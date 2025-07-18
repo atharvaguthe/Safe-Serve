@@ -1,5 +1,8 @@
 package com.thinkspark.view;
 
+import com.thinkspark.Controller.LoginController;
+import com.thinkspark.Controller.SignUpController;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,6 +17,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class LoginUI extends Application {
+
+    LoginController loginController = new LoginController();
+    SignUpController signUpController = new SignUpController();
 
     @Override
     public void start(Stage stage) {
@@ -44,9 +50,22 @@ public class LoginUI extends Application {
         // Buttons
         Button loginBtn = new Button("log in");
         loginBtn.setStyle("-fx-background-color: #F76C6C; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20 8 20;");
+        loginBtn.setOnAction(e -> {
+            String emailString = email.getText();
+            String passwordString = password.getText();
+            loginController.login(emailString, passwordString);
+            System.out.println("button clicked");
+            
+        });
 
         Button signUpBtn = new Button("Sign Up");
         signUpBtn.setStyle("-fx-background-color: #8B3E47; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20 8 20;");
+        signUpBtn.setOnAction(e -> {
+            String emailString = email.getText();
+            String passwordString = password.getText();
+            signUpController.signUp(emailString, passwordString);
+            System.out.println("button clicked");
+        });
 
         Label forgotPassword = new Label("Forget Password");
         forgotPassword.setTextFill(Color.WHITE);
