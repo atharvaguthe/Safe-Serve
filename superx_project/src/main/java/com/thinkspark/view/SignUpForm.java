@@ -1,5 +1,7 @@
 package com.thinkspark.view;
 
+import com.thinkspark.Controller.SignUpController;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,6 +15,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class SignUpForm extends Application {
+
+    SignUpController signUpController = new SignUpController();
 
     @Override
     public void start(Stage primaryStage) {
@@ -53,6 +57,12 @@ public class SignUpForm extends Application {
         // Buttons
         Button signUpBtn = new Button("Sign Up");
         styleButton(signUpBtn, "#8D4C57");
+        signUpBtn.setOnAction(e -> {
+            String emailString = emailField.getText();
+            String passwordString = passwordField.getText();
+            signUpController.signUp(emailString, passwordString);
+            System.out.println("button clicked");
+        });
 
         Button loginBtn = new Button("Log In");
         styleButton(loginBtn, "#FF6B6B");

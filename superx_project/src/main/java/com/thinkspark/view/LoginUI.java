@@ -61,10 +61,7 @@ public class LoginUI extends Application {
         Button signUpBtn = new Button("Sign Up");
         signUpBtn.setStyle("-fx-background-color: #8B3E47; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20 8 20;");
         signUpBtn.setOnAction(e -> {
-            String emailString = email.getText();
-            String passwordString = password.getText();
-            signUpController.signUp(emailString, passwordString);
-            System.out.println("button clicked");
+            
         });
 
         Label forgotPassword = new Label("Forget Password");
