@@ -1,5 +1,8 @@
 package com.thinkspark.view;
 
+import com.thinkspark.Controller.LoginController;
+import com.thinkspark.Controller.SignUpController;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,6 +17,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class LoginUI extends Application {
+
+    LoginController loginController = new LoginController();
+    SignUpController signUpController = new SignUpController();
 
     @Override
     public void start(Stage stage) {
@@ -44,7 +50,7 @@ public class LoginUI extends Application {
         // Buttons
         Button loginBtn = new Button("log in");
         loginBtn.setStyle("-fx-background-color: #F76C6C; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20 8 20;");
-
+    
         Button signUpBtn = new Button("Sign Up");
         signUpBtn.setStyle("-fx-background-color: #8B3E47; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20 8 20;");
 
@@ -63,6 +69,61 @@ public class LoginUI extends Application {
         roleComboBox.setOnAction(e -> {
             String selected = roleComboBox.getValue();
             System.out.println("Selected role: " + selected);
+        });
+
+        loginBtn.setOnAction(e -> {
+            String emailString = email.getText();
+            String passwordString = password.getText();
+            String selectedRole = roleComboBox.getValue();
+
+            // You would typically validate the login credentials here
+            // For this example, we'll navigate based on the selected role
+            if (selectedRole != null) {
+                Stage currentStage = (Stage) loginBtn.getScene().getWindow();
+                currentStage.close(); // Close the login window
+
+                Stage dashboardStage = new Stage();
+                Application dashboard = null;
+
+                switch (selectedRole) {
+                    case "Citizen":
+                        dashboard = new CitizenDashboard();
+                        break;
+                    case "Volunteer":
+                        dashboard = new VolunteerDashboard();
+                        break;
+                    case "NGO":
+                        dashboard = new NgoDashboard();
+                        break;
+                    case "Government":
+                        dashboard = new GovDashboard();
+                        break;
+                }
+
+                if (dashboard != null) {
+                    try {
+                        dashboard.start(dashboardStage);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            } else {
+                // Handle case where no role is selected
+                System.out.println("Please select a role.");
+            }
+        });
+
+        signUpBtn.setOnAction(e -> {
+            Stage currentStage = (Stage) signUpBtn.getScene().getWindow();
+            currentStage.close();
+
+            Stage signUpStage = new Stage();
+            SignUpForm signUpForm = new SignUpForm();
+            try {
+                signUpForm.start(signUpStage);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
 
         HBox selectionRow = new HBox(10, roleLabel, roleComboBox);
