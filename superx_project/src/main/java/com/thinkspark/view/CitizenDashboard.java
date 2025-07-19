@@ -42,6 +42,9 @@ public class CitizenDashboard extends Application {
             navLinks.getChildren().add(link);
         }
 
+        Label txLabel = new Label("Hello");
+        txLabel.setAlignment(Pos.TOP_LEFT);
+
         navbar.getChildren().addAll(logo, spacer, navLinks);
 
         // BANNER
@@ -127,7 +130,7 @@ public class CitizenDashboard extends Application {
 
         // Assemble layout
         mainContent.getChildren().addAll(
-                navbar, banner, quickAccess,
+                navbar, txLabel, banner, quickAccess,
                 alertBox, newsLabel, newsCards,
                 statsLabel, statsGrid
         );
@@ -137,7 +140,7 @@ public class CitizenDashboard extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setStyle("-fx-background: #19263A;");
 
-        Scene scene = new Scene(scrollPane, 1300, 1000);
+        Scene scene = new Scene(scrollPane, 1200, 800);
         primaryStage.setTitle("Disaster Relief Helper");
         primaryStage.setScene(scene);
         primaryStage.show();

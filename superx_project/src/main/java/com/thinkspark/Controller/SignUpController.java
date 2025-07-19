@@ -13,7 +13,7 @@ public class SignUpController {
             return new Result(false, "Email and password cannot be empty");
         }
         try {
-            String apiKey = "AIzaSyC2vOi81GM5zEsvqx4H28se5LvZdkn1t-Q";
+            String apiKey = "AIzaSyAZ0tYGpqtLb3OvVNj0RROf4eDMx5Uk330";
             URL url = new URL("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + apiKey);
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();
             connection.setRequestMethod("POST");

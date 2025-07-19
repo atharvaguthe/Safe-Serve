@@ -67,6 +67,38 @@ public class SignUpForm extends Application {
         Button loginBtn = new Button("Log In");
         styleButton(loginBtn, "#FF6B6B");
 
+        loginBtn.setOnAction(e -> {
+            Stage currentStage = (Stage) loginBtn.getScene().getWindow();
+            currentStage.close();
+
+            Stage loginStage = new Stage();
+            LoginUI loginUI = new LoginUI();
+            try {
+                loginUI.start(loginStage);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        signUpBtn.setOnAction(e -> {
+            String emailString = emailField.getText();
+            String passwordString = passwordField.getText();
+            // Assuming signUp is successful
+            signUpController.signUp(emailString, passwordString);
+            System.out.println("button clicked");
+
+            Stage currentStage = (Stage) signUpBtn.getScene().getWindow();
+            currentStage.close();
+
+            Stage loginStage = new Stage();
+            LoginUI loginUI = new LoginUI();
+            try {
+                loginUI.start(loginStage);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
         HBox buttonBox = new HBox(20, signUpBtn, loginBtn);
         buttonBox.setAlignment(Pos.CENTER);
 
@@ -81,7 +113,7 @@ public class SignUpForm extends Application {
         root.setStyle("-fx-background-color: white;");
         StackPane.setAlignment(formBox, Pos.CENTER);
 
-        Scene scene = new Scene(root, 600, 480);
+        Scene scene = new Scene(root, 1200, 800);
         primaryStage.setTitle("Sign Up | ThinkSpark");
         primaryStage.setScene(scene);
         primaryStage.show();

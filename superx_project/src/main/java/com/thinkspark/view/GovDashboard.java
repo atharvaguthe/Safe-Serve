@@ -137,7 +137,7 @@ public class GovDashboard extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setStyle("-fx-background: #19263A;");
 
-        Scene scene = new Scene(scrollPane, 1300, 1000);
+        Scene scene = new Scene(scrollPane, 1200, 800);
         primaryStage.setTitle("Disaster Relief Helper");
         primaryStage.setScene(scene);
         primaryStage.show();
