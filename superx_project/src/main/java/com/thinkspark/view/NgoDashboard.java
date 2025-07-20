@@ -1,147 +1,294 @@
 package com.thinkspark.view;
 
 import javafx.application.Application;
-import javafx.geometry.*;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class NgoDashboard extends Application {
 
+    // --- Style Definitions (Consistent Light Theme) ---
+    private static final String BACKGROUND_COLOR = "#F4F7FC";
+    private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
+    private static final String PRIMARY_BLUE = "#005A9C";
+    private static final String SECONDARY_ACCENT_COLOR = "#4299E1";
+    private static final String FONT_COLOR_DARK = "#2D3748";
+    private static final String FONT_COLOR_MEDIUM = "#4A5568";
+    private static final String FONT_COLOR_LIGHT = "#FFFFFF";
+    private static final String BORDER_COLOR = "#E2E8F0";
+    private static final String PRIMARY_ACCENT_ORANGE = "#FCA311";
+
+    // --- Fields to hold stage and scene reference ---
+    private Stage primaryStage;
+    private Scene dashboardScene;
+
+    // --- Font Definitions ---
+    private static Font getFont(double size, FontWeight weight) {
+        return Font.font("System", weight, size);
+    }
+
     @Override
     public void start(Stage primaryStage) {
-        // Main vertical container
-        VBox mainContent = new VBox(40);
-        mainContent.setPadding(new Insets(40));
-        mainContent.setStyle("-fx-background-color: #19263A;");
-        mainContent.setAlignment(Pos.TOP_CENTER);
+        this.primaryStage = primaryStage;
+        
+        VBox rootLayout = new VBox(40);
+        rootLayout.setPadding(new Insets(20, 50, 50, 50));
+        rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
+        rootLayout.setAlignment(Pos.TOP_CENTER);
 
-        // NAVBAR
-        HBox navbar = new HBox(50);
-        navbar.setPadding(new Insets(20));
-        navbar.setAlignment(Pos.CENTER_LEFT);
-        Label logo = new Label("🏢 Helper");
-        logo.setTextFill(Color.web("#fca311"));
-        logo.setFont(Font.font("Arial", 40));
+        Node header = createHeader();
+        Node overviewSection = createOverviewSection();
+        GridPane mainGrid = createMainGrid();
+        rootLayout.getChildren().addAll(header, overviewSection, mainGrid);
+
+        ScrollPane scrollPane = new ScrollPane(rootLayout);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background: " + BACKGROUND_COLOR + ";");
+        scrollPane.getStyleClass().add("edge-to-edge");
+
+        dashboardScene = new Scene(scrollPane, 1366, 900);
+        primaryStage.setTitle("NGO Dashboard | Disaster Relief Operations");
+        primaryStage.setScene(dashboardScene);
+        primaryStage.show();
+    }
+
+    private GridPane createMainGrid() {
+        GridPane mainGrid = new GridPane();
+        mainGrid.setHgap(40);
+        mainGrid.setVgap(40);
+        mainGrid.setAlignment(Pos.CENTER);
+
+        mainGrid.add(createQuickAccessModule(), 0, 0);
+        mainGrid.add(createLiveAlertsModule(), 1, 0);
+        mainGrid.add(createStatisticsModule(), 0, 1, 2, 1);
+        return mainGrid;
+    }
+
+    private Node createHeader() {
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(10, 0, 20, 0));
+
+        Label logo = new Label("🌐 NGO Helper");
+        logo.setFont(getFont(32, FontWeight.BOLD));
+        logo.setTextFill(Color.web(PRIMARY_BLUE));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         HBox navLinks = new HBox(40);
-        navLinks.setAlignment(Pos.CENTER_RIGHT);
-        String[] navItems = { "Home", "Assistance", "Resources", "About us" };
+        navLinks.setAlignment(Pos.CENTER);
+        String[] navItems = { "Dashboard", "Tasks", "Volunteers", "Reports" };
         for (String item : navItems) {
             Label link = new Label(item);
-            link.setTextFill(Color.WHITE);
-            link.setFont(Font.font(22));
+            link.setFont(getFont(16, FontWeight.MEDIUM));
+            link.setTextFill(Color.web(FONT_COLOR_DARK));
+            link.setStyle("-fx-cursor: hand;");
+            link.setOnMouseEntered(e -> link.setUnderline(true));
+            link.setOnMouseExited(e -> link.setUnderline(false));
+            
+            if ("Dashboard".equals(item)) {
+                link.setOnMouseClicked(e -> primaryStage.setScene(dashboardScene));
+            } else if ("Tasks".equals(item)) {
+                link.setOnMouseClicked(e -> new MyTasksView(primaryStage, dashboardScene).start(primaryStage));
+            } else if ("Volunteers".equals(item)) {
+                link.setOnMouseClicked(e -> new ManageVolunteersView(primaryStage, dashboardScene).start(primaryStage));
+            } else if ("Reports".equals(item)) {
+                link.setOnMouseClicked(e -> new AllRequestsView(primaryStage, dashboardScene).start(primaryStage));
+            }
+            
             navLinks.getChildren().add(link);
         }
+        
+        MenuButton profileButton = new MenuButton("Profile");
+        profileButton.setFont(getFont(16, FontWeight.MEDIUM));
+        MenuItem settingsItem = new MenuItem("Settings");
+        MenuItem logoutItem = new MenuItem("Log Out");
+        profileButton.getItems().addAll(settingsItem, logoutItem);
 
-        navbar.getChildren().addAll(logo, spacer, navLinks);
+        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
+        logoutItem.setOnAction(e -> {
+            primaryStage.close();
+            new DisasterHelperUI().start(new Stage());
+        });
+        
+        navLinks.getChildren().add(profileButton);
 
-        // BANNER
-        ImageView banner = new ImageView(new Image("Assets//Images//disaster.java"));
-        banner.setFitWidth(1000);
-        banner.setPreserveRatio(true);
-        banner.setSmooth(true);
-        banner.setStyle("-fx-effect: dropshadow(three-pass-box, gray, 10, 0, 0, 0);");
-
-        // QUICK ACCESS
-        VBox quickAccess = new VBox(20);
-        quickAccess.setAlignment(Pos.CENTER);
-        Label quickLabel = new Label("Quick Access");
-        quickLabel.setTextFill(Color.WHITE);
-        quickLabel.setFont(Font.font(30));
-
-        HBox quickButtons = new HBox(30);
-        quickButtons.setAlignment(Pos.CENTER);
-        String[] buttonTexts = { "All Requests", "Manage Volunteers", "Map", "Donations" };
-        for (String text : buttonTexts) {
-            Button btn = new Button(text);
-            btn.setPrefSize(200, 100);
-            btn.setFont(Font.font(18));
-            btn.setStyle("-fx-background-color: #7a90b8; -fx-text-fill: white; -fx-background-radius: 10;");
-            quickButtons.getChildren().add(btn);
-        }
-
-        quickAccess.getChildren().addAll(quickLabel, quickButtons);
-
-        // LIVE ALERTS
-        Label alerts = new Label("Live Alerts");
-        alerts.setFont(Font.font(28));
-        alerts.setTextFill(Color.WHITE);
-        StackPane alertBox = new StackPane(alerts);
-        alertBox.setPrefHeight(150);
-        alertBox.setStyle("-fx-background-color: #7a90b8; -fx-background-radius: 10;");
-
-        // FEATURED NEWS
-        Label newsLabel = new Label("Featured News");
-        newsLabel.setFont(Font.font(28));
-        newsLabel.setTextFill(Color.WHITE);
-
-        HBox newsCards = new HBox(30);
-        newsCards.setPadding(new Insets(10));
-        newsCards.setAlignment(Pos.CENTER);
-        for (int i = 0; i < 3; i++) {
-            Region card = new Region();
-            card.setPrefSize(200, 300);
-            card.setStyle("-fx-background-color: #7a90b8; -fx-background-radius: 10;");
-            newsCards.getChildren().add(card);
-        }
-
-        // STATISTICS
-        Label statsLabel = new Label("Statistics");
-        statsLabel.setFont(Font.font(28));
-        statsLabel.setTextFill(Color.WHITE);
-
-        GridPane statsGrid = new GridPane();
-        statsGrid.setPadding(new Insets(30));
-        statsGrid.setHgap(50);
-        statsGrid.setAlignment(Pos.CENTER);
-        statsGrid.setStyle("-fx-background-color: #46c7c1; -fx-background-radius: 10;");
-
-        String[][] statsData = {
-                { "12K", "people rescued" },
-                { "56K", "Request Handled" },
-                { "343", "Active Volunteers" },
-                { "39K", "Resources Delivered" }
-        };
-
-        for (int i = 0; i < statsData.length; i++) {
-            VBox box = new VBox(10);
-            box.setAlignment(Pos.CENTER);
-            Label number = new Label(statsData[i][0]);
-            number.setFont(Font.font(40));
-            number.setTextFill(Color.BLACK);
-            Label label = new Label(statsData[i][1]);
-            label.setFont(Font.font(20));
-            label.setTextFill(Color.BLACK);
-            box.getChildren().addAll(number, label);
-            statsGrid.add(box, i, 0);
-        }
-
-        // Assemble layout
-        mainContent.getChildren().addAll(
-                navbar, banner, quickAccess,
-                alertBox, newsLabel, newsCards,
-                statsLabel, statsGrid
-        );
-
-        // Make it scrollable
-        ScrollPane scrollPane = new ScrollPane(mainContent);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setStyle("-fx-background: #19263A;");
-
-        Scene scene = new Scene(scrollPane, 1200, 800);
-        primaryStage.setTitle("Disaster Relief Helper");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        header.getChildren().addAll(logo, spacer, navLinks);
+        return header;
     }
 
+    private Node createOverviewSection() {
+        VBox overviewBox = new VBox(15);
+        overviewBox.setAlignment(Pos.CENTER_LEFT);
+        overviewBox.setPadding(new Insets(30));
+        overviewBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 16; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1;");
+
+        Label title = new Label("Operations Dashboard");
+        title.setFont(getFont(36, FontWeight.BOLD));
+        title.setTextFill(Color.web(FONT_COLOR_DARK));
+
+        Label subtitle = new Label("Coordinate your team, manage requests, and track your impact in real-time.");
+        subtitle.setFont(getFont(18, FontWeight.NORMAL));
+        subtitle.setTextFill(Color.web(FONT_COLOR_MEDIUM));
+        subtitle.setWrapText(true);
+
+        overviewBox.getChildren().addAll(title, subtitle);
+        return overviewBox;
+    }
+
+    private Node createQuickAccessModule() {
+        VBox card = createDashboardCard("Quick Actions");
+        GridPane buttonGrid = new GridPane();
+        buttonGrid.setHgap(20);
+        buttonGrid.setVgap(20);
+        buttonGrid.setPadding(new Insets(15, 0, 0, 0));
+        
+        Button allRequestsButton = createQuickAccessButton("📋 All Requests", true);
+        allRequestsButton.setOnAction(e -> new AllRequestsView(primaryStage, dashboardScene).start(primaryStage));
+        
+        Button manageVolunteersButton = createQuickAccessButton("👥 Manage Volunteers", false);
+        manageVolunteersButton.setOnAction(e -> new ManageVolunteersView(primaryStage, dashboardScene).start(primaryStage));
+        
+        Button viewMapButton = createQuickAccessButton("🗺️ View Map", false);
+        // Add map functionality here later
+        
+        Button viewDonationsButton = createQuickAccessButton("💖 View Donations", false);
+        viewDonationsButton.setOnAction(e -> new ViewDonationsView(primaryStage, dashboardScene).start(primaryStage));
+
+        buttonGrid.add(allRequestsButton, 0, 0);
+        buttonGrid.add(manageVolunteersButton, 1, 0);
+        buttonGrid.add(viewMapButton, 0, 1);
+        buttonGrid.add(viewDonationsButton, 1, 1);
+
+        card.getChildren().add(buttonGrid);
+        return card;
+    }
     
+    private Button createQuickAccessButton(String text, boolean isPrimary) {
+        Button button = new Button(text);
+        button.setFont(getFont(16, FontWeight.BOLD));
+        button.setPrefSize(250, 80);
+        GridPane.setHgrow(button, Priority.ALWAYS);
+        GridPane.setVgrow(button, Priority.ALWAYS);
+
+        String style;
+        if (isPrimary) {
+            button.setTextFill(Color.web(FONT_COLOR_LIGHT));
+            style = "-fx-background-color: " + PRIMARY_BLUE + ";";
+        } else {
+            button.setTextFill(Color.web(FONT_COLOR_DARK));
+            style = "-fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + ";";
+        }
+        
+        button.setStyle(style + " -fx-background-radius: 10; -fx-border-radius: 10; -fx-cursor: hand;");
+        return button;
+    }
+
+    private Node createLiveAlertsModule() {
+        VBox card = createDashboardCard("Live Government Alerts");
+        VBox alertsContainer = new VBox(15);
+        alertsContainer.setPadding(new Insets(15, 0, 0, 0));
+        
+        alertsContainer.getChildren().add(createAlertItem("New Request: Medical Aid in Sector 7", "High Priority"));
+        alertsContainer.getChildren().add(createAlertItem("Resource Depletion Warning: Water Supply", "Medium Priority"));
+        alertsContainer.getChildren().add(createAlertItem("Road Closure: Main St Bridge", "High Priority"));
+        
+        card.getChildren().add(alertsContainer);
+        return card;
+    }
+    
+    private Node createAlertItem(String text, String priority) {
+        VBox item = new VBox(3);
+        Label alertLabel = new Label(text);
+        alertLabel.setFont(getFont(15, FontWeight.MEDIUM));
+        alertLabel.setTextFill(Color.web(FONT_COLOR_DARK));
+        alertLabel.setWrapText(true);
+        
+        Label priorityLabel = new Label(priority);
+        priorityLabel.setFont(getFont(12, FontWeight.BOLD));
+        
+        String priorityColor = PRIMARY_ACCENT_ORANGE;
+        if ("Medium Priority".equals(priority)) {
+            priorityColor = SECONDARY_ACCENT_COLOR;
+        } else if ("Low Priority".equals(priority)) {
+            priorityColor = FONT_COLOR_MEDIUM;
+        }
+        priorityLabel.setTextFill(Color.web(priorityColor));
+        
+        item.getChildren().addAll(alertLabel, priorityLabel);
+        return item;
+    }
+
+    private Node createStatisticsModule() {
+        VBox card = createDashboardCard("Your Organization's Impact");
+        HBox statsBox = new HBox();
+        statsBox.setAlignment(Pos.CENTER);
+        statsBox.setSpacing(40);
+        statsBox.setPadding(new Insets(15, 0, 0, 0));
+        HBox.setHgrow(statsBox, Priority.ALWAYS);
+
+        String[][] statsData = {
+            { "1.2K", "People Aided" },
+            { "4.8K", "Requests Fulfilled" },
+            { "343", "Active Volunteers" },
+            { "8.2K", "Items Delivered" }
+        };
+
+        for (String[] stat : statsData) {
+            Node statItem = createStatItem(stat[0], stat[1]);
+            HBox.setHgrow(statItem, Priority.ALWAYS);
+            statsBox.getChildren().add(statItem);
+        }
+
+        card.getChildren().add(statsBox);
+        return card;
+    }
+
+    private Node createStatItem(String number, String label) {
+        VBox item = new VBox(-5);
+        item.setAlignment(Pos.CENTER);
+        
+        Label numberLabel = new Label(number);
+        numberLabel.setFont(getFont(48, FontWeight.BOLD));
+        numberLabel.setTextFill(Color.web(PRIMARY_BLUE));
+        
+        Label textLabel = new Label(label);
+        textLabel.setFont(getFont(16, FontWeight.NORMAL));
+        textLabel.setTextFill(Color.web(FONT_COLOR_MEDIUM));
+        
+        item.getChildren().addAll(numberLabel, textLabel);
+        return item;
+    }
+    
+    private VBox createDashboardCard(String title) {
+        VBox card = new VBox(10);
+        card.setPadding(new Insets(25));
+        card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
+                      "-fx-background-radius: 12; " +
+                      "-fx-border-color: " + BORDER_COLOR + "; " +
+                      "-fx-border-width: 1;");
+        GridPane.setHgrow(card, Priority.ALWAYS);
+        GridPane.setVgrow(card, Priority.ALWAYS);
+        
+        Label titleLabel = new Label(title);
+        titleLabel.setFont(getFont(22, FontWeight.BOLD));
+        titleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
+        
+        card.getChildren().add(titleLabel);
+        return card;
+    }
+
 }

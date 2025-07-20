@@ -1,207 +1,384 @@
 package com.thinkspark.view;
 
 import javafx.application.Application;
-import javafx.geometry.*;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class DisasterHelperUI extends Application {
 
+    // --- Style Definitions ---
+    private static final String BACKGROUND_COLOR = "#FFFFFF";
+    private static final String PRIMARY_BLUE = "#005A9C";
+    private static final String SECONDARY_BLUE = "#007BFF";
+    private static final String FONT_COLOR_DARK = "#2D3748";
+    private static final String FONT_COLOR_LIGHT = "#FFFFFF";
+    private static final String CARD_BACKGROUND_COLOR = "#F4F7FC";
+    private static final String BORDER_COLOR = "#E2E8F0";
+    private static final String ALERT_BACKGROUND_COLOR = "#FFFBEB";
+    private static final String ALERT_TEXT_COLOR = "#B45309";
+
+    // --- Font Definitions ---
+    private static Font getFont(double size, FontWeight weight) {
+        return Font.font("System", weight, size);
+    }
+
     @Override
     public void start(Stage primaryStage) {
-        // Main content container
-        VBox mainContent = new VBox(40);
-        mainContent.setPadding(new Insets(40));
-        // Set background to white for a clean, modern look
-        mainContent.setStyle("-fx-background-color: #FFFFFF;");
-        mainContent.setAlignment(Pos.TOP_CENTER);
+        // --- Root Layout ---
+        VBox rootLayout = new VBox(40);
+        rootLayout.setPadding(new Insets(20, 50, 50, 50));
+        rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
+        rootLayout.setAlignment(Pos.TOP_CENTER);
 
-        // NAVBAR
-        HBox navbar = new HBox(50);
-        navbar.setPadding(new Insets(20));
-        navbar.setAlignment(Pos.CENTER_LEFT);
+        // --- Header / Navigation Bar ---
+        Node header = createHeader(primaryStage);
+
+        // --- Hero Section ---
+        Node heroSection = createHeroSection();
+
+        // --- Main Content Grid ---
+        GridPane mainGrid = new GridPane();
+        mainGrid.setHgap(40);
+        mainGrid.setVgap(40);
+        mainGrid.setAlignment(Pos.CENTER);
+
+        // Configure column constraints for a balanced layout
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setPercentWidth(65);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setPercentWidth(35);
+        mainGrid.getColumnConstraints().addAll(col1, col2);
+
+        // --- Left Column Content ---
+        VBox leftColumn = new VBox(40);
+        leftColumn.getChildren().addAll(
+            createQuickAccessModule(primaryStage), // Pass stage for navigation
+            createFeaturedNewsModule()
+        );
+
+        // --- Right Column Content ---
+        VBox rightColumn = new VBox(40);
+        rightColumn.getChildren().addAll(
+            createLiveAlertsModule(),
+            createStatisticsModule()
+        );
+
+        mainGrid.add(leftColumn, 0, 0);
+        mainGrid.add(rightColumn, 1, 0);
+
+        // --- Assemble the Main Layout ---
+        rootLayout.getChildren().addAll(header, heroSection, mainGrid);
+
+        // --- ScrollPane for Responsiveness ---
+        ScrollPane scrollPane = new ScrollPane(rootLayout);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background: " + BACKGROUND_COLOR + ";");
+        scrollPane.getStyleClass().add("edge-to-edge");
+
+
+        // --- Scene and Stage Setup ---
+        Scene scene = new Scene(scrollPane, 1366, 800);
+        primaryStage.setTitle("Safe Serve | Disaster Relief Helper");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    /**
+     * Creates the top header with logo, navigation, and auth buttons.
+     * @param stage The primary stage to handle window switching.
+     * @return A styled HBox node for the header.
+     */
+    private Node createHeader(Stage stage) {
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(10, 0, 20, 0));
 
         Label logo = new Label("🏢 Safe Serve");
-        // Use a strong, professional blue for the logo text
-        logo.setTextFill(Color.web("#005A9C"));
-        logo.setFont(Font.font("Arial", 40));
+        logo.setFont(getFont(32, FontWeight.BOLD));
+        logo.setTextFill(Color.web(PRIMARY_BLUE));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
+        // Navigation Links
         HBox navLinks = new HBox(40);
         navLinks.setAlignment(Pos.CENTER);
-        String[] navItems = { "Home", "Assistance", "Resources", "About us" };
-        for (String item : navItems) {
-            Label link = new Label(item);
-            // Use a dark gray for navigation links for readability
-            link.setTextFill(Color.web("#333333"));
-            link.setFont(Font.font(22));
-            navLinks.getChildren().add(link);
-        }
+        
+        // --- Navigation Links with Actions ---
+        Button homeLink = createNavLink("Home");
+        homeLink.setOnAction(e -> this.start(stage)); // Reloads the dashboard
 
-        // Log in & Sign up buttons
-        VBox authButtons = new VBox(10);
-        authButtons.setAlignment(Pos.CENTER_RIGHT);
+        Button assistanceLink = createNavLink("Assistance");
+        assistanceLink.setOnAction(e -> new AssistanceView(stage, assistanceLink.getScene()).start(stage));
 
-        Button loginBtn = new Button("Log in");
-        Button signupBtn = new Button("Sign up");
+        Button resourcesLink = createNavLink("Resources");
+        resourcesLink.setOnAction(e -> new ResourcesView(stage, resourcesLink.getScene()).start(stage));
 
-        for (Button btn : new Button[]{loginBtn, signupBtn}) {
-            btn.setFont(Font.font(18));
-            btn.setTextFill(Color.WHITE);
-            // Style buttons with the primary blue color
-            btn.setStyle("-fx-background-color: #007BFF; -fx-background-radius: 20; -fx-padding: 6 20 6 20;");
-        }
+        Button aboutUsLink = createNavLink("About Us");
+        aboutUsLink.setOnAction(e -> new AboutUsView(stage, aboutUsLink.getScene()).start(stage));
 
-        authButtons.getChildren().addAll(loginBtn, signupBtn);
-        navbar.getChildren().addAll(logo, spacer, navLinks, authButtons);
+        navLinks.getChildren().addAll(homeLink, assistanceLink, resourcesLink, aboutUsLink);
 
-        // BANNER IMAGE
-        // Replaced local image with a placeholder for preview purposes
-        ImageView banner = new ImageView(new Image("https://placehold.co/1000x400/007BFF/FFFFFF?text=We+Are+Here+To+Help"));
-        banner.setFitWidth(1000);
-        banner.setPreserveRatio(true);
-        banner.setSmooth(true);
-        // Add a subtle drop shadow and rounded corners to the banner
-        banner.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0); -fx-background-radius: 10;");
+        // Auth Buttons
+        HBox authButtons = new HBox(15);
+        authButtons.setAlignment(Pos.CENTER);
 
-        // QUICK ACCESS SECTION
-        VBox quickAccess = new VBox(20);
-        quickAccess.setAlignment(Pos.CENTER);
-        Label quickLabel = new Label("Quick Access");
-        quickLabel.setTextFill(Color.BLACK);
-        quickLabel.setFont(Font.font(30));
+        Button loginBtn = new Button("Log In");
+        loginBtn.setFont(getFont(15, FontWeight.BOLD));
+        loginBtn.setTextFill(Color.web(PRIMARY_BLUE));
+        loginBtn.setStyle("-fx-background-color: transparent; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 2; -fx-background-radius: 20; -fx-border-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;");
 
-        HBox quickButtons = new HBox(30);
-        quickButtons.setAlignment(Pos.CENTER);
-        String[] quickItems = { "Disaster Info Type", "Nearest Safe Zone", "Relief Resources", "Donate Now" };
-        for (String item : quickItems) {
-            Button btn = new Button(item);
-            btn.setPrefSize(200, 100);
-            btn.setFont(Font.font(18));
-            // Use a light gray for secondary buttons to distinguish them
-            btn.setStyle("-fx-background-color: #F0F0F0; -fx-text-fill: black; -fx-background-radius: 10; -fx-border-color: #DDDDDD; -fx-border-width: 1;");
-            quickButtons.getChildren().add(btn);
-        }
-
-        quickAccess.getChildren().addAll(quickLabel, quickButtons);
-
-        // LIVE ALERTS
-        Label alerts = new Label("Live Alerts");
-        alerts.setFont(Font.font(28));
-        alerts.setTextFill(Color.web("#5C3D03")); // Dark brown text for contrast
-        StackPane alertBox = new StackPane(alerts);
-        alertBox.setPrefHeight(150);
-        // Use a light warning yellow for the alerts section
-        alertBox.setStyle("-fx-background-color: #FFF3CD; -fx-background-radius: 10;");
-
-        // FEATURED NEWS
-        Label newsLabel = new Label("Featured News");
-        newsLabel.setFont(Font.font(28));
-        newsLabel.setTextFill(Color.BLACK);
-
-        HBox newsCards = new HBox(30);
-        newsCards.setPadding(new Insets(10));
-        newsCards.setAlignment(Pos.CENTER);
-        for (int i = 0; i < 3; i++) {
-            // Replaced Region with a VBox to hold placeholder content
-            VBox card = new VBox(10);
-            card.setPrefSize(200, 300);
-            // Style cards with a white background and a subtle border
-            card.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-border-color: #E0E0E0; -fx-border-width: 1; -fx-border-radius: 10;");
-            card.setPadding(new Insets(15));
-            
-            Label cardTitle = new Label("News Headline " + (i + 1));
-            cardTitle.setFont(Font.font("Arial", 18));
-            cardTitle.setWrapText(true);
-            
-            Label cardContent = new Label("A brief summary of the news article will appear here, giving users a glimpse of the content.");
-            cardContent.setWrapText(true);
-            
-            card.getChildren().addAll(cardTitle, cardContent);
-            newsCards.getChildren().add(card);
-        }
-
-        // STATISTICS SECTION
-        Label statsLabel = new Label("Statistics");
-        statsLabel.setFont(Font.font(28));
-        statsLabel.setTextFill(Color.BLACK);
-
-        GridPane statsGrid = new GridPane();
-        statsGrid.setPadding(new Insets(30));
-        statsGrid.setHgap(50);
-        statsGrid.setAlignment(Pos.CENTER);
-        // Use a very light, professional blue for the statistics background
-        statsGrid.setStyle("-fx-background-color: #E9F5FF; -fx-background-radius: 10;");
-
-        String[][] statsData = {
-                { "12K", "People Rescued" },
-                { "56K", "Requests Handled" },
-                { "343", "Active Volunteers" },
-                { "39K", "Resources Delivered" }
-        };
-
-        for (int i = 0; i < statsData.length; i++) {
-            VBox box = new VBox(10);
-            box.setAlignment(Pos.CENTER);
-            Label number = new Label(statsData[i][0]);
-            number.setFont(Font.font(40));
-            // Use the primary blue to highlight the numbers
-            number.setTextFill(Color.web("#005A9C"));
-            Label label = new Label(statsData[i][1]);
-            label.setFont(Font.font(20));
-            label.setTextFill(Color.BLACK);
-            box.getChildren().addAll(number, label);
-            statsGrid.add(box, i, 0);
-        }
+        Button signupBtn = new Button("Sign Up");
+        signupBtn.setFont(getFont(15, FontWeight.BOLD));
+        signupBtn.setTextFill(Color.web(FONT_COLOR_LIGHT));
+        signupBtn.setStyle("-fx-background-color: " + SECONDARY_BLUE + "; -fx-background-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;");
+        
+        // --- Button Actions for Login and Sign Up ---
+        loginBtn.setOnAction(e -> {
+            Stage currentStage = (Stage) loginBtn.getScene().getWindow();
+            currentStage.close();
+            Stage loginStage = new Stage();
+            new LoginUI().start(loginStage);
+        });
 
         signupBtn.setOnAction(e -> {
             Stage currentStage = (Stage) signupBtn.getScene().getWindow();
             currentStage.close();
             Stage signUpStage = new Stage();
-            SignUpForm signUpForm = new SignUpForm();
-            try {
-                signUpForm.start(signUpStage);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            new SignUpForm().start(signUpStage);
+        });
+        
+        authButtons.getChildren().addAll(loginBtn, signupBtn);
+        HBox.setMargin(navLinks, new Insets(0, 50, 0, 0));
+
+        header.getChildren().addAll(logo, spacer, navLinks, authButtons);
+        return header;
+    }
+    
+    /**
+     * Helper to create a styled, clickable navigation label.
+     * @param text The text for the link.
+     * @return A styled Button configured to look like a label.
+     */
+    private Button createNavLink(String text) {
+        Button link = new Button(text);
+        link.setFont(getFont(16, FontWeight.MEDIUM));
+        link.setTextFill(Color.web(FONT_COLOR_DARK));
+        link.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-cursor: hand;");
+        link.setOnMouseEntered(e -> link.setUnderline(true));
+        link.setOnMouseExited(e -> link.setUnderline(false));
+        return link;
+    }
+
+    /**
+     * Creates the main hero section.
+     * @return A styled VBox node for the hero section.
+     */
+    private Node createHeroSection() {
+        VBox heroBox = new VBox(20);
+        heroBox.setAlignment(Pos.CENTER);
+        heroBox.setPadding(new Insets(60, 40, 60, 40));
+        heroBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 16;");
+
+        Label title = new Label("We Are Here To Help");
+        title.setFont(getFont(48, FontWeight.BOLD));
+        title.setTextFill(Color.web(FONT_COLOR_DARK));
+
+        Label subtitle = new Label("Your trusted partner in navigating emergencies. Get access to critical information, resources, and support when you need it most.");
+        subtitle.setFont(getFont(18, FontWeight.NORMAL));
+        subtitle.setTextFill(Color.web(FONT_COLOR_DARK));
+        subtitle.setOpacity(0.8);
+        subtitle.setWrapText(true);
+        subtitle.setMaxWidth(800);
+        subtitle.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+
+        heroBox.getChildren().addAll(title, subtitle);
+        return heroBox;
+    }
+
+    /**
+     * Creates a dashboard module for quick access buttons.
+     * @param stage The primary stage to handle navigation.
+     * @return A styled VBox node representing a dashboard card.
+     */
+    private Node createQuickAccessModule(Stage stage) {
+        VBox card = createDashboardCard("Quick Access");
+        GridPane buttonGrid = new GridPane();
+        buttonGrid.setHgap(20);
+        buttonGrid.setVgap(20);
+        buttonGrid.setPadding(new Insets(15, 0, 0, 0));
+        
+        Button disasterInfoBtn = createQuickAccessButton("Disaster Info Type");
+        disasterInfoBtn.setOnAction(e -> new DisasterInfoTypeView(stage, disasterInfoBtn.getScene()).start(stage));
+
+        Button safeZoneBtn = createQuickAccessButton("Nearest Safe Zone");
+        safeZoneBtn.setOnAction(e -> new NearestSafeZoneView(stage, safeZoneBtn.getScene()).start(stage));
+
+        Button reliefResourcesBtn = createQuickAccessButton("Relief Resources");
+        reliefResourcesBtn.setOnAction(e -> new ReliefResourcesView(stage, reliefResourcesBtn.getScene()).start(stage));
+        
+        Button donateBtn = createQuickAccessButton("Donate Now");
+        donateBtn.setOnAction(e -> new DonationsView(stage, donateBtn.getScene()).start(stage));
+
+        buttonGrid.add(disasterInfoBtn, 0, 0);
+        buttonGrid.add(safeZoneBtn, 1, 0);
+        buttonGrid.add(reliefResourcesBtn, 0, 1);
+        buttonGrid.add(donateBtn, 1, 1);
+
+        card.getChildren().add(buttonGrid);
+        return card;
+    }
+    
+    /**
+     * Helper to create styled buttons for the Quick Access section.
+     * @param text The button's text.
+     * @return A styled Button.
+     */
+    private Button createQuickAccessButton(String text) {
+        Button button = new Button(text);
+        button.setFont(getFont(16, FontWeight.BOLD));
+        button.setTextFill(Color.web(FONT_COLOR_DARK));
+        button.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 10; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-cursor: hand;");
+        button.setPrefSize(300, 80);
+        GridPane.setHgrow(button, Priority.ALWAYS);
+        GridPane.setVgrow(button, Priority.ALWAYS);
+        return button;
+    }
+
+    /**
+     * Creates a dashboard module for live alerts.
+     * @return A styled VBox node representing a dashboard card.
+     */
+    private Node createLiveAlertsModule() {
+        VBox card = createDashboardCard("Live Alerts");
+        card.setStyle("-fx-background-color: " + ALERT_BACKGROUND_COLOR + "; -fx-background-radius: 12; -fx-padding: 20;");
+        
+        Label title = (Label) card.getChildren().get(0);
+        title.setTextFill(Color.web(ALERT_TEXT_COLOR));
+        
+        VBox alertsContainer = new VBox(15);
+        alertsContainer.setPadding(new Insets(10, 0, 0, 0));
+        
+        alertsContainer.getChildren().add(createAlertItem("High wind advisory in effect until 8 PM."));
+        alertsContainer.getChildren().add(createAlertItem("Road closure on Main St due to flooding."));
+        alertsContainer.getChildren().add(createAlertItem("Community shelter open at the civic center."));
+        
+        card.getChildren().add(alertsContainer);
+        return card;
+    }
+    
+    private Node createAlertItem(String text) {
+        Label alertLabel = new Label("• " + text);
+        alertLabel.setFont(getFont(15, FontWeight.MEDIUM));
+        alertLabel.setTextFill(Color.web(ALERT_TEXT_COLOR));
+        alertLabel.setWrapText(true);
+        return alertLabel;
+    }
+
+    /**
+     * Creates a dashboard module for key statistics.
+     * @return A styled VBox node representing a dashboard card.
+     */
+    private Node createStatisticsModule() {
+        VBox card = createDashboardCard("Statistics");
+        GridPane grid = new GridPane();
+        grid.setHgap(20);
+        grid.setVgap(20);
+        grid.setPadding(new Insets(15, 0, 0, 0));
+        
+        grid.add(createStatItem("12K", "People Rescued"), 0, 0);
+        grid.add(createStatItem("56K", "Requests Handled"), 1, 0);
+        grid.add(createStatItem("343", "Active Volunteers"), 0, 1);
+        grid.add(createStatItem("39K", "Resources Delivered"), 1, 1);
+
+        card.getChildren().add(grid);
+        return card;
+    }
+
+    private Node createStatItem(String number, String label) {
+        VBox item = new VBox(-2);
+        item.setAlignment(Pos.CENTER_LEFT);
+        
+        Label numberLabel = new Label(number);
+        numberLabel.setFont(getFont(34, FontWeight.BOLD));
+        numberLabel.setTextFill(Color.web(PRIMARY_BLUE));
+        
+        Label textLabel = new Label(label);
+        textLabel.setFont(getFont(14, FontWeight.NORMAL));
+        textLabel.setTextFill(Color.web(FONT_COLOR_DARK));
+        
+        item.getChildren().addAll(numberLabel, textLabel);
+        return item;
+    }
+
+    /**
+     * Creates a dashboard module for featured news.
+     * @return A styled VBox node representing a dashboard card.
+     */
+    private Node createFeaturedNewsModule() {
+        VBox card = createDashboardCard("Featured News");
+        VBox newsList = new VBox(20);
+        newsList.setPadding(new Insets(15, 0, 0, 0));
+
+        newsList.getChildren().add(createNewsItem("How to Stay Safe During a Flood", "Essential tips from experts on preparing for and reacting to flood warnings in your area."));
+        newsList.getChildren().add(createNewsItem("Volunteer Spotlight: The Unsung Heroes", "Meet the dedicated volunteers who are working tirelessly behind the scenes to provide aid."));
+        newsList.getChildren().add(createNewsItem("Donation Drive Exceeds Goals", "Thanks to overwhelming community support, our latest donation drive has successfully..."));
+
+        card.getChildren().add(newsList);
+        return card;
+    }
+    
+    private Node createNewsItem(String title, String summary) {
+        VBox item = new VBox(5);
+        Label titleLabel = new Label(title);
+        titleLabel.setFont(getFont(18, FontWeight.BOLD));
+        titleLabel.setTextFill(Color.web(PRIMARY_BLUE));
+        
+        Label summaryLabel = new Label(summary);
+        summaryLabel.setFont(getFont(15, FontWeight.NORMAL));
+        summaryLabel.setTextFill(Color.web(FONT_COLOR_DARK));
+        summaryLabel.setWrapText(true);
+        
+        item.getChildren().addAll(titleLabel, summaryLabel);
+        item.setStyle("-fx-border-color: " + BORDER_COLOR + " transparent transparent transparent; -fx-border-width: 1; -fx-padding: 15 0 0 0;");
+        
+        item.parentProperty().addListener((obs, oldParent, newParent) -> {
+            if (newParent != null && ((VBox)newParent).getChildren().get(0) == item) {
+                item.setStyle("-fx-border-width: 0; -fx-padding: 0;");
             }
         });
-        loginBtn.setOnAction(e -> {
-            Stage currentStage = (Stage) loginBtn.getScene().getWindow();
-            currentStage.close();
-            Stage loginStage = new Stage();
-            LoginUI loginUI = new LoginUI();
-            try {
-                loginUI.start(loginStage);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
 
-        // Assemble full page
-        mainContent.getChildren().addAll(
-                navbar, banner, quickAccess,
-                alertBox, newsLabel, newsCards,
-                statsLabel, statsGrid
-        );
-
-        // Make scrollable
-        ScrollPane scrollPane = new ScrollPane(mainContent);
-        scrollPane.setFitToWidth(true);
-        // Ensure the scroll pane background is also white
-        scrollPane.setStyle("-fx-background: #FFFFFF;");
-
-        // Scene
-        Scene scene = new Scene(scrollPane, 1200, 800);
-        primaryStage.setTitle("Disaster Relief Helper");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        return item;
+    }
+    
+    /**
+     * Helper method to create a consistent card layout for dashboard modules.
+     * @param title The title of the card.
+     * @return A VBox styled as a card with a title.
+     */
+    private VBox createDashboardCard(String title) {
+        VBox card = new VBox(10);
+        card.setPadding(new Insets(25));
+        card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
+                      "-fx-background-radius: 12;");
+        VBox.setVgrow(card, Priority.ALWAYS);
+        
+        Label titleLabel = new Label(title);
+        titleLabel.setFont(getFont(24, FontWeight.BOLD));
+        titleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
+        
+        card.getChildren().add(titleLabel);
+        return card;
     }
 }

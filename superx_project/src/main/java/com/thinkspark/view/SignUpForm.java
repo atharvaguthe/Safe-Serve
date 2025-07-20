@@ -3,148 +3,190 @@ package com.thinkspark.view;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-// --- Placeholder Classes for Compilation ---
-// In a real application, these would be fully implemented.
-class SignUpController {
-    public void signUp(String email, String password) {
-        System.out.println("Signing up with Email: " + email);
-    }
-}
-
-// This placeholder uses the previously defined LoginUI for navigation.
-// Ensure the LoginUI class is accessible in your project.
-
 public class SignUpForm extends Application {
 
-    SignUpController signUpController = new SignUpController();
+    // --- Style Definitions (Consistent Light Theme) ---
+    private static final String BACKGROUND_COLOR = "#F4F7FC";
+    private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
+    private static final String PRIMARY_BLUE = "#005A9C";
+    private static final String FONT_COLOR_DARK = "#2D3748";
+    private static final String FONT_COLOR_LIGHT = "#FFFFFF";
+    private static final String BORDER_COLOR = "#E2E8F0";
+
+    // --- Font Definitions ---
+    private static Font getFont(double size, FontWeight weight) {
+        return Font.font("System", weight, size);
+    }
 
     @Override
-    public void start(Stage primaryStage) {
-        // Main form layout with a clean white background
-        VBox formBox = new VBox(20); // Increased spacing
-        formBox.setPadding(new Insets(40));
-        formBox.setAlignment(Pos.CENTER);
-        formBox.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 15;");
-        formBox.setMaxWidth(500); // Set a max width for the form
-        formBox.setMaxHeight(650); // Set a max height
+    public void start(Stage stage) {
+        // --- Main Layout ---
+        HBox mainLayout = new HBox();
+        mainLayout.setAlignment(Pos.CENTER);
+        mainLayout.setMaxSize(960, 720); // Slightly taller to accommodate more fields
+        mainLayout.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
+                           "-fx-background-radius: 16; " +
+                           "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 20, 0, 0, 8);");
 
-        // Center the formBox in the scene
-        VBox root = new VBox(formBox);
-        root.setAlignment(Pos.CENTER);
-        root.setStyle("-fx-background-color: #F0F0F0;"); // Light gray background for the scene
+        // Add the two main panes to the layout
+        mainLayout.getChildren().addAll(createBrandingPane(), createSignUpForm(stage));
 
-        // Header Label
-        Label header = new Label("Create Your Account");
-        header.setFont(Font.font("Arial", FontWeight.BOLD, 32));
-        // Use the primary professional blue for the header
-        header.setTextFill(Color.web("#005A9C"));
-
-        // --- Input Fields ---
-        // Styled to match the light theme of LoginUI
-        String fieldStyle = "-fx-font-size: 16px; -fx-background-radius: 8; -fx-border-color: #DDDDDD; -fx-border-radius: 8; -fx-padding: 10;";
-        
-        TextField emailField = new TextField();
-        emailField.setPromptText("Enter your email");
-        emailField.setStyle(fieldStyle);
-        emailField.setMaxWidth(350);
-        
-        TextField nameField = new TextField();
-        nameField.setPromptText("Full name");
-        nameField.setStyle(fieldStyle);
-        nameField.setMaxWidth(350);
-
-        PasswordField passwordField = new PasswordField();
-        passwordField.setPromptText("Create a password");
-        passwordField.setStyle(fieldStyle);
-        passwordField.setMaxWidth(350);
-
-        PasswordField confirmPasswordField = new PasswordField();
-        confirmPasswordField.setPromptText("Confirm your password");
-        confirmPasswordField.setStyle(fieldStyle);
-        confirmPasswordField.setMaxWidth(350);
-
-        // --- Role Selection ---
-        Text roleLabel = new Text("Register as:");
-        roleLabel.setFill(Color.BLACK);
-        roleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
-
-        ComboBox<String> roleComboBox = new ComboBox<>();
-        roleComboBox.getItems().addAll("Citizen", "Volunteer", "NGO", "Government");
-        roleComboBox.setPromptText("Select your role");
-        roleComboBox.setMaxWidth(350);
-        // Style the combo box to match the text fields
-        roleComboBox.setStyle("-fx-font-size: 16px; -fx-background-color: #FFFFFF; -fx-border-color: #DDDDDD; -fx-border-radius: 8;");
-
-        HBox selectionRow = new HBox(10, roleLabel, roleComboBox);
-        selectionRow.setAlignment(Pos.CENTER_LEFT);
-        selectionRow.setMaxWidth(350);
-
-        // --- Buttons ---
-        Button signUpBtn = new Button("Sign Up");
-        // Style the primary sign-up button
-        signUpBtn.setStyle("-fx-background-color: #007BFF; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 12 25 12 25; -fx-font-size: 16px;");
-        signUpBtn.setPrefWidth(350);
-
-        Button loginBtn = new Button("Already have an account? Log In");
-        // Use a flat, text-like style for the secondary login button
-        loginBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #007BFF; -fx-font-weight: bold; -fx-font-size: 14px;");
-
-        // --- Event Handlers ---
-        signUpBtn.setOnAction(e -> {
-            String emailString = emailField.getText();
-            String passwordString = passwordField.getText();
-            // Basic validation: check if passwords match
-            if (!passwordString.equals(confirmPasswordField.getText())) {
-                System.out.println("Passwords do not match.");
-                // In a real app, show an alert to the user
-                return;
-            }
-            signUpController.signUp(emailString, passwordString);
-            System.out.println("Sign Up button clicked and successful.");
-
-            // Navigate to LoginUI after successful sign-up
-            Stage currentStage = (Stage) signUpBtn.getScene().getWindow();
-            currentStage.close();
-
-            Stage loginStage = new Stage();
-            LoginUI loginUI = new LoginUI();
-            try {
-                loginUI.start(loginStage);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
-
-        loginBtn.setOnAction(e -> {
-            Stage currentStage = (Stage) loginBtn.getScene().getWindow();
-            currentStage.close();
-
-            Stage loginStage = new Stage();
-            LoginUI loginUI = new LoginUI();
-            try {
-                loginUI.start(loginStage);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
-
-        // Add components to the form layout
-        formBox.getChildren().addAll(header, nameField, emailField, passwordField, confirmPasswordField, selectionRow, signUpBtn, loginBtn);
+        // --- Root Pane ---
+        StackPane root = new StackPane(mainLayout);
+        root.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
+        root.setPadding(new Insets(40));
 
         // --- Scene and Stage Setup ---
-        Scene scene = new Scene(root, 1200, 800);
-        primaryStage.setTitle("Sign Up | Disaster Relief Helper");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        Scene scene = new Scene(root, 1200, 900);
+        stage.setTitle("Sign Up - Disaster Relief Helper");
+        stage.setScene(scene);
+        stage.setResizable(true);
+        stage.show();
     }
+
+    /**
+     * Creates the left-side branding pane with a title and message.
+     * @return A styled VBox node for the branding pane.
+     */
+    private Node createBrandingPane() {
+        VBox brandingPane = new VBox(20);
+        brandingPane.setPrefWidth(480);
+        brandingPane.setAlignment(Pos.CENTER_LEFT);
+        brandingPane.setPadding(new Insets(40));
+        brandingPane.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 16 0 0 16;");
+
+        Label logo = new Label("🏢 Helper");
+        logo.setFont(getFont(40, FontWeight.BOLD));
+        logo.setTextFill(Color.web(FONT_COLOR_LIGHT));
+
+        Text welcomeText = new Text("Join a community of responders. Create your account to start making a difference.");
+        welcomeText.setFont(getFont(18, FontWeight.NORMAL));
+        welcomeText.setFill(Color.web(FONT_COLOR_LIGHT));
+        welcomeText.setOpacity(0.9);
+        welcomeText.setWrappingWidth(380);
+
+        brandingPane.getChildren().addAll(logo, welcomeText);
+        return brandingPane;
+    }
+
+    /**
+     * Creates the right-side sign-up form.
+     * @param stage The primary stage to handle window switching.
+     * @return A styled VBox node for the sign-up form.
+     */
+    private Node createSignUpForm(Stage stage) {
+        VBox formPane = new VBox(15); // Reduced spacing for a tighter form
+        formPane.setPrefWidth(480);
+        formPane.setAlignment(Pos.CENTER_LEFT);
+        formPane.setPadding(new Insets(40));
+
+        // --- Form Title ---
+        Label title = new Label("Create Your Account");
+        title.setFont(getFont(28, FontWeight.BOLD));
+        title.setTextFill(Color.web(FONT_COLOR_DARK));
+        VBox.setMargin(title, new Insets(0, 0, 10, 0));
+
+        // --- Form Fields ---
+        TextField nameField = createStyledTextField("Full Name");
+        TextField emailField = createStyledTextField("Email");
+        PasswordField passwordField = createStyledPasswordField("Create Password");
+        PasswordField confirmPasswordField = createStyledPasswordField("Confirm Password");
+        ComboBox<String> roleComboBox = createStyledComboBox();
+        
+        // --- Sign Up Button ---
+        Button signUpBtn = new Button("Create Account");
+        signUpBtn.setFont(getFont(16, FontWeight.BOLD));
+        signUpBtn.setTextFill(Color.web(FONT_COLOR_LIGHT));
+        signUpBtn.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 8; -fx-cursor: hand;");
+        signUpBtn.setPrefHeight(50);
+        signUpBtn.setMaxWidth(Double.MAX_VALUE);
+
+        // --- Bottom Link ---
+        Hyperlink loginLink = new Hyperlink("Already have an account? Log In");
+        loginLink.setFont(getFont(14, FontWeight.MEDIUM));
+        HBox bottomLinkBox = new HBox(loginLink);
+        bottomLinkBox.setAlignment(Pos.CENTER);
+        
+        // --- Event Handlers ---
+        signUpBtn.setOnAction(e -> handleSignUp(stage, passwordField.getText(), confirmPasswordField.getText()));
+        loginLink.setOnAction(e -> handleLoginRedirect(stage));
+
+        formPane.getChildren().addAll(
+            title,
+            new Label("Full Name"), nameField,
+            new Label("Email"), emailField,
+            new Label("Password"), passwordField,
+            new Label("Confirm Password"), confirmPasswordField,
+            new Label("Register as"), roleComboBox,
+            signUpBtn,
+            bottomLinkBox
+        );
+
+        return formPane;
+    }
+
+    // --- Helper methods for creating styled form elements ---
+
+    private TextField createStyledTextField(String prompt) {
+        TextField textField = new TextField();
+        textField.setPromptText(prompt);
+        textField.setFont(getFont(15, FontWeight.NORMAL));
+        textField.setPrefHeight(45);
+        textField.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 8; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 8; -fx-border-width: 1.5;");
+        return textField;
+    }
+
+    private PasswordField createStyledPasswordField(String prompt) {
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText(prompt);
+        passwordField.setFont(getFont(15, FontWeight.NORMAL));
+        passwordField.setPrefHeight(45);
+        passwordField.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 8; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 8; -fx-border-width: 1.5;");
+        return passwordField;
+    }
+
+    private ComboBox<String> createStyledComboBox() {
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll("Citizen", "Volunteer", "NGO", "Government");
+        comboBox.setPromptText("Select your role");
+        comboBox.setPrefHeight(45);
+        comboBox.setMaxWidth(Double.MAX_VALUE);
+        comboBox.setStyle("-fx-font-size: 15px; -fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 8; -fx-border-width: 1.5;");
+        return comboBox;
+    }
+
+    // --- Event Handling Logic ---
+
+    private void handleSignUp(Stage currentStage, String password, String confirmPassword) {
+        if (!password.equals(confirmPassword)) {
+            // In a real app, show an alert dialog.
+            System.out.println("Passwords do not match.");
+            return;
+        }
+        
+        // Placeholder for actual sign-up logic
+        System.out.println("Sign-up successful! Redirecting to login...");
+        
+        // Redirect to login after successful sign-up
+        handleLoginRedirect(currentStage);
+    }
+
+    private void handleLoginRedirect(Stage currentStage) {
+        currentStage.close();
+        Stage loginStage = new Stage();
+        // This launches the redesigned login UI.
+        new LoginUI().start(loginStage);
+    }
+
+    
 }

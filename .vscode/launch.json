@@ -6,6 +6,41 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ReportDisasterView",
+            "request": "launch",
+            "mainClass": "com.thinkspark.view.ReportDisasterView",
+            "projectName": "superx_project"
+        },
+        {
+            "type": "java",
+            "name": "VolunteerDashboardRedesignedLight",
+            "request": "launch",
+            "mainClass": "com.thinkspark.view.VolunteerDashboardRedesignedLight",
+            "projectName": "superx_project"
+        },
+        {
+            "type": "java",
+            "name": "NgoDashboardRedesignedLight",
+            "request": "launch",
+            "mainClass": "com.thinkspark.view.NgoDashboardRedesignedLight",
+            "projectName": "superx_project"
+        },
+        {
+            "type": "java",
+            "name": "GovDashboardRedesignedLight",
+            "request": "launch",
+            "mainClass": "com.thinkspark.view.GovDashboardRedesignedLight",
+            "projectName": "superx_project"
+        },
+        {
+            "type": "java",
+            "name": "GovDashboardRedesigned",
+            "request": "launch",
+            "mainClass": "com.thinkspark.view.GovDashboardRedesigned",
+            "projectName": "superx_project"
+        },
+        {
+            "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "com.thinkspark.Main",
