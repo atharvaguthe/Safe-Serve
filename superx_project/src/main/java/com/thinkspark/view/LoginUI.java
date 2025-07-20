@@ -1,5 +1,7 @@
 package com.thinkspark.view;
 
+import com.thinkspark.Controller.LoginController;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -81,6 +83,8 @@ public class LoginUI extends Application {
         return brandingPane;
     }
 
+
+    LoginController loginController = new LoginController();
     /**
      * Creates the right-side login form.
      * @param stage The primary stage to handle window switching.
