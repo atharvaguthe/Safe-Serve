@@ -1,5 +1,7 @@
 package com.thinkspark.view;
 
+import com.thinkspark.model.DataManager;
+import com.thinkspark.model.Disaster;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -7,33 +9,37 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class GovDashboard extends Application {
 
-    // --- Style Definitions (Light Theme) ---
+    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String PRIMARY_BLUE = "#005A9C";
-    private static final String SECONDARY_ACCENT_COLOR = "#4299E1"; // A bright, professional blue
     private static final String FONT_COLOR_DARK = "#2D3748";
     private static final String FONT_COLOR_MEDIUM = "#4A5568";
     private static final String FONT_COLOR_LIGHT = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
-    private static final String PRIMARY_ACCENT_ORANGE = "#FCA311";
+    private static final String ALERT_COLOR = "#E53E3E";
 
-    // --- Fields to hold stage and scene reference ---
     private Stage primaryStage;
     private Scene dashboardScene;
 
-    // --- Font Definitions ---
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
@@ -47,16 +53,11 @@ public class GovDashboard extends Application {
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
-        Node header = createHeader();
-        Node overviewSection = createOverviewSection();
-        GridPane mainGrid = createMainGrid();
-        rootLayout.getChildren().addAll(header, overviewSection, mainGrid);
+        rootLayout.getChildren().addAll(createHeader(), createOverviewSection(), createMainGrid());
 
         ScrollPane scrollPane = new ScrollPane(rootLayout);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background: " + BACKGROUND_COLOR + ";");
-        scrollPane.getStyleClass().add("edge-to-edge");
 
         dashboardScene = new Scene(scrollPane, 1366, 900);
         primaryStage.setTitle("Government Dashboard | Disaster Command Center");
@@ -70,8 +71,8 @@ public class GovDashboard extends Application {
         mainGrid.setVgap(40);
         mainGrid.setAlignment(Pos.CENTER);
 
-        mainGrid.add(createQuickAccessModule(), 0, 0);
-        mainGrid.add(createLiveAlertsModule(), 1, 0);
+        mainGrid.add(createKeyActionsModule(), 0, 0);
+        mainGrid.add(createDisasterReportsModule(), 1, 0);
         mainGrid.add(createStatisticsModule(), 0, 1, 2, 1);
         return mainGrid;
     }
@@ -87,169 +88,110 @@ public class GovDashboard extends Application {
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        HBox navLinks = new HBox(40);
-        navLinks.setAlignment(Pos.CENTER);
-        String[] navItems = { "Dashboard", "Analytics", "Reports" };
-        for (String item : navItems) {
-            Label link = new Label(item);
-            link.setFont(getFont(16, FontWeight.MEDIUM));
-            link.setTextFill(Color.web(FONT_COLOR_DARK));
-            link.setStyle("-fx-cursor: hand;");
-            link.setOnMouseEntered(e -> link.setUnderline(true));
-            link.setOnMouseExited(e -> link.setUnderline(false));
-            
-            if ("Dashboard".equals(item)) {
-                link.setOnMouseClicked(e -> primaryStage.setScene(dashboardScene));
-            } else if ("Analytics".equals(item)) {
-                link.setOnMouseClicked(e -> new AnalyticsView(primaryStage, dashboardScene).start(primaryStage));
-            } else if ("Reports".equals(item)) {
-                link.setOnMouseClicked(e -> new AllRequestsView(primaryStage, dashboardScene).start(primaryStage));
-            }
-            
-            navLinks.getChildren().add(link);
-        }
         
-        MenuButton profileButton = new MenuButton("Profile");
+        MenuButton profileButton = new MenuButton("Admin");
         profileButton.setFont(getFont(16, FontWeight.MEDIUM));
         MenuItem settingsItem = new MenuItem("Settings");
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(settingsItem, logoutItem);
-
-        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
-        logoutItem.setOnAction(e -> {
-            primaryStage.close();
-            new DisasterHelperUI().start(new Stage());
-        });
         
-        navLinks.getChildren().add(profileButton);
+        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
+        logoutItem.setOnAction(e -> new DisasterHelperUI().start(new Stage()));
 
-        header.getChildren().addAll(logo, spacer, navLinks);
+        header.getChildren().addAll(logo, spacer, profileButton);
         return header;
     }
 
     private Node createOverviewSection() {
         VBox overviewBox = new VBox(15);
-        overviewBox.setAlignment(Pos.CENTER_LEFT);
         overviewBox.setPadding(new Insets(30));
         overviewBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 16;");
-
         Label title = new Label("Command Center Overview");
         title.setFont(getFont(36, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
-
-        Label subtitle = new Label("Monitor real-time alerts, manage resources, and analyze disaster response data.");
+        Label subtitle = new Label("Monitor real-time reports, manage partner NGOs, and broadcast critical alerts.");
         subtitle.setFont(getFont(18, FontWeight.NORMAL));
         subtitle.setTextFill(Color.web(FONT_COLOR_MEDIUM));
-        subtitle.setWrapText(true);
-
         overviewBox.getChildren().addAll(title, subtitle);
         return overviewBox;
     }
 
-    private Node createQuickAccessModule() {
-        VBox card = createDashboardCard("Quick Access");
+    private Node createKeyActionsModule() {
+        VBox card = createDashboardCard("Key Actions");
         GridPane buttonGrid = new GridPane();
         buttonGrid.setHgap(20);
         buttonGrid.setVgap(20);
         buttonGrid.setPadding(new Insets(15, 0, 0, 0));
-        
-        Button broadcastButton = createQuickAccessButton("📢 Broadcast Alerts", true);
+
+        Button broadcastButton = createQuickAccessButton("📢 Broadcast Alert", true);
         broadcastButton.setOnAction(e -> new BroadcastAlertsView(primaryStage, dashboardScene).start(primaryStage));
-        
+
         Button manageNgosButton = createQuickAccessButton("🌐 Manage NGOs", false);
         manageNgosButton.setOnAction(e -> new ManageNgosView(primaryStage, dashboardScene).start(primaryStage));
-        
-        Button liveMapButton = createQuickAccessButton("🗺️ Live Map", false);
-        // Add map functionality later
-        
-        Button analyticsButton = createQuickAccessButton("📊 Analytics", false);
-        analyticsButton.setOnAction(e -> new AnalyticsView(primaryStage, dashboardScene).start(primaryStage));
 
         buttonGrid.add(broadcastButton, 0, 0);
         buttonGrid.add(manageNgosButton, 1, 0);
-        buttonGrid.add(liveMapButton, 0, 1);
-        buttonGrid.add(analyticsButton, 1, 1);
 
         card.getChildren().add(buttonGrid);
         return card;
     }
-    
+
     private Button createQuickAccessButton(String text, boolean isPrimary) {
         Button button = new Button(text);
         button.setFont(getFont(16, FontWeight.BOLD));
         button.setPrefSize(250, 80);
         GridPane.setHgrow(button, Priority.ALWAYS);
-        GridPane.setVgrow(button, Priority.ALWAYS);
-
-        String style;
         if (isPrimary) {
             button.setTextFill(Color.web(FONT_COLOR_LIGHT));
-            style = "-fx-background-color: " + PRIMARY_BLUE + ";";
+            button.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;");
         } else {
             button.setTextFill(Color.web(FONT_COLOR_DARK));
-            style = "-fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + ";";
+            button.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-cursor: hand;");
         }
-        
-        button.setStyle(style + " -fx-background-radius: 10; -fx-border-radius: 10; -fx-cursor: hand;");
         return button;
     }
-
-    private Node createLiveAlertsModule() {
-        VBox card = createDashboardCard("Live Alerts");
-        VBox alertsContainer = new VBox(15);
-        alertsContainer.setPadding(new Insets(15, 0, 0, 0));
-        
-        alertsContainer.getChildren().add(createAlertItem("New Request: Medical Aid in Sector 7", "High Priority"));
-        alertsContainer.getChildren().add(createAlertItem("Resource Depletion Warning: Water Supply", "Medium Priority"));
-        alertsContainer.getChildren().add(createAlertItem("Volunteer Check-in: Team Bravo", "Low Priority"));
-        
-        card.getChildren().add(alertsContainer);
-        return card;
-    }
     
-    private Node createAlertItem(String text, String priority) {
-        VBox item = new VBox(3);
-        Label alertLabel = new Label(text);
-        alertLabel.setFont(getFont(15, FontWeight.MEDIUM));
-        alertLabel.setTextFill(Color.web(FONT_COLOR_DARK));
-        alertLabel.setWrapText(true);
-        
-        Label priorityLabel = new Label(priority);
-        priorityLabel.setFont(getFont(12, FontWeight.BOLD));
-        
-        String priorityColor = PRIMARY_ACCENT_ORANGE;
-        if ("Medium Priority".equals(priority)) {
-            priorityColor = SECONDARY_ACCENT_COLOR;
-        } else if ("Low Priority".equals(priority)) {
-            priorityColor = FONT_COLOR_MEDIUM;
-        }
-        priorityLabel.setTextFill(Color.web(priorityColor));
-        
-        item.getChildren().addAll(alertLabel, priorityLabel);
-        return item;
+    private Node createDisasterReportsModule() {
+        VBox card = createDashboardCard("Incoming Disaster Reports");
+        ListView<Disaster> reportsList = new ListView<>(DataManager.getDisasterReports());
+        reportsList.setPlaceholder(new Label("No new disaster reports from citizens."));
+        reportsList.setCellFactory(param -> new ListCell<Disaster>() {
+            @Override
+            protected void updateItem(Disaster item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    Text type = new Text(item.getType() + " at " + item.getLocation());
+                    type.setFont(GovDashboard.getFont(14, FontWeight.BOLD));
+                    type.setFill(Color.web(ALERT_COLOR));
+                    
+                    Text description = new Text(item.getDescription());
+                    description.setWrappingWidth(param.getWidth() - 30);
+                    
+                    VBox content = new VBox(5, type, description);
+                    setGraphic(content);
+                }
+            }
+        });
+        VBox.setVgrow(reportsList, Priority.ALWAYS);
+        card.getChildren().add(reportsList);
+        return card;
     }
 
     private Node createStatisticsModule() {
         VBox card = createDashboardCard("Key Performance Indicators");
-        HBox statsBox = new HBox();
+        HBox statsBox = new HBox(40);
         statsBox.setAlignment(Pos.CENTER);
-        statsBox.setSpacing(40);
         statsBox.setPadding(new Insets(15, 0, 0, 0));
         HBox.setHgrow(statsBox, Priority.ALWAYS);
 
-        String[][] statsData = {
-            { "12K", "People Rescued" },
-            { "56K", "Requests Handled" },
-            { "343", "Active Volunteers" },
-            { "39K", "Resources Delivered" }
-        };
-
-        for (String[] stat : statsData) {
-            Node statItem = createStatItem(stat[0], stat[1]);
-            HBox.setHgrow(statItem, Priority.ALWAYS);
-            statsBox.getChildren().add(statItem);
-        }
+        statsBox.getChildren().addAll(
+            createStatItem("12K", "People Rescued"),
+            createStatItem("56K", "Requests Handled"),
+            createStatItem("3", "Verified NGOs"),
+            createStatItem("343", "Total Volunteers")
+        );
 
         card.getChildren().add(statsBox);
         return card;
@@ -258,35 +200,26 @@ public class GovDashboard extends Application {
     private Node createStatItem(String number, String label) {
         VBox item = new VBox(-5);
         item.setAlignment(Pos.CENTER);
-        
         Label numberLabel = new Label(number);
         numberLabel.setFont(getFont(48, FontWeight.BOLD));
         numberLabel.setTextFill(Color.web(PRIMARY_BLUE));
-        
         Label textLabel = new Label(label);
         textLabel.setFont(getFont(16, FontWeight.NORMAL));
         textLabel.setTextFill(Color.web(FONT_COLOR_MEDIUM));
-        
         item.getChildren().addAll(numberLabel, textLabel);
         return item;
     }
-    
+
     private VBox createDashboardCard(String title) {
         VBox card = new VBox(10);
         card.setPadding(new Insets(25));
-        card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
-                      "-fx-border-color: " + BORDER_COLOR + "; " +
-                      "-fx-border-width: 1;");
+        card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 12; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1;");
         GridPane.setHgrow(card, Priority.ALWAYS);
         GridPane.setVgrow(card, Priority.ALWAYS);
-        
         Label titleLabel = new Label(title);
         titleLabel.setFont(getFont(22, FontWeight.BOLD));
         titleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
-        
         card.getChildren().add(titleLabel);
         return card;
     }
-
 }

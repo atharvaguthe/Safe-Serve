@@ -1,5 +1,8 @@
 package com.thinkspark.view;
 
+import com.thinkspark.model.DataManager;
+import com.thinkspark.model.Task;
+import com.thinkspark.model.Volunteer;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +21,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.util.Optional;
+
 public class ManageVolunteersView extends Application {
 
     // --- Style Definitions ---
@@ -32,11 +37,13 @@ public class ManageVolunteersView extends Application {
     private final Scene previousScene;
     private final Stage primaryStage;
 
-    // --- Font Helper ---
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
 
+    /**
+     * A simple wrapper class for displaying volunteer information in the ListView.
+     */
     private static class VolunteerItem {
         private final String name;
         private final String status;
@@ -49,6 +56,9 @@ public class ManageVolunteersView extends Application {
         }
     }
 
+    /**
+     * Custom ListCell to render the VolunteerItem data.
+     */
     private static class VolunteerCell extends ListCell<VolunteerItem> {
         private final HBox content = new HBox();
         private final VBox details = new VBox(5);
@@ -107,10 +117,7 @@ public class ManageVolunteersView extends Application {
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
-        Node header = createHeader();
-        Node volunteersList = createVolunteersList();
-
-        rootLayout.getChildren().addAll(header, volunteersList);
+        rootLayout.getChildren().addAll(createHeader(), createVolunteersList());
 
         ScrollPane scrollPane = new ScrollPane(rootLayout);
         scrollPane.setFitToWidth(true);
@@ -138,10 +145,7 @@ public class ManageVolunteersView extends Application {
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
         backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
         backButton.setPadding(new Insets(8, 16, 8, 16));
-        backButton.setOnAction(e -> {
-            primaryStage.setScene(previousScene);
-            primaryStage.setTitle("NGO Dashboard | Disaster Relief Operations");
-        });
+        backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
         return header;
@@ -154,16 +158,31 @@ public class ManageVolunteersView extends Application {
                       "-fx-background-radius: 12; " +
                       "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
 
-        ObservableList<VolunteerItem> volunteers = FXCollections.observableArrayList(
-            new VolunteerItem("John Doe", "Active", "Supply Distribution"),
-            new VolunteerItem("Jane Smith", "Active", "Medical Aid"),
-            new VolunteerItem("Peter Jones", "Inactive", "On Standby"),
-            new VolunteerItem("Mary Williams", "Active", "Shelter Management")
-        );
+        // --- Data Integration ---
+        // Create a list of VolunteerItems by checking the status of each volunteer from DataManager
+        ObservableList<VolunteerItem> volunteerItems = FXCollections.observableArrayList();
+        ObservableList<Volunteer> allVolunteers = DataManager.getVolunteers();
+        ObservableList<Task> allTasks = DataManager.getAssignedTasks();
 
-        ListView<VolunteerItem> listView = new ListView<>(volunteers);
+        for (Volunteer volunteer : allVolunteers) {
+            // Find if the volunteer has an assigned task
+            Optional<Task> assignedTask = allTasks.stream()
+                .filter(task -> task.getAssignedTo().equals(volunteer.getName()))
+                .findFirst();
+
+            if (assignedTask.isPresent()) {
+                // If a task is found, the volunteer is Active
+                volunteerItems.add(new VolunteerItem(volunteer.getName(), "Active", assignedTask.get().getDescription()));
+            } else {
+                // Otherwise, the volunteer is Inactive
+                volunteerItems.add(new VolunteerItem(volunteer.getName(), "Inactive", "On Standby"));
+            }
+        }
+
+        ListView<VolunteerItem> listView = new ListView<>(volunteerItems);
         listView.setCellFactory(param -> new VolunteerCell());
         listView.setStyle("-fx-background-color: transparent;");
+        listView.setPlaceholder(new Label("No volunteers registered in the system."));
 
         card.getChildren().add(listView);
         
@@ -172,5 +191,4 @@ public class ManageVolunteersView extends Application {
         
         return container;
     }
-
 }

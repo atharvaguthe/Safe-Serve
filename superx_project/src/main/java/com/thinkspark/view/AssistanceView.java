@@ -1,7 +1,9 @@
 package com.thinkspark.view;
 
-import javafx.application.Application;
+import com.thinkspark.model.DataManager;
+import com.thinkspark.model.Disaster;
 import javafx.animation.PauseTransition;
+import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -29,7 +31,6 @@ public class AssistanceView extends Application {
     private final Scene previousScene;
     private final Stage primaryStage;
 
-    // --- Font Helper ---
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
@@ -77,10 +78,7 @@ public class AssistanceView extends Application {
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
         backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
         backButton.setPadding(new Insets(8, 16, 8, 16));
-        backButton.setOnAction(e -> {
-            primaryStage.setScene(previousScene);
-            primaryStage.setTitle("Citizen Dashboard | Disaster Relief Helper");
-        });
+        backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
         return header;
@@ -98,38 +96,33 @@ public class AssistanceView extends Application {
         formGrid.setHgap(20);
         formGrid.setVgap(15);
 
-        // Assistance Type
-        formGrid.add(createLabel("Type of Assistance Needed"), 0, 0);
+        // --- Form Fields ---
         ComboBox<String> assistanceType = new ComboBox<>();
         assistanceType.getItems().addAll("Medical", "Food & Water", "Shelter", "Rescue", "Other");
-        assistanceType.setPromptText("Select a type");
-        assistanceType.setMaxWidth(Double.MAX_VALUE);
+        assistanceType.setPromptText("Select a type of help needed");
         styleFormControl(assistanceType);
-        formGrid.add(assistanceType, 1, 0);
 
-        // Number of People
-        formGrid.add(createLabel("Number of People"), 0, 1);
         Spinner<Integer> peopleSpinner = new Spinner<>(1, 50, 1);
         styleFormControl(peopleSpinner);
-        formGrid.add(peopleSpinner, 1, 1);
 
-        // Location
-        formGrid.add(createLabel("Current Location"), 0, 2);
         TextField locationField = createTextField("e.g., Near City Park, 456 Oak Ave");
-        formGrid.add(locationField, 1, 2);
-
-        // Details
-        formGrid.add(createLabel("Additional Details"), 0, 3);
         TextArea detailsArea = new TextArea();
         detailsArea.setPromptText("Describe your situation, e.g., 'Trapped on rooftop', 'Need baby formula'...");
         detailsArea.setWrapText(true);
         detailsArea.setPrefRowCount(4);
         styleFormControl(detailsArea);
-        formGrid.add(detailsArea, 1, 3);
 
-        // Contact Information
-        formGrid.add(createLabel("Contact Number"), 0, 4);
         TextField contactField = createTextField("A number where you can be reached");
+
+        formGrid.add(createLabel("Type of Assistance"), 0, 0);
+        formGrid.add(assistanceType, 1, 0);
+        formGrid.add(createLabel("Number of People"), 0, 1);
+        formGrid.add(peopleSpinner, 1, 1);
+        formGrid.add(createLabel("Current Location"), 0, 2);
+        formGrid.add(locationField, 1, 2);
+        formGrid.add(createLabel("Additional Details"), 0, 3);
+        formGrid.add(detailsArea, 1, 3);
+        formGrid.add(createLabel("Contact Number"), 0, 4);
         formGrid.add(contactField, 1, 4);
 
         // --- Form Actions ---
@@ -145,8 +138,23 @@ public class AssistanceView extends Application {
         container.setAlignment(Pos.CENTER);
 
         submitButton.setOnAction(e -> {
-            System.out.println("Assistance Request Submitted!");
+            // --- Data Submission Logic ---
+            String type = assistanceType.getValue();
+            String location = locationField.getText();
+            String details = detailsArea.getText();
+            Integer peopleCount = peopleSpinner.getValue();
+
+            if (type == null || location.isEmpty() || details.isEmpty()) {
+                new Alert(Alert.AlertType.ERROR, "Please fill in all required fields.").showAndWait();
+                return;
+            }
+
+            String fullDescription = "Assistance for " + peopleCount + " person(s). Details: " + details;
             
+            // Add the request as a new Disaster to the central DataManager
+            DataManager.getDisasterReports().add(new Disaster(type, location, fullDescription));
+
+            // --- Confirmation UI ---
             VBox confirmationVBox = new VBox(20);
             confirmationVBox.setAlignment(Pos.CENTER);
             confirmationVBox.setPadding(new Insets(40));
@@ -166,10 +174,7 @@ public class AssistanceView extends Application {
             container.getChildren().setAll(confirmationVBox);
             
             PauseTransition delay = new PauseTransition(Duration.seconds(4));
-            delay.setOnFinished(event -> {
-                Button backButton = (Button) ((HBox) ((VBox) container.getParent()).getChildren().get(0)).getChildren().get(2);
-                backButton.fire();
-            });
+            delay.setOnFinished(event -> primaryStage.setScene(previousScene));
             delay.play();
         });
 
@@ -194,5 +199,4 @@ public class AssistanceView extends Application {
     private void styleFormControl(Control control) {
         control.setStyle("-fx-font-size: 14px; -fx-background-color: #FFFFFF; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 8; -fx-padding: 8;");
     }
-
 }

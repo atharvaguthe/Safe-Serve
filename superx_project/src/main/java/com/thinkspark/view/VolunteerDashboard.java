@@ -1,16 +1,25 @@
 package com.thinkspark.view;
 
+import com.thinkspark.model.DataManager;
+import com.thinkspark.model.Task;
 import javafx.application.Application;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -18,23 +27,24 @@ import javafx.stage.Stage;
 
 public class VolunteerDashboard extends Application {
 
-    // --- Style Definitions (Consistent Light Theme) ---
+    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String PRIMARY_BLUE = "#005A9C";
-    private static final String SECONDARY_ACCENT_COLOR = "#4299E1";
     private static final String FONT_COLOR_DARK = "#2D3748";
     private static final String FONT_COLOR_MEDIUM = "#4A5568";
     private static final String FONT_COLOR_LIGHT = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
     private static final String PRIMARY_ACCENT_ORANGE = "#FCA311";
-    
-    // --- Fields to hold stage and scene reference ---
+
     private Stage primaryStage;
     private Scene dashboardScene;
+    private ListView<Task> tasksListView;
 
+    // For demonstration, we assume a specific volunteer is logged in.
+    // This would be set dynamically after a real login.
+    private final String currentVolunteerName = "Aarav Sharma";
 
-    // --- Font Definitions ---
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
@@ -56,12 +66,15 @@ public class VolunteerDashboard extends Application {
         ScrollPane scrollPane = new ScrollPane(rootLayout);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background: " + BACKGROUND_COLOR + ";");
-        scrollPane.getStyleClass().add("edge-to-edge");
 
         dashboardScene = new Scene(scrollPane, 1366, 900);
-        primaryStage.setTitle("Volunteer Dashboard | Disaster Relief");
+        primaryStage.setTitle("Volunteer Dashboard | " + currentVolunteerName);
         primaryStage.setScene(dashboardScene);
+        
+        // Listen for changes in the central task list and update the UI accordingly.
+        DataManager.getAssignedTasks().addListener((ListChangeListener<Task>) c -> updateAssignedTasks());
+        updateAssignedTasks(); // Perform initial load of tasks.
+        
         primaryStage.show();
     }
     
@@ -92,26 +105,16 @@ public class VolunteerDashboard extends Application {
 
         HBox navLinks = new HBox(40);
         navLinks.setAlignment(Pos.CENTER);
-        String[] navItems = { "Dashboard", "My Tasks" };
-        for (String item : navItems) {
-            Label link = new Label(item);
-            link.setFont(getFont(16, FontWeight.MEDIUM));
-            link.setTextFill(Color.web(FONT_COLOR_DARK));
-            link.setStyle("-fx-cursor: hand;");
-            link.setOnMouseEntered(e -> link.setUnderline(true));
-            link.setOnMouseExited(e -> link.setUnderline(false));
-            
-            if("Dashboard".equals(item)){
-                link.setOnMouseClicked(e -> primaryStage.setScene(dashboardScene));
-            } else if ("My Tasks".equals(item)) {
-                link.setOnMouseClicked(e -> {
-                    MyTasksView myTasksView = new MyTasksView(primaryStage, dashboardScene);
-                    myTasksView.start(primaryStage);
-                });
-            }
-            
-            navLinks.getChildren().add(link);
-        }
+        
+        Label dashboardLink = new Label("Dashboard");
+        dashboardLink.setFont(getFont(16, FontWeight.MEDIUM));
+        dashboardLink.setOnMouseClicked(e -> primaryStage.setScene(dashboardScene));
+        
+        Label tasksLink = new Label("My Tasks");
+        tasksLink.setFont(getFont(16, FontWeight.MEDIUM));
+        tasksLink.setOnMouseClicked(e -> new MyTasksView(primaryStage, dashboardScene).start(primaryStage));
+        
+        navLinks.getChildren().addAll(dashboardLink, tasksLink);
         
         MenuButton profileButton = new MenuButton("Profile");
         profileButton.setFont(getFont(16, FontWeight.MEDIUM));
@@ -119,16 +122,8 @@ public class VolunteerDashboard extends Application {
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(settingsItem, logoutItem);
 
-        settingsItem.setOnAction(e -> {
-            SettingsView settingsView = new SettingsView(primaryStage, dashboardScene);
-            settingsView.start(primaryStage);
-        });
-
-        logoutItem.setOnAction(e -> {
-            primaryStage.close();
-            Stage landingStage = new Stage();
-            new DisasterHelperUI().start(landingStage);
-        });
+        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
+        logoutItem.setOnAction(e -> new DisasterHelperUI().start(new Stage()));
         
         navLinks.getChildren().add(profileButton);
 
@@ -142,7 +137,7 @@ public class VolunteerDashboard extends Application {
         overviewBox.setPadding(new Insets(30));
         overviewBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 16; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1;");
 
-        Label title = new Label("Welcome, Volunteer!");
+        Label title = new Label("Welcome, " + currentVolunteerName + "!");
         title.setFont(getFont(36, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
@@ -163,22 +158,13 @@ public class VolunteerDashboard extends Application {
         buttonGrid.setPadding(new Insets(15, 0, 0, 0));
         
         Button reportButton = createQuickAccessButton("🚨 Report Incident", true);
-        reportButton.setOnAction(e -> {
-            ReportDisasterView reportView = new ReportDisasterView(primaryStage, dashboardScene);
-            reportView.start(primaryStage);
-        });
+        reportButton.setOnAction(e -> new ReportDisasterView(primaryStage, dashboardScene).start(primaryStage));
         
         Button requestHelpButton = createQuickAccessButton("🤝 Request Help", false);
-        requestHelpButton.setOnAction(e -> {
-            AssistanceView assistanceView = new AssistanceView(primaryStage, dashboardScene);
-            assistanceView.start(primaryStage);
-        });
+        requestHelpButton.setOnAction(e -> new AssistanceView(primaryStage, dashboardScene).start(primaryStage));
         
         Button logHoursButton = createQuickAccessButton("📋 Log Hours", false);
-        logHoursButton.setOnAction(e -> {
-            LogHoursView logHoursView = new LogHoursView(primaryStage, dashboardScene);
-            logHoursView.start(primaryStage);
-        });
+        logHoursButton.setOnAction(e -> new LogHoursView(primaryStage, dashboardScene).start(primaryStage));
         
         buttonGrid.add(reportButton, 0, 0);
         buttonGrid.add(requestHelpButton, 1, 0);
@@ -211,37 +197,38 @@ public class VolunteerDashboard extends Application {
 
     private Node createAssignedTasksModule() {
         VBox card = createDashboardCard("Your Assigned Tasks");
-        VBox tasksContainer = new VBox(15);
-        tasksContainer.setPadding(new Insets(15, 0, 0, 0));
+        tasksListView = new ListView<>();
+        tasksListView.setPlaceholder(new Label("You have no assigned tasks."));
+        tasksListView.setCellFactory(param -> new ListCell<Task>() {
+            @Override
+            protected void updateItem(Task item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getDescription());
+                    setFont(VolunteerDashboard.getFont(15, FontWeight.MEDIUM));
+                    setTextFill(Color.web(FONT_COLOR_DARK));
+                }
+            }
+        });
         
-        tasksContainer.getChildren().add(createTaskItem("Distribute water bottles at Sector 7 shelter", "High Priority"));
-        tasksContainer.getChildren().add(createTaskItem("Assist with sandbagging at Riverbank", "Medium Priority"));
-        tasksContainer.getChildren().add(createTaskItem("Check-in with elderly residents on Oak St.", "Low Priority"));
-        
-        card.getChildren().add(tasksContainer);
+        VBox.setVgrow(tasksListView, Priority.ALWAYS);
+        card.getChildren().add(tasksListView);
         return card;
     }
     
-    private Node createTaskItem(String text, String priority) {
-        VBox item = new VBox(3);
-        Label taskLabel = new Label(text);
-        taskLabel.setFont(getFont(15, FontWeight.MEDIUM));
-        taskLabel.setTextFill(Color.web(FONT_COLOR_DARK));
-        taskLabel.setWrapText(true);
-        
-        Label priorityLabel = new Label(priority);
-        priorityLabel.setFont(getFont(12, FontWeight.BOLD));
-        
-        String priorityColor = PRIMARY_ACCENT_ORANGE;
-        if ("Medium Priority".equals(priority)) {
-            priorityColor = SECONDARY_ACCENT_COLOR;
-        } else if ("Low Priority".equals(priority)) {
-            priorityColor = FONT_COLOR_MEDIUM;
+    /**
+     * Filters the global task list from DataManager and updates the ListView
+     * to show only the tasks assigned to the current volunteer.
+     */
+    private void updateAssignedTasks() {
+        tasksListView.getItems().clear();
+        for (Task task : DataManager.getAssignedTasks()) {
+            if (currentVolunteerName.equals(task.getAssignedTo())) {
+                tasksListView.getItems().add(task);
+            }
         }
-        priorityLabel.setTextFill(Color.web(priorityColor));
-        
-        item.getChildren().addAll(taskLabel, priorityLabel);
-        return item;
     }
 
     private Node createTeamStatsModule() {
@@ -302,5 +289,4 @@ public class VolunteerDashboard extends Application {
         card.getChildren().add(titleLabel);
         return card;
     }
-
 }

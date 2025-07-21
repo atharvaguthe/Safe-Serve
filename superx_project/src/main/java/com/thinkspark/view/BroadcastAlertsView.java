@@ -1,5 +1,9 @@
 package com.thinkspark.view;
 
+import com.thinkspark.model.DataManager;
+// Note: We do not import com.thinkspark.model.Alert to avoid the name conflict.
+// We will use the fully qualified name instead.
+
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -11,16 +15,18 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class BroadcastAlertsView extends Application {
-    // Style Definitions
+    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String FONT_COLOR_DARK = "#2D3748";
     private static final String FONT_COLOR_LIGHT = "#FFFFFF";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
+    private static final String BORDER_COLOR = "#E2E8F0";
     private static final String SUCCESS_COLOR = "#38A169";
 
     private final Scene previousScene;
@@ -70,10 +76,7 @@ public class BroadcastAlertsView extends Application {
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
         backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
         backButton.setPadding(new Insets(8, 16, 8, 16));
-        backButton.setOnAction(e -> {
-            primaryStage.setScene(previousScene);
-            primaryStage.setTitle("Government Dashboard | Disaster Command Center");
-        });
+        backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
         return header;
@@ -91,25 +94,26 @@ public class BroadcastAlertsView extends Application {
         formGrid.setHgap(20);
         formGrid.setVgap(15);
 
-        formGrid.add(createLabel("Alert Title"), 0, 0);
         TextField titleField = new TextField();
         titleField.setPromptText("e.g., Evacuation Notice for Sector 5");
         styleFormControl(titleField);
-        formGrid.add(titleField, 1, 0);
 
-        formGrid.add(createLabel("Alert Message"), 0, 1);
         TextArea messageArea = new TextArea();
         messageArea.setPromptText("Enter the full alert details here...");
         messageArea.setWrapText(true);
         messageArea.setPrefRowCount(6);
         styleFormControl(messageArea);
-        formGrid.add(messageArea, 1, 1);
 
-        formGrid.add(createLabel("Priority Level"), 0, 2);
         ComboBox<String> priorityBox = new ComboBox<>();
         priorityBox.getItems().addAll("High", "Medium", "Low");
         priorityBox.setPromptText("Select Priority");
         styleFormControl(priorityBox);
+
+        formGrid.add(createLabel("Alert Title"), 0, 0);
+        formGrid.add(titleField, 1, 0);
+        formGrid.add(createLabel("Alert Message"), 0, 1);
+        formGrid.add(messageArea, 1, 1);
+        formGrid.add(createLabel("Priority Level"), 0, 2);
         formGrid.add(priorityBox, 1, 2);
 
         Button submitButton = new Button("Broadcast Alert");
@@ -124,8 +128,20 @@ public class BroadcastAlertsView extends Application {
         container.setAlignment(Pos.CENTER);
 
         submitButton.setOnAction(e -> {
-            System.out.println("Alert Broadcasted!");
-            
+            String title = titleField.getText();
+            String message = messageArea.getText();
+            String priority = priorityBox.getValue();
+
+            if (title.isEmpty() || message.isEmpty() || priority == null) {
+                // This uses the JavaFX Alert dialog
+                new Alert(Alert.AlertType.ERROR, "Please fill in all fields to broadcast an alert.").showAndWait();
+                return;
+            }
+
+            // *** THIS IS THE FIX ***
+            // We use the fully qualified name for our custom model class to avoid confusion.
+            DataManager.getBroadcastAlerts().add(new com.thinkspark.model.Alert(title, message, priority));
+
             VBox confirmationVBox = new VBox(20);
             confirmationVBox.setAlignment(Pos.CENTER);
             confirmationVBox.setPadding(new Insets(40));
@@ -135,16 +151,14 @@ public class BroadcastAlertsView extends Application {
             
             Label confirmationText = new Label("The alert has been broadcast to all relevant channels.");
             confirmationText.setFont(getFont(16, FontWeight.NORMAL));
+            confirmationText.setTextAlignment(TextAlignment.CENTER);
             
             confirmationVBox.getChildren().addAll(confirmationTitle, confirmationText);
             
             container.getChildren().setAll(confirmationVBox);
             
             PauseTransition delay = new PauseTransition(Duration.seconds(3));
-            delay.setOnFinished(event -> {
-                 Button backButton = (Button) ((HBox) ((VBox) container.getParent()).getChildren().get(0)).getChildren().get(2);
-                 backButton.fire();
-            });
+            delay.setOnFinished(event -> primaryStage.setScene(previousScene));
             delay.play();
         });
 
@@ -155,11 +169,11 @@ public class BroadcastAlertsView extends Application {
     private Label createLabel(String text) {
         Label label = new Label(text);
         label.setFont(getFont(16, FontWeight.MEDIUM));
+        label.setTextFill(Color.web(FONT_COLOR_DARK));
         return label;
     }
 
     private void styleFormControl(Control control) {
-        control.setStyle("-fx-font-size: 14px; -fx-border-radius: 8; -fx-padding: 8; -fx-max-width: infinity;");
+        control.setStyle("-fx-font-size: 14px; -fx-background-color: #FFFFFF; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 8; -fx-padding: 8;");
     }
-
 }

@@ -1,5 +1,7 @@
 package com.thinkspark.view;
 
+import com.thinkspark.model.Alert;
+import com.thinkspark.model.DataManager;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,7 +14,13 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -31,12 +39,9 @@ public class CitizenDashboard extends Application {
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
 
-    // --- Fields to hold stage and scene reference ---
     private Stage primaryStage;
     private Scene dashboardScene;
 
-
-    // Consistent font for a unified look.
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
@@ -110,53 +115,25 @@ public class CitizenDashboard extends Application {
             link.setOnMouseEntered(e -> link.setUnderline(true));
             link.setOnMouseExited(e -> link.setUnderline(false));
             
-            // --- ADDED: Navigation functionality for all header links ---
             if ("Home".equals(item)) {
                  link.setOnMouseClicked(e -> primaryStage.setScene(dashboardScene));
             } else if ("Assistance".equals(item)) {
-                link.setOnMouseClicked(e -> {
-                    AssistanceView assistanceView = new AssistanceView(primaryStage, dashboardScene);
-                    assistanceView.start(primaryStage);
-                });
+                link.setOnMouseClicked(e -> new AssistanceView(primaryStage, dashboardScene).start(primaryStage));
             } else if ("About Us".equals(item)) {
-                link.setOnMouseClicked(e -> {
-                    AboutUsView aboutUsView = new AboutUsView(primaryStage, dashboardScene);
-                    aboutUsView.start(primaryStage);
-                });
+                link.setOnMouseClicked(e -> new AboutUsView(primaryStage, dashboardScene).start(primaryStage));
             } else if ("Resources".equals(item)) {
-                link.setOnMouseClicked(e -> {
-                    ResourcesView resourcesView = new ResourcesView(primaryStage, dashboardScene);
-                    resourcesView.start(primaryStage);
-                });
+                link.setOnMouseClicked(e -> new ResourcesView(primaryStage, dashboardScene).start(primaryStage));
             }
-
-
             navLinks.getChildren().add(link);
         }
 
-        // --- MODIFIED: Changed Button to MenuButton for dropdown ---
         MenuButton profileButton = new MenuButton("C");
         MenuItem settingsItem = new MenuItem("Settings");
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(settingsItem, logoutItem);
 
-        // Action for Settings
-        settingsItem.setOnAction(e -> {
-            System.out.println("Settings Clicked!");
-            // --- MODIFIED: Navigate to SettingsView ---
-            SettingsView settingsView = new SettingsView(primaryStage, dashboardScene);
-            settingsView.start(primaryStage);
-        });
-
-        // Action for Log Out
-        logoutItem.setOnAction(e -> {
-            System.out.println("Logged Out!");
-            // --- MODIFIED: Navigate back to DisasterHelperUI ---
-            primaryStage.close(); // Close the current dashboard window
-            Stage loginStage = new Stage();
-            new DisasterHelperUI().start(loginStage); // Open the main landing page
-        });
-
+        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
+        logoutItem.setOnAction(e -> new DisasterHelperUI().start(new Stage()));
 
         profileButton.setFont(getFont(16, FontWeight.BOLD));
         profileButton.setStyle(
@@ -200,10 +177,7 @@ public class CitizenDashboard extends Application {
         reportButton.setPadding(new Insets(12, 20, 12, 20));
         VBox.setMargin(reportButton, new Insets(10, 0, 0, 0));
 
-        reportButton.setOnAction(e -> {
-            ReportDisasterView reportView = new ReportDisasterView(primaryStage, dashboardScene);
-            reportView.start(primaryStage);
-        });
+        reportButton.setOnAction(e -> new ReportDisasterView(primaryStage, dashboardScene).start(primaryStage));
 
         content.getChildren().addAll(welcome, subtitle, reportButton);
         heroPane.getChildren().add(content);
@@ -221,16 +195,8 @@ public class CitizenDashboard extends Application {
         Node donateButton = createQuickAccessButton("💖 Donate", "Support the cause");
         Node requestsButton = createQuickAccessButton("📋 All Requests", "See active requests");
 
-        donateButton.setOnMouseClicked(e -> {
-            DonationsView donationsView = new DonationsView(primaryStage, dashboardScene);
-            donationsView.start(primaryStage);
-        });
-
-        requestsButton.setOnMouseClicked(e -> {
-            AllRequestsView requestsView = new AllRequestsView(primaryStage, dashboardScene);
-            requestsView.start(primaryStage);
-        });
-
+        donateButton.setOnMouseClicked(e -> new DonationsView(primaryStage, dashboardScene).start(primaryStage));
+        requestsButton.setOnMouseClicked(e -> new AllRequestsView(primaryStage, dashboardScene).start(primaryStage));
 
         buttonBox.getChildren().addAll(mapButton, donateButton, requestsButton);
         card.getChildren().add(buttonBox);
@@ -261,30 +227,33 @@ public class CitizenDashboard extends Application {
     }
 
     private Node createLiveAlertsModule() {
-        VBox card = createDashboardCard("Live Alerts");
-        ListView<String> alertsList = new ListView<>();
-        alertsList.getItems().addAll(
-            "High Flood Warning for North District - 15 min ago",
-            "Power Outage reported in West Suburbs - 45 min ago",
-            "Emergency Shelter at City Hall is now open - 1 hr ago"
-        );
-        alertsList.setCellFactory(param -> new ListCell<String>() {
+        VBox card = createDashboardCard("Live Government Alerts");
+        ListView<Alert> alertsList = new ListView<>(DataManager.getBroadcastAlerts());
+        alertsList.setPlaceholder(new Label("No active government alerts."));
+
+        alertsList.setCellFactory(param -> new ListCell<Alert>() {
             @Override
-            protected void updateItem(String item, boolean empty) {
+            protected void updateItem(Alert item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
-                    setText(null); setGraphic(null);
+                    setGraphic(null);
                 } else {
-                    Text text = new Text(item);
-                    text.setFont(CitizenDashboard.getFont(14, FontWeight.NORMAL));
-                    text.setWrappingWidth(param.getWidth() - 20);
-                    if(getIndex() == 0) {
-                        text.setFill(Color.web(ALERT_COLOR));
-                        text.setFont(CitizenDashboard.getFont(14, FontWeight.BOLD));
+                    Text title = new Text(item.getTitle());
+                    title.setFont(CitizenDashboard.getFont(14, FontWeight.BOLD));
+
+                    Text message = new Text(item.getMessage());
+                    message.setFont(CitizenDashboard.getFont(14, FontWeight.NORMAL));
+                    message.setWrappingWidth(param.getWidth() - 30); // Ensure text wraps
+
+                    if ("High".equalsIgnoreCase(item.getPriority())) {
+                        title.setFill(Color.web(ALERT_COLOR));
                     } else {
-                        text.setFill(Color.web(FONT_COLOR_DARK));
+                        title.setFill(Color.web(FONT_COLOR_DARK));
                     }
-                    setGraphic(text);
+                    
+                    VBox alertContent = new VBox(5, title, message);
+                    alertContent.setPadding(new Insets(5));
+                    setGraphic(alertContent);
                 }
             }
         });
@@ -352,13 +321,10 @@ public class CitizenDashboard extends Application {
         item.getChildren().addAll(titleLabel, summaryLabel);
         item.setStyle("-fx-border-color: " + BORDER_COLOR + " transparent transparent transparent; -fx-border-width: 1; -fx-padding: 10 0 0 0;");
         
-        item.sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (newScene != null) {
-                 if (((VBox)item.getParent()).getChildren().get(0) == item) {
-                     item.setStyle("-fx-border-width: 0; -fx-padding: 0;");
-                 }
-            }
-        });
+        // A better way to handle the first item's border
+        if (item.getParent() instanceof VBox && ((VBox) item.getParent()).getChildren().isEmpty()) {
+            item.setStyle("-fx-border-width: 0; -fx-padding: 0;");
+        }
 
         return item;
     }

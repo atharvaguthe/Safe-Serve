@@ -1,7 +1,7 @@
 package com.thinkspark.view;
 
+import com.thinkspark.model.DataManager;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,13 +19,14 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class ManageNgosView extends Application {
-    // Style Definitions
+    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
     private static final String STATUS_VERIFIED_COLOR = "#38A169";
     private static final String STATUS_PENDING_COLOR = "#DD6B20";
+    private static final String ACTION_BUTTON_COLOR = "#3182CE";
 
     private final Scene previousScene;
     private final Stage primaryStage;
@@ -34,53 +35,73 @@ public class ManageNgosView extends Application {
         return Font.font("System", weight, size);
     }
 
-    private static class NgoItem {
-        final String name;
-        final String status;
-        final String contact;
+    /**
+     * Public static inner class to represent an NGO.
+     * This needs to be public and static so it can be accessed from DataManager.
+     */
+    public static class NgoItem {
+        private String name;
+        private String status;
+        private String contact;
+
         public NgoItem(String name, String status, String contact) {
             this.name = name;
             this.status = status;
             this.contact = contact;
         }
+
+        public String getName() { return name; }
+        public String getStatus() { return status; }
+        public String getContact() { return contact; }
+        public void setStatus(String status) { this.status = status; }
     }
 
-    private static class NgoCell extends ListCell<NgoItem> {
-        public NgoCell() {
-            super();
-        }
+    /**
+     * Custom ListCell to display NGO data and provide a verification button.
+     */
+    private class NgoCell extends ListCell<NgoItem> {
         @Override
         protected void updateItem(NgoItem item, boolean empty) {
             super.updateItem(item, empty);
             if (empty || item == null) {
                 setGraphic(null);
             } else {
-                HBox content = new HBox();
-                VBox details = new VBox(5);
-                Label nameLabel = new Label(item.name);
+                HBox content = new HBox(20);
+                content.setAlignment(Pos.CENTER);
+                content.setPadding(new Insets(15));
+                content.setStyle("-fx-border-color: transparent transparent " + BORDER_COLOR + " transparent; -fx-border-width: 1;");
+
+                Label nameLabel = new Label(item.getName());
                 nameLabel.setFont(ManageNgosView.getFont(16, FontWeight.BOLD));
-                Label contactLabel = new Label("Contact: " + item.contact);
+                Label contactLabel = new Label("Contact: " + item.getContact());
                 contactLabel.setOpacity(0.8);
-                details.getChildren().addAll(nameLabel, contactLabel);
+                VBox details = new VBox(5, nameLabel, contactLabel);
 
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                Label statusLabel = new Label(item.status.toUpperCase());
+                Label statusLabel = new Label(item.getStatus().toUpperCase());
                 statusLabel.setFont(ManageNgosView.getFont(12, FontWeight.BOLD));
-                statusLabel.setPadding(new Insets(4, 8, 4, 8));
                 statusLabel.setTextFill(Color.WHITE);
-                if ("Verified".equalsIgnoreCase(item.status)) {
-                    statusLabel.setStyle("-fx-background-color: " + STATUS_VERIFIED_COLOR + "; -fx-background-radius: 6;");
-                } else {
-                    statusLabel.setStyle("-fx-background-color: " + STATUS_PENDING_COLOR + "; -fx-background-radius: 6;");
-                }
-                
-                content.setAlignment(Pos.CENTER);
-                content.setSpacing(20);
+                statusLabel.setPadding(new Insets(4, 8, 4, 8));
+                String statusColor = "Verified".equalsIgnoreCase(item.getStatus()) ? STATUS_VERIFIED_COLOR : STATUS_PENDING_COLOR;
+                statusLabel.setStyle("-fx-background-color: " + statusColor + "; -fx-background-radius: 6;");
+
                 content.getChildren().addAll(details, spacer, statusLabel);
-                content.setPadding(new Insets(15));
-                content.setStyle("-fx-border-color: transparent transparent " + BORDER_COLOR + " transparent; -fx-border-width: 1;");
+
+                // Only show the verify button if the NGO is pending
+                if ("Pending Verification".equalsIgnoreCase(item.getStatus())) {
+                    Button verifyButton = new Button("Verify NGO");
+                    verifyButton.setTextFill(Color.WHITE);
+                    verifyButton.setStyle("-fx-background-color: " + ACTION_BUTTON_COLOR + "; -fx-background-radius: 6; -fx-cursor: hand;");
+                    verifyButton.setOnAction(e -> {
+                        // Update the status in the data model
+                        item.setStatus("Verified");
+                        // Force the ListView to redraw this cell to reflect the change
+                        getListView().refresh();
+                    });
+                    content.getChildren().add(verifyButton);
+                }
                 setGraphic(content);
             }
         }
@@ -102,8 +123,6 @@ public class ManageNgosView extends Application {
 
         ScrollPane scrollPane = new ScrollPane(rootLayout);
         scrollPane.setFitToWidth(true);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
         Scene scene = new Scene(scrollPane, 1280, 900);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Manage NGOs | Government Dashboard");
@@ -125,10 +144,7 @@ public class ManageNgosView extends Application {
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
         backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
         backButton.setPadding(new Insets(8, 16, 8, 16));
-        backButton.setOnAction(e -> {
-            primaryStage.setScene(previousScene);
-            primaryStage.setTitle("Government Dashboard | Disaster Command Center");
-        });
+        backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
         return header;
@@ -141,15 +157,13 @@ public class ManageNgosView extends Application {
                       "-fx-background-radius: 12; " +
                       "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
 
-        ObservableList<NgoItem> ngos = FXCollections.observableArrayList(
-            new NgoItem("Red Cross Society", "Verified", "contact@redcross.org"),
-            new NgoItem("Green Earth Foundation", "Verified", "info@greenearth.org"),
-            new NgoItem("Community Helpers", "Pending Verification", "apply@communityhelpers.com")
-        );
+        // Get the live list of NGOs from the central DataManager
+        ObservableList<NgoItem> ngos = DataManager.getNgos();
 
         ListView<NgoItem> listView = new ListView<>(ngos);
         listView.setCellFactory(param -> new NgoCell());
         listView.setStyle("-fx-background-color: transparent;");
+        listView.setPlaceholder(new Label("No NGOs to display."));
 
         card.getChildren().add(listView);
         
@@ -158,5 +172,4 @@ public class ManageNgosView extends Application {
         
         return container;
     }
-
 }
