@@ -104,7 +104,8 @@ public class GovDashboard extends Application {
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(settingsItem, logoutItem);
         
-        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
+        
+        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, "admin@gov.org").start(primaryStage)); // Placeholder email
         logoutItem.setOnAction(e -> {
             primaryStage.close();
             new DisasterHelperUI().start(new Stage());

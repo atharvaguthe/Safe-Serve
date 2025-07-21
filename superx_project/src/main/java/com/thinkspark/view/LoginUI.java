@@ -100,6 +100,7 @@ public class LoginUI extends Application {
 
         Hyperlink forgotPasswordLink = new Hyperlink("Forgot Password?");
         forgotPasswordLink.setFont(getFont(14, FontWeight.MEDIUM));
+        forgotPasswordLink.setOnAction(e -> handleForgotPassword(stage)); // Added this line
 
         Hyperlink signUpLink = new Hyperlink("Don't have an account? Sign Up");
         signUpLink.setFont(getFont(14, FontWeight.MEDIUM));
@@ -151,7 +152,6 @@ public class LoginUI extends Application {
         return comboBox;
     }
 
-    // --- UPDATED METHOD ---
     private void handleLogin(Stage currentStage, String email, String password, String selectedRole) {
         if (selectedRole == null || selectedRole.isEmpty()) {
             showAlert("Login Error", "Please select a role to continue.");
@@ -165,11 +165,10 @@ public class LoginUI extends Application {
         LoginController.Result result = loginController.login(email, password, selectedRole);
 
         if (result.success) {
-            currentStage.close(); // Close the login window
+            currentStage.close();
             Stage dashboardStage = new Stage();
             Application dashboard = null;
 
-            // This logic is now active and will launch the correct dashboard
             switch (selectedRole) {
                 case "Citizen":
                     dashboard = new CitizenDashboard();
@@ -193,7 +192,6 @@ public class LoginUI extends Application {
                     showAlert("Application Error", "Could not open the dashboard.");
                 }
             } else {
-                // This will only show if a role doesn't have a matching dashboard
                 showAlert("Login Successful", "Welcome! The dashboard for '" + selectedRole + "' is not available.");
             }
         } else {
@@ -205,6 +203,12 @@ public class LoginUI extends Application {
         currentStage.close();
         Stage signUpStage = new Stage();
         new SignUpForm().start(signUpStage);
+    }
+    
+    private void handleForgotPassword(Stage currentStage) {
+        currentStage.close();
+        Stage forgotPasswordStage = new Stage();
+        new ForgotPasswordUI().start(forgotPasswordStage);
     }
 
     private void showAlert(String title, String message) {

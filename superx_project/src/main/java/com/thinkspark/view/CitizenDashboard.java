@@ -132,7 +132,7 @@ public class CitizenDashboard extends Application {
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(settingsItem, logoutItem);
 
-        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
+        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         logoutItem.setOnAction(e -> {
             primaryStage.close();
             new DisasterHelperUI().start(new Stage());
@@ -192,6 +192,7 @@ public class CitizenDashboard extends Application {
         buttonBox.setPadding(new Insets(10, 0, 0, 0));
 
         Node mapButton = createQuickAccessButton("🗺️ Map", "View disaster map");
+        mapButton.setOnMouseClicked(e -> new MapView(primaryStage, dashboardScene).start(primaryStage));
         Node donateButton = createQuickAccessButton("💖 Donate", "Support the cause");
         Node myRequestsButton = createQuickAccessButton("📋 My Requests", "See your requests");
 

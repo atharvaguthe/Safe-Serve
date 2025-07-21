@@ -1,19 +1,20 @@
 package com.thinkspark.view;
 
+import com.thinkspark.Controller.DeleteAccountController;
+import com.thinkspark.Controller.ForgotPasswordController;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+
+import java.util.Optional;
 
 public class SettingsView extends Application {
 
@@ -28,15 +29,21 @@ public class SettingsView extends Application {
 
     private final Scene previousScene;
     private final Stage primaryStage;
+    private final String userEmail; // To store the current user's email
+
+    private final ForgotPasswordController forgotPasswordController = new ForgotPasswordController();
+    private final DeleteAccountController deleteAccountController = new DeleteAccountController();
+
 
     // --- Font Helper ---
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
 
-    public SettingsView(Stage primaryStage, Scene previousScene) {
+    public SettingsView(Stage primaryStage, Scene previousScene, String userEmail) {
         this.primaryStage = primaryStage;
         this.previousScene = previousScene;
+        this.userEmail = userEmail;
     }
 
     @Override
@@ -79,7 +86,7 @@ public class SettingsView extends Application {
         backButton.setPadding(new Insets(8, 16, 8, 16));
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
-            primaryStage.setTitle("Citizen Dashboard | Disaster Relief Helper");
+            // You might want to restore the previous title here if it's dynamic
         });
 
         header.getChildren().addAll(title, spacer, backButton);
@@ -112,10 +119,13 @@ public class SettingsView extends Application {
         
         Button changePasswordButton = new Button("Change Password");
         changePasswordButton.setFont(getFont(14, FontWeight.MEDIUM));
-        
+        changePasswordButton.setOnAction(e -> handleChangePassword());
+
         Button deleteAccountButton = new Button("Delete Account");
         deleteAccountButton.setFont(getFont(14, FontWeight.MEDIUM));
         deleteAccountButton.setTextFill(Color.web(ALERT_COLOR));
+        deleteAccountButton.setOnAction(e -> handleDeleteAccount());
+
 
         HBox accountButtons = new HBox(20, changePasswordButton, deleteAccountButton);
         
@@ -126,6 +136,35 @@ public class SettingsView extends Application {
         
         return container;
     }
+    
+    private void handleChangePassword() {
+        boolean success = forgotPasswordController.sendPasswordResetEmail(this.userEmail);
+        if (success) {
+            showAlert("Success", "A password reset link has been sent to " + this.userEmail + ". Please check your inbox.");
+        } else {
+            showAlert("Error", "Could not send password reset email. Please try again later.");
+        }
+    }
+
+    private void handleDeleteAccount() {
+        Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationDialog.setTitle("Delete Account");
+        confirmationDialog.setHeaderText("Are you sure you want to permanently delete your account?");
+        confirmationDialog.setContentText("This action cannot be undone.");
+
+        Optional<ButtonType> result = confirmationDialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            boolean success = deleteAccountController.deleteAccount(this.userEmail);
+            if (success) {
+                showAlert("Account Deleted", "Your account has been successfully deleted.");
+                primaryStage.close();
+                new LoginUI().start(new Stage());
+            } else {
+                showAlert("Error", "Failed to delete account. Please try again later.");
+            }
+        }
+    }
+
 
     private Node createSettingItem(String title, String description, boolean selected) {
         HBox settingRow = new HBox();
@@ -163,6 +202,17 @@ public class SettingsView extends Application {
         } else {
             toggle.setStyle("-fx-background-color: " + BORDER_COLOR + "; -fx-text-fill: " + FONT_COLOR_DARK + "; -fx-background-radius: 15; -fx-padding: 5 15;");
         }
+    }
+    
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        if (title.toLowerCase().contains("error")) {
+            alert.setAlertType(Alert.AlertType.ERROR);
+        }
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 }

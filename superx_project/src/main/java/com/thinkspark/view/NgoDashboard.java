@@ -129,7 +129,8 @@ public class NgoDashboard extends Application {
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(settingsItem, logoutItem);
 
-        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
+
+        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, "ngo@example.com").start(primaryStage)); // Placeholder email
         
         // --- UPDATED LOGOUT ACTION ---
         logoutItem.setOnAction(e -> {
@@ -176,6 +177,7 @@ public class NgoDashboard extends Application {
         manageVolunteersButton.setOnAction(e -> new ManageVolunteersView(primaryStage, dashboardScene).start(primaryStage));
 
         Button viewMapButton = createQuickAccessButton("View Map", false);
+        viewMapButton.setOnAction(e -> new MapView(primaryStage, dashboardScene).start(primaryStage));
 
         Button viewDonationsButton = createQuickAccessButton("View Donations", false);
         viewDonationsButton.setOnAction(e -> new ViewDonationsView(primaryStage, dashboardScene).start(primaryStage));

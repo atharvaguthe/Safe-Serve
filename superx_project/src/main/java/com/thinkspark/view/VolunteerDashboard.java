@@ -128,7 +128,7 @@ public class VolunteerDashboard extends Application {
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(settingsItem, logoutItem);
 
-        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
+        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.currentVolunteerName).start(primaryStage));
         logoutItem.setOnAction(e -> {
             primaryStage.close();
             new DisasterHelperUI().start(new Stage());
@@ -175,9 +175,14 @@ public class VolunteerDashboard extends Application {
         Button logHoursButton = createQuickAccessButton("📋 Log Hours", false);
         logHoursButton.setOnAction(e -> new LogHoursView(primaryStage, dashboardScene).start(primaryStage));
 
+        Button viewMapButton = createQuickAccessButton("🗺️ View Map", false);
+        viewMapButton.setOnAction(e -> new MapView(primaryStage, dashboardScene).start(primaryStage));
+
+        // ... other buttons ...
+
         buttonGrid.add(reportButton, 0, 0);
         buttonGrid.add(requestHelpButton, 1, 0);
-        buttonGrid.add(createQuickAccessButton("🗺️ View Map", false), 0, 1);
+        buttonGrid.add(viewMapButton, 0, 1); // Add the button with the action
         buttonGrid.add(logHoursButton, 1, 1);
 
         card.getChildren().add(buttonGrid);
