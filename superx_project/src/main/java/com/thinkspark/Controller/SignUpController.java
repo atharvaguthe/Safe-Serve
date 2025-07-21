@@ -1,10 +1,16 @@
 package com.thinkspark.Controller;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.thinkspark.model.FirebaseConfig; // Import FirebaseConfig
 import com.thinkspark.model.User;
 import com.thinkspark.model.UserService;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import org.json.JSONObject;
 
 public class SignUpController {
@@ -14,8 +20,11 @@ public class SignUpController {
             return new Result(false, "All fields are required and cannot be empty");
         }
         try {
-            // This is a placeholder API key and should be kept secure in a real application
-            String apiKey = "AIzaSyAZ0tYGpqtLb3OvVNj0RROf4eDMx5Uk330";
+            // --- FIX: Initialize Firebase at the start ---
+            FirebaseConfig.initialize();
+
+            // This is a placeholder API key and should be kept secure.
+            String apiKey = "AIzaSyAZ0tYGpqtLb3OvVNj0RROf4eDMx5Uk330"; // Your Web API Key from Firebase Console
             URL url = new URL("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + apiKey);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
@@ -32,22 +41,32 @@ public class SignUpController {
             }
 
             if (connection.getResponseCode() == 200) {
-                // If sign-up is successful, register the user in Firestore
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                JSONObject jsonResponse = new JSONObject(response.toString());
+                String uid = jsonResponse.getString("localId");
+
+                // Set the custom claim using the Admin SDK
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("role", role);
+                FirebaseAuth.getInstance().setCustomUserClaims(uid, claims);
+
+                // Save user data to Firestore (without password)
                 UserService userService = new UserService();
-                User newUser = new User(name, email, password, role); // Storing the password in Firestore is not recommended for production
+                User newUser = new User(name, email, role);
                 boolean isRegistered = userService.registerUser(newUser);
 
                 if (isRegistered) {
                     return new Result(true, "SignUp Successful");
                 } else {
-                    // This part of the logic might need refinement based on how you want to handle
-                    // a failed Firestore registration after a successful authentication.
-                    // For example, you might want to delete the newly created auth user.
                     return new Result(false, "SignUp successful, but failed to save user data.");
                 }
             } else {
-                // It's helpful to return the error message from the API
-                // For a more robust solution, you would parse the error stream from the connection
                 return new Result(false, "SignUp Unsuccessful: " + connection.getResponseMessage());
             }
         } catch (Exception e) {

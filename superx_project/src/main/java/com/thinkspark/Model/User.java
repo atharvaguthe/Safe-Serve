@@ -3,17 +3,17 @@ package com.thinkspark.model;
 public class User {
     private String name;
     private String email;
-    private String password; // Note: In a real application, passwords should be hashed.
+    // The 'password' field has been removed.
     private String role;
 
     public User() {
-        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+        // Default constructor is still useful for Firestore data mapping.
     }
 
-    public User(String name, String email, String password, String role) {
+    // New constructor without the password field.
+    public User(String name, String email, String role) {
         this.name = name;
         this.email = email;
-        this.password = password;
         this.role = role;
     }
 
@@ -33,13 +33,7 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    // The getPassword() and setPassword() methods have been removed.
 
     public String getRole() {
         return role;
