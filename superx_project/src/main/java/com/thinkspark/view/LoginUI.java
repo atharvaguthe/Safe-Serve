@@ -1,13 +1,13 @@
 package com.thinkspark.view;
 
 import com.thinkspark.Controller.LoginController;
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -17,7 +17,6 @@ import javafx.stage.Stage;
 
 public class LoginUI extends Application {
 
-    // --- Style Definitions (Consistent Light Theme) ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String PRIMARY_BLUE = "#005A9C";
@@ -25,32 +24,27 @@ public class LoginUI extends Application {
     private static final String FONT_COLOR_LIGHT = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
 
-    // --- Font Definitions ---
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
 
+    LoginController loginController = new LoginController();
+
     @Override
     public void start(Stage stage) {
-        // --- Main Layout ---
-        // An HBox creates the two-pane layout.
         HBox mainLayout = new HBox();
         mainLayout.setAlignment(Pos.CENTER);
-        mainLayout.setMaxSize(960, 640); // Constrain the size of the login panel
+        mainLayout.setMaxSize(960, 640);
         mainLayout.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                           "-fx-background-radius: 16; " +
-                           "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 20, 0, 0, 8);");
+                "-fx-background-radius: 16; " +
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 20, 0, 0, 8);");
 
-        // Add the two main panes to the layout
         mainLayout.getChildren().addAll(createBrandingPane(), createLoginForm(stage));
 
-        // --- Root Pane ---
-        // A StackPane is used to center the mainLayout in the scene.
         StackPane root = new StackPane(mainLayout);
         root.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         root.setPadding(new Insets(40));
 
-        // --- Scene and Stage Setup ---
         Scene scene = new Scene(root, 1200, 800);
         stage.setTitle("Login - Disaster Relief Helper");
         stage.setScene(scene);
@@ -58,10 +52,6 @@ public class LoginUI extends Application {
         stage.show();
     }
 
-    /**
-     * Creates the left-side branding pane with a title and message.
-     * @return A styled VBox node for the branding pane.
-     */
     private Node createBrandingPane() {
         VBox brandingPane = new VBox(20);
         brandingPane.setPrefWidth(480);
@@ -83,31 +73,21 @@ public class LoginUI extends Application {
         return brandingPane;
     }
 
-
-    LoginController loginController = new LoginController();
-    /**
-     * Creates the right-side login form.
-     * @param stage The primary stage to handle window switching.
-     * @return A styled VBox node for the login form.
-     */
     private Node createLoginForm(Stage stage) {
         VBox formPane = new VBox(25);
         formPane.setPrefWidth(480);
         formPane.setAlignment(Pos.CENTER_LEFT);
         formPane.setPadding(new Insets(40));
 
-        // --- Form Title ---
         Label title = new Label("Log In to Your Account");
         title.setFont(getFont(28, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
         VBox.setMargin(title, new Insets(0, 0, 10, 0));
 
-        // --- Form Fields ---
         TextField emailField = createStyledTextField("Email");
         PasswordField passwordField = createStyledPasswordField("Password");
         ComboBox<String> roleComboBox = createStyledComboBox();
-        
-        // --- Login Button ---
+
         Button loginBtn = new Button("Log In");
         loginBtn.setFont(getFont(16, FontWeight.BOLD));
         loginBtn.setTextFill(Color.web(FONT_COLOR_LIGHT));
@@ -115,34 +95,55 @@ public class LoginUI extends Application {
         loginBtn.setPrefHeight(50);
         loginBtn.setMaxWidth(Double.MAX_VALUE);
 
-        // --- Bottom Links ---
         Hyperlink forgotPasswordLink = new Hyperlink("Forgot Password?");
         forgotPasswordLink.setFont(getFont(14, FontWeight.MEDIUM));
-        
+
         Hyperlink signUpLink = new Hyperlink("Don't have an account? Sign Up");
         signUpLink.setFont(getFont(14, FontWeight.MEDIUM));
 
         HBox bottomLinks = new HBox(forgotPasswordLink, signUpLink);
         HBox.setHgrow(forgotPasswordLink, Priority.ALWAYS);
         bottomLinks.setAlignment(Pos.CENTER);
-        
-        // --- Event Handlers ---
+
+        // --- Enter Key Navigation ---
+        emailField.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                passwordField.requestFocus();
+            }
+        });
+
+        passwordField.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                roleComboBox.requestFocus();
+            }
+        });
+
+        roleComboBox.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                loginBtn.fire();
+            }
+        });
+
+        loginBtn.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                loginBtn.fire();
+            }
+        });
+
         loginBtn.setOnAction(e -> handleLogin(stage, roleComboBox.getValue()));
         signUpLink.setOnAction(e -> handleSignUp(stage));
 
         formPane.getChildren().addAll(
-            title,
-            new Label("Email"), emailField,
-            new Label("Password"), passwordField,
-            new Label("Log in as"), roleComboBox,
-            loginBtn,
-            bottomLinks
+                title,
+                new Label("Email"), emailField,
+                new Label("Password"), passwordField,
+                new Label("Log in as"), roleComboBox,
+                loginBtn,
+                bottomLinks
         );
 
         return formPane;
     }
-
-    // --- Helper methods for creating styled form elements ---
 
     private TextField createStyledTextField(String prompt) {
         TextField textField = new TextField();
@@ -172,20 +173,16 @@ public class LoginUI extends Application {
         return comboBox;
     }
 
-    // --- Event Handling Logic ---
-
     private void handleLogin(Stage currentStage, String selectedRole) {
         if (selectedRole == null) {
-            // In a real app, show an alert dialog.
             System.out.println("Please select a role.");
             return;
         }
 
-        currentStage.close(); // Close the login window
+        currentStage.close();
         Stage dashboardStage = new Stage();
         Application dashboard = null;
 
-        // IMPORTANT: This now launches the redesigned dashboards.
         switch (selectedRole) {
             case "Citizen":
                 dashboard = new CitizenDashboard();
@@ -213,9 +210,6 @@ public class LoginUI extends Application {
     private void handleSignUp(Stage currentStage) {
         currentStage.close();
         Stage signUpStage = new Stage();
-        // Assuming SignUpForm is available. Replace with your actual implementation.
         new SignUpForm().start(signUpStage);
     }
 }
-
-    

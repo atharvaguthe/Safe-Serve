@@ -1,3 +1,4 @@
+package com.thinkspark.model;
 // package com.thinkspark.Model;
 
 // public class UserDetail {
