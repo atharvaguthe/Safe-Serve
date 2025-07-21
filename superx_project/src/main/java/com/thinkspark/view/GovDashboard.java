@@ -43,9 +43,18 @@ public class GovDashboard extends Application {
     private Scene dashboardScene;
     private DisasterDao disasterDao;
     private ObservableList<Disaster> liveDisasterReportsList;
+    private String userName;
+
+    public GovDashboard() {
+        this.userName = "Admin"; 
+    }
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
+    }
+
+    public GovDashboard(String userName) {
+        this.userName = (userName == null || userName.isEmpty()) ? "Admin" : userName;
     }
 
     @Override
@@ -105,7 +114,7 @@ public class GovDashboard extends Application {
         profileButton.getItems().addAll(settingsItem, logoutItem);
         
         
-        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, "admin@gov.org").start(primaryStage)); // Placeholder email
+        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         logoutItem.setOnAction(e -> {
             primaryStage.close();
             new DisasterHelperUI().start(new Stage());

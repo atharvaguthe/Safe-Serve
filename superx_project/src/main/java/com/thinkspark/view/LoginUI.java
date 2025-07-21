@@ -171,16 +171,16 @@ public class LoginUI extends Application {
 
             switch (selectedRole) {
                 case "Citizen":
-                    dashboard = new CitizenDashboard();
+                    dashboard = new CitizenDashboard(email);
                     break;
                 case "Volunteer":
-                    dashboard = new VolunteerDashboard();
+                    dashboard = new VolunteerDashboard(email);
                     break;
                 case "NGO":
-                    dashboard = new NgoDashboard();
+                    dashboard = new NgoDashboard(email);
                     break;
                 case "Government":
-                    dashboard = new GovDashboard();
+                    dashboard = new GovDashboard(email);
                     break;
             }
 

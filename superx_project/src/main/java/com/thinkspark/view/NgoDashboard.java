@@ -39,10 +39,19 @@ public class NgoDashboard extends Application {
     private DisasterDao disasterDao;
     private ObservableList<Alert> liveAlertsList;
     private ObservableList<Disaster> liveDisasterReportsList;
+    private String userName;
+
+    private NgoDashboard() {
+        this.userName = "NGO";
+    }
 
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
+    }
+
+    public NgoDashboard(String userName) {
+        this.userName = (userName == null || userName.isEmpty()) ? "NGO" : userName;
     }
 
     @Override
@@ -130,7 +139,7 @@ public class NgoDashboard extends Application {
         profileButton.getItems().addAll(settingsItem, logoutItem);
 
 
-        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, "ngo@example.com").start(primaryStage)); // Placeholder email
+        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         
         // --- UPDATED LOGOUT ACTION ---
         logoutItem.setOnAction(e -> {

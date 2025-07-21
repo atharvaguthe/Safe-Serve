@@ -37,11 +37,21 @@ public class VolunteerDashboard extends Application {
     private Stage primaryStage;
     private Scene dashboardScene;
     private ListView<Task> tasksListView;
-    private final String currentVolunteerName = "Aarav Sharma"; // This would be dynamic in a real app
+    // CHANGED: Use userName instead of a hardcoded name
+    private String userName;
 
     private AlertDao alertDao;
     private TaskDao taskDao;
     private ObservableList<Alert> liveAlertsList;
+
+    // CHANGED: Made the default constructor public
+    public VolunteerDashboard() {
+        this.userName = "Volunteer";
+    }
+
+    public VolunteerDashboard(String userName) {
+        this.userName = (userName == null || userName.isEmpty()) ? "Volunteer" : userName;
+    }
 
 
     private static Font getFont(double size, FontWeight weight) {
@@ -74,7 +84,8 @@ public class VolunteerDashboard extends Application {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         dashboardScene = new Scene(scrollPane, 1366, 900);
-        primaryStage.setTitle("Volunteer Dashboard | " + currentVolunteerName);
+        // CHANGED: Set the title dynamically
+        primaryStage.setTitle("Volunteer Dashboard | " + this.userName);
         primaryStage.setScene(dashboardScene);
 
         // Listen for changes in assigned tasks from Firebase
@@ -119,7 +130,6 @@ public class VolunteerDashboard extends Application {
         dashboardLink.setFont(getFont(16, FontWeight.MEDIUM));
         dashboardLink.setOnMouseClicked(e -> primaryStage.setScene(dashboardScene));
 
-        // "My Tasks" link has been removed from here
         navLinks.getChildren().add(dashboardLink);
 
         MenuButton profileButton = new MenuButton("Profile");
@@ -128,7 +138,8 @@ public class VolunteerDashboard extends Application {
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(settingsItem, logoutItem);
 
-        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.currentVolunteerName).start(primaryStage));
+        // CHANGED: Pass the dynamic user name to the settings view
+        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         logoutItem.setOnAction(e -> {
             primaryStage.close();
             new DisasterHelperUI().start(new Stage());
@@ -146,7 +157,8 @@ public class VolunteerDashboard extends Application {
         overviewBox.setPadding(new Insets(30));
         overviewBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 16; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1;");
 
-        Label title = new Label("Welcome, " + currentVolunteerName + "!");
+        // CHANGED: Use the dynamic user name
+        Label title = new Label("Welcome, " + this.userName + "!");
         title.setFont(getFont(36, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
@@ -166,11 +178,12 @@ public class VolunteerDashboard extends Application {
         buttonGrid.setVgap(20);
         buttonGrid.setPadding(new Insets(15, 0, 0, 0));
 
+        // CHANGED: Pass the dynamic user name to other views
         Button reportButton = createQuickAccessButton("🚨 Report Incident", true);
-        reportButton.setOnAction(e -> new ReportDisasterView(primaryStage, dashboardScene, currentVolunteerName).start(primaryStage));
+        reportButton.setOnAction(e -> new ReportDisasterView(primaryStage, dashboardScene, this.userName).start(primaryStage));
 
         Button requestHelpButton = createQuickAccessButton("🤝 Request Help", false);
-        requestHelpButton.setOnAction(e -> new AssistanceView(primaryStage, dashboardScene, currentVolunteerName).start(primaryStage));
+        requestHelpButton.setOnAction(e -> new AssistanceView(primaryStage, dashboardScene, this.userName).start(primaryStage));
 
         Button logHoursButton = createQuickAccessButton("📋 Log Hours", false);
         logHoursButton.setOnAction(e -> new LogHoursView(primaryStage, dashboardScene).start(primaryStage));
@@ -178,11 +191,10 @@ public class VolunteerDashboard extends Application {
         Button viewMapButton = createQuickAccessButton("🗺️ View Map", false);
         viewMapButton.setOnAction(e -> new MapView(primaryStage, dashboardScene).start(primaryStage));
 
-        // ... other buttons ...
 
         buttonGrid.add(reportButton, 0, 0);
         buttonGrid.add(requestHelpButton, 1, 0);
-        buttonGrid.add(viewMapButton, 0, 1); // Add the button with the action
+        buttonGrid.add(viewMapButton, 0, 1);
         buttonGrid.add(logHoursButton, 1, 1);
 
         card.getChildren().add(buttonGrid);
@@ -235,7 +247,8 @@ public class VolunteerDashboard extends Application {
     private void updateAssignedTasks() {
         tasksListView.getItems().clear();
         for (Task task : DataManager.getAssignedTasks()) {
-            if (currentVolunteerName.equals(task.getAssignedTo())) {
+            // CHANGED: Filter tasks based on the dynamic user name
+            if (this.userName.equals(task.getAssignedTo())) {
                 tasksListView.getItems().add(task);
             }
         }
