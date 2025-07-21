@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Disaster Map</title>
+    <title>Disaster & Shelter Map - Pune</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -14,6 +14,51 @@
             height: 100%;
             width: 100%;
         }
+
+        /* Styles for the custom control at the bottom right */
+        .info-control {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            font-family: sans-serif;
+            font-size: 14px;
+            color: #333;
+            max-height: 40%; /* Limit height to prevent overflow */
+            overflow-y: auto; /* Add scroll if content overflows */
+        }
+        .info-control h4 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 16px;
+        }
+        .info-control ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .info-control ul li {
+            margin-bottom: 3px;
+        }
+        .info-control .disaster-item {
+            color: #dc3545; /* Red color */
+        }
+        .info-control .shelter-item {
+            color: #28a745; /* Green color */
+        }
+
+        /* Style for permanent tooltips */
+        .leaflet-tooltip.permanent-label {
+            background-color: transparent;
+            border: none;
+            box-shadow: none;
+            color: black; /* Or a color that stands out */
+            font-weight: bold;
+            font-size: 14px;
+            padding: 0;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.7); /* Optional: add subtle text shadow for readability */
+        }
     </style>
 </head>
 <body>
@@ -22,39 +67,98 @@
 
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 <script>
-    // Initialize the map and set its view to our chosen geographical coordinates and a zoom level
-    var map = L.map('map').setView([19.9975, 73.7898], 13); // Centered on Nashik
+    // Initialize the map and set its view to a central point in Pune
+    // Adjusted view to better encompass all locations
+    var map = L.map('map').setView([18.5100, 73.8500], 11); // Slightly higher zoom out for wider Pune view
 
     // Add a tile layer to add to our map
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // --- Example Markers ---
+    // Data for areas
+    var disasterAreas = [
+        { name: "NBN College Pune (Katraj)", lat: 18.4502, lon: 73.8447 },
+        { name: "Katraj Bus Stop", lat: 18.4437, lon: 73.8666 },
+        { name: "Nawale Bridge", lat: 18.4830, lon: 73.8050 },
+        { name: "Hinjawadi Phase 1", lat: 18.5830, lon: 73.7440 }, // Added: IT hub, known for waterlogging during heavy rains
+        { name: "Deccan Gymkhana", lat: 18.5140, lon: 73.8370 } // Added: Central area, can face issues during heavy rains
+    ];
 
-    // Shelter Marker
-    var shelterIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-    });
-    L.marker([20.0084, 73.7801], {icon: shelterIcon}).addTo(map)
-        .bindPopup("<b>Safe Zone:</b><br>Panchavati College Campus");
+    var shelterAreas = [
+        { name: "Core2Web (Narhe)", lat: 18.4716, lon: 73.8182 }, // Corrected: Narhe address
+        { name: "Swargate", lat: 18.5011, lon: 73.8627 },
+        { name: "Chandani Chowk", lat: 18.5140, lon: 73.7840 },
+        { name: "Warje", lat: 18.4820, lon: 73.7930 },
+        { name: "Pune Railway Station", lat: 18.5284, lon: 73.8738 }, // Added: Major transport hub, often used as temporary shelter
+        { name: "Shivaji Nagar Court", lat: 18.5204, lon: 73.8436 }, // Added: Central, large area, potential for community halls
+        { name: "Aga Khan Palace (Nagar Road)", lat: 18.5620, lon: 73.8890 } // Corrected
+    ];
 
-    // Incident Marker
-    var incidentIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
+    // --- Add Disaster Areas (Red Circles with Labels) ---
+    var disasterColor = 'darkred';
+    var disasterFillColor = '#dc3545'; // Vibrant red
+    var disasterFillOpacity = 0.7;
+    var disasterCircleRadius = 200; // Radius in meters
+
+    disasterAreas.forEach(function(area) {
+        L.circle([area.lat, area.lon], {
+            color: disasterColor,
+            fillColor: disasterFillColor,
+            fillOpacity: disasterFillOpacity,
+            radius: disasterCircleRadius
+        }).addTo(map)
+          .bindTooltip(area.name, { // Add permanent tooltip/label
+              permanent: true,
+              direction: 'center',
+              className: 'permanent-label' // Custom class for styling
+          })
+          .bindPopup("<b>Disaster Zone:</b><br>" + area.name + " vicinity.");
     });
-    L.marker([19.9930, 73.7938], {icon: incidentIcon}).addTo(map)
-        .bindPopup("<b>Incident:</b><br>Flooding reported near Ramkund.");
+
+    // --- Add Shelter Areas (Green Circles with Labels) ---
+    var shelterColor = 'darkgreen';
+    var shelterFillColor = '#28a745'; // Vibrant green
+    var shelterFillOpacity = 0.7;
+    var shelterCircleRadius = 250; // Slightly larger radius for shelters
+
+    shelterAreas.forEach(function(area) {
+        L.circle([area.lat, area.lon], {
+            color: shelterColor,
+            fillColor: shelterFillColor,
+            fillOpacity: shelterFillOpacity,
+            radius: shelterCircleRadius
+        }).addTo(map)
+          .bindTooltip(area.name, { // Add permanent tooltip/label
+              permanent: true,
+              direction: 'center',
+              className: 'permanent-label' // Custom class for styling
+          })
+          .bindPopup("<b>Shelter Area:</b><br>" + area.name + " (potential shelter).");
+    });
+
+    // --- Custom Control for Lists (Bottom Right) ---
+    var infoControl = L.control({position: 'bottomright'});
+
+    infoControl.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'info-control'); // Create a div with a custom class
+        var disasterListHtml = '<h4>Affected Areas:</h4><ul>';
+        disasterAreas.forEach(function(area) {
+            disasterListHtml += '<li class="disaster-item">' + area.name + '</li>';
+        });
+        disasterListHtml += '</ul>';
+
+        var shelterListHtml = '<h4>Shelter Areas:</h4><ul>';
+        shelterAreas.forEach(function(area) {
+            shelterListHtml += '<li class="shelter-item">' + area.name + '</li>';
+        });
+        shelterListHtml += '</ul>';
+
+        div.innerHTML = disasterListHtml + shelterListHtml;
+        return div;
+    };
+
+    infoControl.addTo(map);
 
 </script>
 

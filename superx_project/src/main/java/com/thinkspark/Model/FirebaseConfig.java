@@ -16,7 +16,7 @@ public class FirebaseConfig {
     public static Firestore initialize() throws IOException {
         if (db == null) {
             // IMPORTANT: Replace this path with the actual path to your Firebase service account key JSON file.
-            String serviceAccountKeyPath = "src/main/resources/safe-serve-private.json";
+            String serviceAccountKeyPath = "superx_project/src/main/resources/safe-serve-private.json";
 
             FileInputStream serviceAccount = new FileInputStream(serviceAccountKeyPath);
 
