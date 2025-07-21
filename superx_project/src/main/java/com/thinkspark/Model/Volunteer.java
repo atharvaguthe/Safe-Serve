@@ -2,11 +2,18 @@ package com.thinkspark.model;
 
 /**
  * Represents a volunteer in the system.
- * This simple model holds information about an individual volunteer.
+ * This class is structured as a JavaBean for Firestore compatibility.
  */
 public class Volunteer {
 
-    private final String name;
+    private String name;
+    private String email;
+    private String role;
+
+    /**
+     * A no-argument constructor is REQUIRED by Firestore for deserialization.
+     */
+    public Volunteer() {}
 
     /**
      * Constructs a new Volunteer object.
@@ -17,19 +24,33 @@ public class Volunteer {
         this.name = name;
     }
 
-    // --- Getter ---
+    // --- Getters and Setters ---
+    // Firestore uses these to automatically map data.
 
     public String getName() {
         return name;
     }
 
-    /**
-     * Overridden to provide a user-friendly string representation of the object.
-     * This is particularly useful for displaying volunteer names in UI components
-     * like ComboBoxes or ChoiceDialogs.
-     *
-     * @return The name of the volunteer.
-     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getRole() {
+        return role;
+    }
+    
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return name;

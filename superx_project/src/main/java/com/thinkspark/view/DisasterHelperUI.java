@@ -40,8 +40,13 @@ public class DisasterHelperUI extends Application {
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
+        // --- Scene and Stage Setup ---
+        Scene scene = new Scene(new ScrollPane(rootLayout), 1366, 800);
+        primaryStage.setTitle("Safe Serve | Disaster Relief Helper");
+        primaryStage.setScene(scene);
+
         // --- Header / Navigation Bar ---
-        Node header = createHeader(primaryStage);
+        Node header = createHeader(primaryStage, scene);
 
         // --- Hero Section ---
         Node heroSection = createHeroSection();
@@ -62,7 +67,7 @@ public class DisasterHelperUI extends Application {
         // --- Left Column Content ---
         VBox leftColumn = new VBox(40);
         leftColumn.getChildren().addAll(
-            createQuickAccessModule(primaryStage), // Pass stage for navigation
+            createQuickAccessModule(primaryStage, scene), // Pass stage and scene for navigation
             createFeaturedNewsModule()
         );
 
@@ -80,26 +85,17 @@ public class DisasterHelperUI extends Application {
         rootLayout.getChildren().addAll(header, heroSection, mainGrid);
 
         // --- ScrollPane for Responsiveness ---
-        ScrollPane scrollPane = new ScrollPane(rootLayout);
+        ScrollPane scrollPane = (ScrollPane) scene.getRoot();
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background: " + BACKGROUND_COLOR + ";");
         scrollPane.getStyleClass().add("edge-to-edge");
 
 
-        // --- Scene and Stage Setup ---
-        Scene scene = new Scene(scrollPane, 1366, 800);
-        primaryStage.setTitle("Safe Serve | Disaster Relief Helper");
-        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    /**
-     * Creates the top header with logo, navigation, and auth buttons.
-     * @param stage The primary stage to handle window switching.
-     * @return A styled HBox node for the header.
-     */
-    private Node createHeader(Stage stage) {
+    private Node createHeader(Stage stage, Scene scene) {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(10, 0, 20, 0));
@@ -115,18 +111,17 @@ public class DisasterHelperUI extends Application {
         HBox navLinks = new HBox(40);
         navLinks.setAlignment(Pos.CENTER);
         
-        // --- Navigation Links with Actions ---
         Button homeLink = createNavLink("Home");
-        homeLink.setOnAction(e -> this.start(stage)); // Reloads the dashboard
+        homeLink.setOnAction(e -> this.start(stage));
 
         Button assistanceLink = createNavLink("Assistance");
-        assistanceLink.setOnAction(e -> new AssistanceView(stage, assistanceLink.getScene()).start(stage));
+        assistanceLink.setOnAction(e -> new AssistanceView(stage, scene, "Citizen").start(stage));
 
         Button resourcesLink = createNavLink("Resources");
-        resourcesLink.setOnAction(e -> new ResourcesView(stage, resourcesLink.getScene()).start(stage));
+        resourcesLink.setOnAction(e -> new ResourcesView(stage, scene).start(stage));
 
         Button aboutUsLink = createNavLink("About Us");
-        aboutUsLink.setOnAction(e -> new AboutUsView(stage, aboutUsLink.getScene()).start(stage));
+        aboutUsLink.setOnAction(e -> new AboutUsView(stage, scene).start(stage));
 
         navLinks.getChildren().addAll(homeLink, assistanceLink, resourcesLink, aboutUsLink);
 
@@ -144,7 +139,6 @@ public class DisasterHelperUI extends Application {
         signupBtn.setTextFill(Color.web(FONT_COLOR_LIGHT));
         signupBtn.setStyle("-fx-background-color: " + SECONDARY_BLUE + "; -fx-background-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;");
         
-        // --- Button Actions for Login and Sign Up ---
         loginBtn.setOnAction(e -> {
             Stage currentStage = (Stage) loginBtn.getScene().getWindow();
             currentStage.close();
@@ -166,11 +160,6 @@ public class DisasterHelperUI extends Application {
         return header;
     }
     
-    /**
-     * Helper to create a styled, clickable navigation label.
-     * @param text The text for the link.
-     * @return A styled Button configured to look like a label.
-     */
     private Button createNavLink(String text) {
         Button link = new Button(text);
         link.setFont(getFont(16, FontWeight.MEDIUM));
@@ -181,10 +170,6 @@ public class DisasterHelperUI extends Application {
         return link;
     }
 
-    /**
-     * Creates the main hero section.
-     * @return A styled VBox node for the hero section.
-     */
     private Node createHeroSection() {
         VBox heroBox = new VBox(20);
         heroBox.setAlignment(Pos.CENTER);
@@ -207,12 +192,7 @@ public class DisasterHelperUI extends Application {
         return heroBox;
     }
 
-    /**
-     * Creates a dashboard module for quick access buttons.
-     * @param stage The primary stage to handle navigation.
-     * @return A styled VBox node representing a dashboard card.
-     */
-    private Node createQuickAccessModule(Stage stage) {
+    private Node createQuickAccessModule(Stage stage, Scene scene) {
         VBox card = createDashboardCard("Quick Access");
         GridPane buttonGrid = new GridPane();
         buttonGrid.setHgap(20);
@@ -220,16 +200,16 @@ public class DisasterHelperUI extends Application {
         buttonGrid.setPadding(new Insets(15, 0, 0, 0));
         
         Button disasterInfoBtn = createQuickAccessButton("Disaster Info Type");
-        disasterInfoBtn.setOnAction(e -> new DisasterInfoTypeView(stage, disasterInfoBtn.getScene()).start(stage));
+        disasterInfoBtn.setOnAction(e -> new DisasterInfoTypeView(stage, scene).start(stage));
 
         Button safeZoneBtn = createQuickAccessButton("Nearest Safe Zone");
-        safeZoneBtn.setOnAction(e -> new NearestSafeZoneView(stage, safeZoneBtn.getScene()).start(stage));
+        safeZoneBtn.setOnAction(e -> new NearestSafeZoneView(stage, scene).start(stage));
 
         Button reliefResourcesBtn = createQuickAccessButton("Relief Resources");
-        reliefResourcesBtn.setOnAction(e -> new ReliefResourcesView(stage, reliefResourcesBtn.getScene()).start(stage));
+        reliefResourcesBtn.setOnAction(e -> new ReliefResourcesView(stage, scene).start(stage));
         
         Button donateBtn = createQuickAccessButton("Donate Now");
-        donateBtn.setOnAction(e -> new DonationsView(stage, donateBtn.getScene()).start(stage));
+        donateBtn.setOnAction(e -> new DonationsView(stage, scene).start(stage));
 
         buttonGrid.add(disasterInfoBtn, 0, 0);
         buttonGrid.add(safeZoneBtn, 1, 0);
@@ -240,11 +220,6 @@ public class DisasterHelperUI extends Application {
         return card;
     }
     
-    /**
-     * Helper to create styled buttons for the Quick Access section.
-     * @param text The button's text.
-     * @return A styled Button.
-     */
     private Button createQuickAccessButton(String text) {
         Button button = new Button(text);
         button.setFont(getFont(16, FontWeight.BOLD));
@@ -256,10 +231,6 @@ public class DisasterHelperUI extends Application {
         return button;
     }
 
-    /**
-     * Creates a dashboard module for live alerts.
-     * @return A styled VBox node representing a dashboard card.
-     */
     private Node createLiveAlertsModule() {
         VBox card = createDashboardCard("Live Alerts");
         card.setStyle("-fx-background-color: " + ALERT_BACKGROUND_COLOR + "; -fx-background-radius: 12; -fx-padding: 20;");
@@ -286,10 +257,6 @@ public class DisasterHelperUI extends Application {
         return alertLabel;
     }
 
-    /**
-     * Creates a dashboard module for key statistics.
-     * @return A styled VBox node representing a dashboard card.
-     */
     private Node createStatisticsModule() {
         VBox card = createDashboardCard("Statistics");
         GridPane grid = new GridPane();
@@ -322,10 +289,6 @@ public class DisasterHelperUI extends Application {
         return item;
     }
 
-    /**
-     * Creates a dashboard module for featured news.
-     * @return A styled VBox node representing a dashboard card.
-     */
     private Node createFeaturedNewsModule() {
         VBox card = createDashboardCard("Featured News");
         VBox newsList = new VBox(20);
@@ -362,11 +325,6 @@ public class DisasterHelperUI extends Application {
         return item;
     }
     
-    /**
-     * Helper method to create a consistent card layout for dashboard modules.
-     * @param title The title of the card.
-     * @return A VBox styled as a card with a title.
-     */
     private VBox createDashboardCard(String title) {
         VBox card = new VBox(10);
         card.setPadding(new Insets(25));

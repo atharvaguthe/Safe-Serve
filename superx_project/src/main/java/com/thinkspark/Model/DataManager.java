@@ -29,14 +29,6 @@ public class DataManager {
 
     // Static initializer block to populate the lists with some default/dummy data upon application startup.
     static {
-        // Add initial volunteers
-        volunteers.addAll(
-            new Volunteer("Aarav Sharma"),
-            new Volunteer("Priya Singh"),
-            new Volunteer("Rohan Joshi"),
-            new Volunteer("Ananya Patel")
-        );
-
         // Add initial partner NGOs
         ngos.addAll(
             new ManageNgosView.NgoItem("Sahayata Foundation", "Verified", "contact@sahayata.org"),
@@ -47,11 +39,6 @@ public class DataManager {
         // Add a default government alert
         broadcastAlerts.add(
             new Alert("Weather Warning", "Heavy rainfall expected in Nashik region for the next 48 hours. Please stay indoors.", "High")
-        );
-
-        // Add an initial disaster report for demonstration
-        disasterReports.add(
-            new Disaster("Medical Emergency", "Near Gangapur Dam", "Elderly person requires immediate medical attention.")
         );
     }
 

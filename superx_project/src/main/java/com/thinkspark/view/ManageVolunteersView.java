@@ -1,10 +1,12 @@
 package com.thinkspark.view;
 
-import com.thinkspark.model.DataManager;
+import com.thinkspark.dao.TaskDao;
+import com.thinkspark.dao.VolunteerDao;
 import com.thinkspark.model.Task;
 import com.thinkspark.model.Volunteer;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -37,13 +39,14 @@ public class ManageVolunteersView extends Application {
     private final Scene previousScene;
     private final Stage primaryStage;
 
+    private ObservableList<VolunteerItem> volunteerItems;
+    private final TaskDao taskDao;
+    private final VolunteerDao volunteerDao;
+
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
 
-    /**
-     * A simple wrapper class for displaying volunteer information in the ListView.
-     */
     private static class VolunteerItem {
         private final String name;
         private final String status;
@@ -56,9 +59,6 @@ public class ManageVolunteersView extends Application {
         }
     }
 
-    /**
-     * Custom ListCell to render the VolunteerItem data.
-     */
     private static class VolunteerCell extends ListCell<VolunteerItem> {
         private final HBox content = new HBox();
         private final VBox details = new VBox(5);
@@ -108,6 +108,8 @@ public class ManageVolunteersView extends Application {
     public ManageVolunteersView(Stage primaryStage, Scene previousScene) {
         this.primaryStage = primaryStage;
         this.previousScene = previousScene;
+        this.taskDao = new TaskDao();
+        this.volunteerDao = new VolunteerDao();
     }
 
     @Override
@@ -126,6 +128,36 @@ public class ManageVolunteersView extends Application {
         Scene scene = new Scene(scrollPane, 1280, 900);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Manage Volunteers | NGO Dashboard");
+
+        // --- Firebase Listeners ---
+        ObservableList<Task> allTasks = FXCollections.observableArrayList();
+        ObservableList<Volunteer> allVolunteers = FXCollections.observableArrayList();
+
+        // Listen for real-time updates from both collections
+        taskDao.listenForTasks(allTasks);
+        volunteerDao.listenForVolunteers(allVolunteers);
+
+        // Add listeners to update the UI whenever the data changes
+        allTasks.addListener((ListChangeListener<Task>) c -> updateVolunteerItems(allVolunteers, allTasks));
+        allVolunteers.addListener((ListChangeListener<Volunteer>) c -> updateVolunteerItems(allVolunteers, allTasks));
+
+        // Initial data load
+        updateVolunteerItems(allVolunteers, allTasks);
+    }
+
+    private void updateVolunteerItems(ObservableList<Volunteer> allVolunteers, ObservableList<Task> allTasks) {
+        volunteerItems.clear();
+        for (Volunteer volunteer : allVolunteers) {
+            Optional<Task> assignedTask = allTasks.stream()
+                .filter(task -> task.getAssignedTo().equals(volunteer.getName()))
+                .findFirst();
+
+            if (assignedTask.isPresent()) {
+                volunteerItems.add(new VolunteerItem(volunteer.getName(), "Active", assignedTask.get().getDescription()));
+            } else {
+                volunteerItems.add(new VolunteerItem(volunteer.getName(), "Inactive", "On Standby"));
+            }
+        }
     }
 
     private Node createHeader() {
@@ -158,31 +190,12 @@ public class ManageVolunteersView extends Application {
                       "-fx-background-radius: 12; " +
                       "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
 
-        // --- Data Integration ---
-        // Create a list of VolunteerItems by checking the status of each volunteer from DataManager
-        ObservableList<VolunteerItem> volunteerItems = FXCollections.observableArrayList();
-        ObservableList<Volunteer> allVolunteers = DataManager.getVolunteers();
-        ObservableList<Task> allTasks = DataManager.getAssignedTasks();
-
-        for (Volunteer volunteer : allVolunteers) {
-            // Find if the volunteer has an assigned task
-            Optional<Task> assignedTask = allTasks.stream()
-                .filter(task -> task.getAssignedTo().equals(volunteer.getName()))
-                .findFirst();
-
-            if (assignedTask.isPresent()) {
-                // If a task is found, the volunteer is Active
-                volunteerItems.add(new VolunteerItem(volunteer.getName(), "Active", assignedTask.get().getDescription()));
-            } else {
-                // Otherwise, the volunteer is Inactive
-                volunteerItems.add(new VolunteerItem(volunteer.getName(), "Inactive", "On Standby"));
-            }
-        }
+        volunteerItems = FXCollections.observableArrayList();
 
         ListView<VolunteerItem> listView = new ListView<>(volunteerItems);
         listView.setCellFactory(param -> new VolunteerCell());
         listView.setStyle("-fx-background-color: transparent;");
-        listView.setPlaceholder(new Label("No volunteers registered in the system."));
+        listView.setPlaceholder(new Label("No volunteers found in the database."));
 
         card.getChildren().add(listView);
         

@@ -1,7 +1,8 @@
 package com.thinkspark.view;
 
-import com.thinkspark.model.DataManager;
+import com.thinkspark.dao.NgoDao;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -30,6 +31,8 @@ public class ManageNgosView extends Application {
 
     private final Scene previousScene;
     private final Stage primaryStage;
+    private final NgoDao ngoDao;
+    private ObservableList<NgoItem> ngosList;
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
@@ -37,7 +40,6 @@ public class ManageNgosView extends Application {
 
     /**
      * Public static inner class to represent an NGO.
-     * This needs to be public and static so it can be accessed from DataManager.
      */
     public static class NgoItem {
         private String name;
@@ -89,15 +91,12 @@ public class ManageNgosView extends Application {
 
                 content.getChildren().addAll(details, spacer, statusLabel);
 
-                // Only show the verify button if the NGO is pending
                 if ("Pending Verification".equalsIgnoreCase(item.getStatus())) {
                     Button verifyButton = new Button("Verify NGO");
                     verifyButton.setTextFill(Color.WHITE);
                     verifyButton.setStyle("-fx-background-color: " + ACTION_BUTTON_COLOR + "; -fx-background-radius: 6; -fx-cursor: hand;");
                     verifyButton.setOnAction(e -> {
-                        // Update the status in the data model
                         item.setStatus("Verified");
-                        // Force the ListView to redraw this cell to reflect the change
                         getListView().refresh();
                     });
                     content.getChildren().add(verifyButton);
@@ -110,6 +109,7 @@ public class ManageNgosView extends Application {
     public ManageNgosView(Stage primaryStage, Scene previousScene) {
         this.primaryStage = primaryStage;
         this.previousScene = previousScene;
+        this.ngoDao = new NgoDao();
     }
 
     @Override
@@ -126,6 +126,9 @@ public class ManageNgosView extends Application {
         Scene scene = new Scene(scrollPane, 1280, 900);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Manage NGOs | Government Dashboard");
+
+        // Start listening for NGOs from Firebase
+        ngoDao.listenForNgos(ngosList);
     }
 
     private Node createHeader() {
@@ -157,10 +160,9 @@ public class ManageNgosView extends Application {
                       "-fx-background-radius: 12; " +
                       "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
 
-        // Get the live list of NGOs from the central DataManager
-        ObservableList<NgoItem> ngos = DataManager.getNgos();
+        ngosList = FXCollections.observableArrayList();
 
-        ListView<NgoItem> listView = new ListView<>(ngos);
+        ListView<NgoItem> listView = new ListView<>(ngosList);
         listView.setCellFactory(param -> new NgoCell());
         listView.setStyle("-fx-background-color: transparent;");
         listView.setPlaceholder(new Label("No NGOs to display."));

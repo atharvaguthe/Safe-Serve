@@ -1,26 +1,16 @@
 package com.thinkspark.view;
 
+import com.thinkspark.dao.AlertDao;
 import com.thinkspark.model.Alert;
-import com.thinkspark.model.DataManager;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -29,7 +19,6 @@ import javafx.stage.Stage;
 
 public class CitizenDashboard extends Application {
 
-    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String SECONDARY_ACCENT_COLOR = "#48BB78";
@@ -41,6 +30,18 @@ public class CitizenDashboard extends Application {
 
     private Stage primaryStage;
     private Scene dashboardScene;
+    private String userName;
+
+    private AlertDao alertDao;
+    private ObservableList<Alert> liveAlertsList;
+
+    public CitizenDashboard() {
+        this.userName = "Citizen";
+    }
+
+    public CitizenDashboard(String userName) {
+        this.userName = (userName == null || userName.isEmpty()) ? "Citizen" : userName;
+    }
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
@@ -50,21 +51,20 @@ public class CitizenDashboard extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
 
+        alertDao = new AlertDao();
+        liveAlertsList = FXCollections.observableArrayList();
+        alertDao.listenForAlerts(liveAlertsList);
+
         VBox rootLayout = new VBox(30);
         rootLayout.setPadding(new Insets(20, 40, 40, 40));
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
-        Node header = createHeader();
-        Node heroSection = createHeroSection();
-        GridPane mainGrid = createMainGrid();
-
-        rootLayout.getChildren().addAll(header, heroSection, mainGrid);
+        rootLayout.getChildren().addAll(createHeader(), createHeroSection(), createMainGrid());
 
         ScrollPane scrollPane = new ScrollPane(rootLayout);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background: " + BACKGROUND_COLOR + ";");
 
         dashboardScene = new Scene(scrollPane, 1280, 900);
         primaryStage.setTitle("Citizen Dashboard | Disaster Relief Helper");
@@ -116,9 +116,9 @@ public class CitizenDashboard extends Application {
             link.setOnMouseExited(e -> link.setUnderline(false));
             
             if ("Home".equals(item)) {
-                 link.setOnMouseClicked(e -> primaryStage.setScene(dashboardScene));
+                 link.setOnMouseClicked(e -> new CitizenDashboard(this.userName).start(primaryStage));
             } else if ("Assistance".equals(item)) {
-                link.setOnMouseClicked(e -> new AssistanceView(primaryStage, dashboardScene).start(primaryStage));
+                link.setOnMouseClicked(e -> new AssistanceView(primaryStage, dashboardScene, this.userName).start(primaryStage));
             } else if ("About Us".equals(item)) {
                 link.setOnMouseClicked(e -> new AboutUsView(primaryStage, dashboardScene).start(primaryStage));
             } else if ("Resources".equals(item)) {
@@ -127,20 +127,22 @@ public class CitizenDashboard extends Application {
             navLinks.getChildren().add(link);
         }
 
-        MenuButton profileButton = new MenuButton("C");
+        MenuButton profileButton = new MenuButton(this.userName.substring(0, 1).toUpperCase());
         MenuItem settingsItem = new MenuItem("Settings");
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(settingsItem, logoutItem);
 
         settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
-        logoutItem.setOnAction(e -> new DisasterHelperUI().start(new Stage()));
+        logoutItem.setOnAction(e -> {
+            primaryStage.close();
+            new DisasterHelperUI().start(new Stage());
+        });
 
         profileButton.setFont(getFont(16, FontWeight.BOLD));
         profileButton.setStyle(
             "-fx-background-color: " + PRIMARY_BLUE + "; " +
             "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " +
-            "-fx-background-radius: 50em; " +
-            "-fx-padding: 0;"
+            "-fx-background-radius: 50em; -fx-padding: 0;"
         );
         profileButton.setMinSize(40, 40);
         profileButton.setMaxSize(40, 40);
@@ -153,18 +155,16 @@ public class CitizenDashboard extends Application {
     private Node createHeroSection() {
         StackPane heroPane = new StackPane();
         heroPane.setPadding(new Insets(40));
-        heroPane.setStyle("-fx-background-color: linear-gradient(to right, " + PRIMARY_BLUE + ", #007ACC); " +
-                          "-fx-background-radius: 12;");
+        heroPane.setStyle("-fx-background-color: linear-gradient(to right, " + PRIMARY_BLUE + ", #007ACC); -fx-background-radius: 12;");
 
         VBox content = new VBox(15);
         content.setAlignment(Pos.CENTER_LEFT);
 
-        Label welcome = new Label("Welcome back, Citizen!");
+        Label welcome = new Label("Welcome back, " + this.userName + "!");
         welcome.setFont(getFont(28, FontWeight.BOLD));
         welcome.setTextFill(Color.web(FONT_COLOR_LIGHT));
 
-        Label subtitle = new Label("Your central hub for disaster assistance, resources, and real-time alerts. " +
-                                   "Report incidents to help us respond faster.");
+        Label subtitle = new Label("Your central hub for disaster assistance, resources, and real-time alerts.");
         subtitle.setFont(getFont(16, FontWeight.NORMAL));
         subtitle.setTextFill(Color.web(FONT_COLOR_LIGHT));
         subtitle.setOpacity(0.9);
@@ -177,7 +177,8 @@ public class CitizenDashboard extends Application {
         reportButton.setPadding(new Insets(12, 20, 12, 20));
         VBox.setMargin(reportButton, new Insets(10, 0, 0, 0));
 
-        reportButton.setOnAction(e -> new ReportDisasterView(primaryStage, dashboardScene).start(primaryStage));
+        // UPDATED to pass username
+        reportButton.setOnAction(e -> new ReportDisasterView(primaryStage, dashboardScene, this.userName).start(primaryStage));
 
         content.getChildren().addAll(welcome, subtitle, reportButton);
         heroPane.getChildren().add(content);
@@ -186,19 +187,18 @@ public class CitizenDashboard extends Application {
 
     private Node createQuickAccessModule() {
         VBox card = createDashboardCard("Quick Access");
-
         HBox buttonBox = new HBox(15);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(10, 0, 0, 0));
 
         Node mapButton = createQuickAccessButton("🗺️ Map", "View disaster map");
         Node donateButton = createQuickAccessButton("💖 Donate", "Support the cause");
-        Node requestsButton = createQuickAccessButton("📋 All Requests", "See active requests");
+        Node myRequestsButton = createQuickAccessButton("📋 My Requests", "See your requests");
 
+        myRequestsButton.setOnMouseClicked(e -> new MyRequestsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         donateButton.setOnMouseClicked(e -> new DonationsView(primaryStage, dashboardScene).start(primaryStage));
-        requestsButton.setOnMouseClicked(e -> new AllRequestsView(primaryStage, dashboardScene).start(primaryStage));
 
-        buttonBox.getChildren().addAll(mapButton, donateButton, requestsButton);
+        buttonBox.getChildren().addAll(mapButton, donateButton, myRequestsButton);
         card.getChildren().add(buttonBox);
         return card;
     }
@@ -228,7 +228,7 @@ public class CitizenDashboard extends Application {
 
     private Node createLiveAlertsModule() {
         VBox card = createDashboardCard("Live Government Alerts");
-        ListView<Alert> alertsList = new ListView<>(DataManager.getBroadcastAlerts());
+        ListView<Alert> alertsList = new ListView<>(liveAlertsList);
         alertsList.setPlaceholder(new Label("No active government alerts."));
 
         alertsList.setCellFactory(param -> new ListCell<Alert>() {
@@ -243,7 +243,7 @@ public class CitizenDashboard extends Application {
 
                     Text message = new Text(item.getMessage());
                     message.setFont(CitizenDashboard.getFont(14, FontWeight.NORMAL));
-                    message.setWrappingWidth(param.getWidth() - 30); // Ensure text wraps
+                    message.setWrappingWidth(param.getWidth() - 30);
 
                     if ("High".equalsIgnoreCase(item.getPriority())) {
                         title.setFill(Color.web(ALERT_COLOR));
@@ -299,9 +299,9 @@ public class CitizenDashboard extends Application {
         VBox newsList = new VBox(15);
         newsList.setPadding(new Insets(10, 0, 0, 0));
 
-        newsList.getChildren().add(createNewsItem("Community Rallies to Provide Aid", "Volunteers from across the city have gathered..."));
-        newsList.getChildren().add(createNewsItem("New Early Warning System Deployed", "The new city-wide siren system was successfully tested..."));
-        newsList.getChildren().add(createNewsItem("How to Prepare an Emergency Kit", "Experts advise having a kit with essentials ready..."));
+        newsList.getChildren().add(createNewsItem("Community Rallies to Provide Aid", "Volunteers from across the city..."));
+        newsList.getChildren().add(createNewsItem("New Early Warning System Deployed", "The new city-wide siren system was..."));
+        newsList.getChildren().add(createNewsItem("How to Prepare an Emergency Kit", "Experts advise having a kit with essentials..."));
 
         card.getChildren().add(newsList);
         return card;
@@ -321,7 +321,6 @@ public class CitizenDashboard extends Application {
         item.getChildren().addAll(titleLabel, summaryLabel);
         item.setStyle("-fx-border-color: " + BORDER_COLOR + " transparent transparent transparent; -fx-border-width: 1; -fx-padding: 10 0 0 0;");
         
-        // A better way to handle the first item's border
         if (item.getParent() instanceof VBox && ((VBox) item.getParent()).getChildren().isEmpty()) {
             item.setStyle("-fx-border-width: 0; -fx-padding: 0;");
         }

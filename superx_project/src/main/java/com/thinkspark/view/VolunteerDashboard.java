@@ -1,28 +1,24 @@
 package com.thinkspark.view;
 
+import com.thinkspark.dao.AlertDao;
+import com.thinkspark.dao.TaskDao;
+import com.thinkspark.model.Alert;
 import com.thinkspark.model.DataManager;
 import com.thinkspark.model.Task;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class VolunteerDashboard extends Application {
@@ -35,15 +31,18 @@ public class VolunteerDashboard extends Application {
     private static final String FONT_COLOR_MEDIUM = "#4A5568";
     private static final String FONT_COLOR_LIGHT = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
-    private static final String PRIMARY_ACCENT_ORANGE = "#FCA311";
+    private static final String ALERT_COLOR = "#E53E3E";
+
 
     private Stage primaryStage;
     private Scene dashboardScene;
     private ListView<Task> tasksListView;
+    private final String currentVolunteerName = "Aarav Sharma"; // This would be dynamic in a real app
 
-    // For demonstration, we assume a specific volunteer is logged in.
-    // This would be set dynamically after a real login.
-    private final String currentVolunteerName = "Aarav Sharma";
+    private AlertDao alertDao;
+    private TaskDao taskDao;
+    private ObservableList<Alert> liveAlertsList;
+
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
@@ -52,7 +51,14 @@ public class VolunteerDashboard extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        
+
+        // --- Initialize DAOs and start listening for data ---
+        alertDao = new AlertDao();
+        taskDao = new TaskDao();
+        liveAlertsList = FXCollections.observableArrayList();
+        alertDao.listenForAlerts(liveAlertsList);
+
+
         VBox rootLayout = new VBox(40);
         rootLayout.setPadding(new Insets(20, 50, 50, 50));
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
@@ -70,14 +76,15 @@ public class VolunteerDashboard extends Application {
         dashboardScene = new Scene(scrollPane, 1366, 900);
         primaryStage.setTitle("Volunteer Dashboard | " + currentVolunteerName);
         primaryStage.setScene(dashboardScene);
-        
-        // Listen for changes in the central task list and update the UI accordingly.
+
+        // Listen for changes in assigned tasks from Firebase
+        taskDao.listenForTasks(DataManager.getAssignedTasks());
         DataManager.getAssignedTasks().addListener((ListChangeListener<Task>) c -> updateAssignedTasks());
-        updateAssignedTasks(); // Perform initial load of tasks.
-        
+        updateAssignedTasks();
+
         primaryStage.show();
     }
-    
+
     private GridPane createMainGrid(){
         GridPane mainGrid = new GridPane();
         mainGrid.setHgap(40);
@@ -86,7 +93,9 @@ public class VolunteerDashboard extends Application {
 
         mainGrid.add(createQuickAccessModule(), 0, 0);
         mainGrid.add(createAssignedTasksModule(), 1, 0);
-        mainGrid.add(createTeamStatsModule(), 0, 1, 2, 1);
+        mainGrid.add(createTeamStatsModule(), 0, 1);
+        mainGrid.add(createLiveAlertsModule(), 1, 1);
+
 
         return mainGrid;
     }
@@ -105,17 +114,14 @@ public class VolunteerDashboard extends Application {
 
         HBox navLinks = new HBox(40);
         navLinks.setAlignment(Pos.CENTER);
-        
+
         Label dashboardLink = new Label("Dashboard");
         dashboardLink.setFont(getFont(16, FontWeight.MEDIUM));
         dashboardLink.setOnMouseClicked(e -> primaryStage.setScene(dashboardScene));
-        
-        Label tasksLink = new Label("My Tasks");
-        tasksLink.setFont(getFont(16, FontWeight.MEDIUM));
-        tasksLink.setOnMouseClicked(e -> new MyTasksView(primaryStage, dashboardScene).start(primaryStage));
-        
-        navLinks.getChildren().addAll(dashboardLink, tasksLink);
-        
+
+        // "My Tasks" link has been removed from here
+        navLinks.getChildren().add(dashboardLink);
+
         MenuButton profileButton = new MenuButton("Profile");
         profileButton.setFont(getFont(16, FontWeight.MEDIUM));
         MenuItem settingsItem = new MenuItem("Settings");
@@ -123,8 +129,11 @@ public class VolunteerDashboard extends Application {
         profileButton.getItems().addAll(settingsItem, logoutItem);
 
         settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
-        logoutItem.setOnAction(e -> new DisasterHelperUI().start(new Stage()));
-        
+        logoutItem.setOnAction(e -> {
+            primaryStage.close();
+            new DisasterHelperUI().start(new Stage());
+        });
+
         navLinks.getChildren().add(profileButton);
 
         header.getChildren().addAll(logo, spacer, navLinks);
@@ -156,16 +165,16 @@ public class VolunteerDashboard extends Application {
         buttonGrid.setHgap(20);
         buttonGrid.setVgap(20);
         buttonGrid.setPadding(new Insets(15, 0, 0, 0));
-        
+
         Button reportButton = createQuickAccessButton("🚨 Report Incident", true);
-        reportButton.setOnAction(e -> new ReportDisasterView(primaryStage, dashboardScene).start(primaryStage));
-        
+        reportButton.setOnAction(e -> new ReportDisasterView(primaryStage, dashboardScene, currentVolunteerName).start(primaryStage));
+
         Button requestHelpButton = createQuickAccessButton("🤝 Request Help", false);
-        requestHelpButton.setOnAction(e -> new AssistanceView(primaryStage, dashboardScene).start(primaryStage));
-        
+        requestHelpButton.setOnAction(e -> new AssistanceView(primaryStage, dashboardScene, currentVolunteerName).start(primaryStage));
+
         Button logHoursButton = createQuickAccessButton("📋 Log Hours", false);
         logHoursButton.setOnAction(e -> new LogHoursView(primaryStage, dashboardScene).start(primaryStage));
-        
+
         buttonGrid.add(reportButton, 0, 0);
         buttonGrid.add(requestHelpButton, 1, 0);
         buttonGrid.add(createQuickAccessButton("🗺️ View Map", false), 0, 1);
@@ -174,7 +183,7 @@ public class VolunteerDashboard extends Application {
         card.getChildren().add(buttonGrid);
         return card;
     }
-    
+
     private Button createQuickAccessButton(String text, boolean isPrimary) {
         Button button = new Button(text);
         button.setFont(getFont(16, FontWeight.BOLD));
@@ -190,7 +199,7 @@ public class VolunteerDashboard extends Application {
             button.setTextFill(Color.web(FONT_COLOR_DARK));
             style = "-fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + ";";
         }
-        
+
         button.setStyle(style + " -fx-background-radius: 10; -fx-border-radius: 10; -fx-cursor: hand;");
         return button;
     }
@@ -212,16 +221,12 @@ public class VolunteerDashboard extends Application {
                 }
             }
         });
-        
+
         VBox.setVgrow(tasksListView, Priority.ALWAYS);
         card.getChildren().add(tasksListView);
         return card;
     }
-    
-    /**
-     * Filters the global task list from DataManager and updates the ListView
-     * to show only the tasks assigned to the current volunteer.
-     */
+
     private void updateAssignedTasks() {
         tasksListView.getItems().clear();
         for (Task task : DataManager.getAssignedTasks()) {
@@ -259,19 +264,55 @@ public class VolunteerDashboard extends Application {
     private Node createStatItem(String number, String label) {
         VBox item = new VBox(-5);
         item.setAlignment(Pos.CENTER);
-        
+
         Label numberLabel = new Label(number);
         numberLabel.setFont(getFont(48, FontWeight.BOLD));
         numberLabel.setTextFill(Color.web(PRIMARY_BLUE));
-        
+
         Label textLabel = new Label(label);
         textLabel.setFont(getFont(16, FontWeight.NORMAL));
         textLabel.setTextFill(Color.web(FONT_COLOR_MEDIUM));
-        
+
         item.getChildren().addAll(numberLabel, textLabel);
         return item;
     }
-    
+
+    private Node createLiveAlertsModule() {
+        VBox card = createDashboardCard("Live Government Alerts");
+        ListView<Alert> alertsList = new ListView<>(liveAlertsList);
+        alertsList.setPlaceholder(new Label("No active government alerts."));
+
+        alertsList.setCellFactory(param -> new ListCell<Alert>() {
+            @Override
+            protected void updateItem(Alert item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    Text title = new Text(item.getTitle());
+                    title.setFont(VolunteerDashboard.getFont(14, FontWeight.BOLD));
+
+                    Text message = new Text(item.getMessage());
+                    message.setFont(VolunteerDashboard.getFont(14, FontWeight.NORMAL));
+                    message.setWrappingWidth(param.getWidth() - 30);
+
+                    if ("High".equalsIgnoreCase(item.getPriority())) {
+                        title.setFill(Color.web(ALERT_COLOR));
+                    } else {
+                        title.setFill(Color.web(FONT_COLOR_DARK));
+                    }
+                    
+                    VBox alertContent = new VBox(5, title, message);
+                    alertContent.setPadding(new Insets(5));
+                    setGraphic(alertContent);
+                }
+            }
+        });
+        VBox.setVgrow(alertsList, Priority.ALWAYS);
+        card.getChildren().add(alertsList);
+        return card;
+    }
+
     private VBox createDashboardCard(String title) {
         VBox card = new VBox(10);
         card.setPadding(new Insets(25));
@@ -281,11 +322,11 @@ public class VolunteerDashboard extends Application {
                       "-fx-border-width: 1;");
         GridPane.setHgrow(card, Priority.ALWAYS);
         GridPane.setVgrow(card, Priority.ALWAYS);
-        
+
         Label titleLabel = new Label(title);
         titleLabel.setFont(getFont(22, FontWeight.BOLD));
         titleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
-        
+
         card.getChildren().add(titleLabel);
         return card;
     }

@@ -1,8 +1,10 @@
 package com.thinkspark.view;
 
-import com.thinkspark.model.DataManager;
+import com.thinkspark.dao.DisasterDao;
 import com.thinkspark.model.Disaster;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -39,6 +41,8 @@ public class GovDashboard extends Application {
 
     private Stage primaryStage;
     private Scene dashboardScene;
+    private DisasterDao disasterDao;
+    private ObservableList<Disaster> liveDisasterReportsList;
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
@@ -47,6 +51,11 @@ public class GovDashboard extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
+
+        // --- Initialize DAO and start listening for data ---
+        disasterDao = new DisasterDao();
+        liveDisasterReportsList = FXCollections.observableArrayList();
+        disasterDao.listenForDisasterReports(liveDisasterReportsList);
 
         VBox rootLayout = new VBox(40);
         rootLayout.setPadding(new Insets(20, 50, 50, 50));
@@ -82,7 +91,7 @@ public class GovDashboard extends Application {
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(10, 0, 20, 0));
 
-        Label logo = new Label("🏛️ Helper Command");
+        Label logo = new Label("Helper Command");
         logo.setFont(getFont(32, FontWeight.BOLD));
         logo.setTextFill(Color.web(PRIMARY_BLUE));
 
@@ -96,7 +105,10 @@ public class GovDashboard extends Application {
         profileButton.getItems().addAll(settingsItem, logoutItem);
         
         settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
-        logoutItem.setOnAction(e -> new DisasterHelperUI().start(new Stage()));
+        logoutItem.setOnAction(e -> {
+            primaryStage.close();
+            new DisasterHelperUI().start(new Stage());
+        });
 
         header.getChildren().addAll(logo, spacer, profileButton);
         return header;
@@ -123,10 +135,10 @@ public class GovDashboard extends Application {
         buttonGrid.setVgap(20);
         buttonGrid.setPadding(new Insets(15, 0, 0, 0));
 
-        Button broadcastButton = createQuickAccessButton("📢 Broadcast Alert", true);
+        Button broadcastButton = createQuickAccessButton("Broadcast Alert", true);
         broadcastButton.setOnAction(e -> new BroadcastAlertsView(primaryStage, dashboardScene).start(primaryStage));
 
-        Button manageNgosButton = createQuickAccessButton("🌐 Manage NGOs", false);
+        Button manageNgosButton = createQuickAccessButton("Manage NGOs", false);
         manageNgosButton.setOnAction(e -> new ManageNgosView(primaryStage, dashboardScene).start(primaryStage));
 
         buttonGrid.add(broadcastButton, 0, 0);
@@ -153,7 +165,7 @@ public class GovDashboard extends Application {
     
     private Node createDisasterReportsModule() {
         VBox card = createDashboardCard("Incoming Disaster Reports");
-        ListView<Disaster> reportsList = new ListView<>(DataManager.getDisasterReports());
+        ListView<Disaster> reportsList = new ListView<>(liveDisasterReportsList);
         reportsList.setPlaceholder(new Label("No new disaster reports from citizens."));
         reportsList.setCellFactory(param -> new ListCell<Disaster>() {
             @Override

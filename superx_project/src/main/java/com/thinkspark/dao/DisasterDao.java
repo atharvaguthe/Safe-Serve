@@ -1,25 +1,21 @@
 package com.thinkspark.dao;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.WriteResult;
+import com.google.cloud.firestore.*;
 import com.thinkspark.model.Disaster;
 import com.thinkspark.model.FirebaseConfig;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-/**
- * A Data Access Object (DAO) for handling all database operations related to Disaster entities.
- * This class abstracts the low-level details of communicating with Firestore for disaster data.
- */
 public class DisasterDao {
 
     private final Firestore db;
 
-    /**
-     * Initializes the DAO and gets the Firestore database instance from the central config.
-     */
     public DisasterDao() {
         Firestore initializedDb = null;
         try {
@@ -31,32 +27,81 @@ public class DisasterDao {
         this.db = initializedDb;
     }
 
-    /**
-     * Saves a Disaster object to the 'disasters' collection in Firestore.
-     *
-     * @param disaster The Disaster object to save.
-     */
     public void saveDisasterReport(Disaster disaster) {
         if (db == null) {
             System.err.println("Firestore is not initialized. Cannot save report.");
             return;
         }
 
-        // Asynchronously add a new document with a Firestore-generated ID to the "disasters" collection.
-        ApiFuture<WriteResult> future = db.collection("disasters").add(disaster);
+        Map<String, Object> disasterData = new HashMap<>();
+        disasterData.put("type", disaster.getType());
+        disasterData.put("location", disaster.getLocation());
+        disasterData.put("description", disaster.getDescription());
+        disasterData.put("citizenName", disaster.getCitizenName()); // ADDED
+        disasterData.put("timestamp", FieldValue.serverTimestamp());
 
-        // Add a listener to log the result of the asynchronous operation.
+        ApiFuture<DocumentReference> future = db.collection("disasters").add(disasterData);
+
         future.addListener(() -> {
             try {
-                System.out.println("DAO Success: Disaster report saved to Firebase with update time: " + future.get().getUpdateTime());
+                System.out.println("DAO Success: Disaster report saved to Firebase with new ID: " + future.get().getId());
             } catch (InterruptedException | ExecutionException e) {
                 System.err.println("DAO Error: Failed to save disaster report to Firebase. " + e.getMessage());
                 e.printStackTrace();
             }
-        }, Runnable::run); // Use a direct executor to run the callback immediately.
+        }, Runnable::run);
+    }
+    
+    public void listenForDisasterReports(ObservableList<Disaster> targetList) {
+        if (db == null) {
+            System.err.println("Firestore is not initialized. Cannot listen for disaster reports.");
+            return;
+        }
+
+        db.collection("disasters").orderBy("timestamp", Query.Direction.DESCENDING).limit(10)
+            .addSnapshotListener((snapshots, e) -> {
+                if (e != null) {
+                    System.err.println("Listen for disaster reports failed: " + e);
+                    return;
+                }
+
+                Platform.runLater(() -> {
+                    targetList.clear();
+                    for (QueryDocumentSnapshot doc : snapshots) {
+                        if (doc.exists()) {
+                            Disaster disaster = doc.toObject(Disaster.class);
+                            targetList.add(disaster);
+                        }
+                    }
+                });
+            });
     }
 
-    // You can add other methods here in the future, for example:
-    // public List<Disaster> getAllDisasters() { ... }
-    // public void updateDisaster(String documentId, Disaster disaster) { ... }
+    // NEW METHOD to listen for requests by a specific citizen
+    public void listenForDisastersByCitizen(ObservableList<Disaster> targetList, String citizenName) {
+        if (db == null) {
+            System.err.println("Firestore is not initialized. Cannot listen for disaster reports.");
+            return;
+        }
+
+        db.collection("disasters")
+            .whereEqualTo("citizenName", citizenName) // Filter by citizenName
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .addSnapshotListener((snapshots, e) -> {
+                if (e != null) {
+                    System.err.println("Listen for citizen's disaster reports failed: " + e);
+                    return;
+                }
+
+                Platform.runLater(() -> {
+                    targetList.clear();
+                    for (QueryDocumentSnapshot doc : snapshots) {
+                        if (doc.exists()) {
+                            Disaster disaster = doc.toObject(Disaster.class);
+                            targetList.add(disaster);
+                        }
+                    }
+                });
+            });
+    }
 }

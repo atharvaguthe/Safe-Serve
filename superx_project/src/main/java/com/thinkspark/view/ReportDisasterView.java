@@ -1,7 +1,6 @@
 package com.thinkspark.view;
 
 import com.thinkspark.dao.DisasterDao;
-import com.thinkspark.model.DataManager;
 import com.thinkspark.model.Disaster;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
@@ -34,15 +33,18 @@ public class ReportDisasterView extends Application {
 
     private final Scene previousScene;
     private final Stage primaryStage;
+    private final String userName; // ADDED
     private File selectedFile;
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
 
-    public ReportDisasterView(Stage primaryStage, Scene previousScene) {
+    // UPDATED CONSTRUCTOR
+    public ReportDisasterView(Stage primaryStage, Scene previousScene, String userName) {
         this.primaryStage = primaryStage;
         this.previousScene = previousScene;
+        this.userName = userName;
     }
 
 
@@ -160,16 +162,12 @@ public class ReportDisasterView extends Application {
                 return;
             }
             
-            Disaster newDisaster = new Disaster(type, location, description);
+            // UPDATED to include the citizen's name
+            Disaster newDisaster = new Disaster(type, location, description, this.userName);
             
-            // Use the DisasterDao to save the report to the database
             DisasterDao disasterDao = new DisasterDao();
             disasterDao.saveDisasterReport(newDisaster);
             
-            // (Optional) Also add to the local DataManager for immediate UI updates in other open windows.
-            DataManager.getDisasterReports().add(newDisaster);
-            
-            // --- Confirmation UI ---
             VBox confirmationVBox = new VBox(20);
             confirmationVBox.setAlignment(Pos.CENTER);
             confirmationVBox.setPadding(new Insets(40));

@@ -1,11 +1,14 @@
 package com.thinkspark.view;
 
+import com.thinkspark.dao.DisasterDao;
+import com.thinkspark.dao.VolunteerDao;
 import com.thinkspark.model.DataManager;
 import com.thinkspark.model.Disaster;
 import com.thinkspark.model.Task;
 import com.thinkspark.model.Volunteer;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -46,6 +49,10 @@ public class AllRequestsView extends Application {
     private final Scene previousScene;
     private final Stage primaryStage;
     private ListView<RequestItem> listView;
+    private ObservableList<RequestItem> requestItems;
+    private final DisasterDao disasterDao;
+    private final VolunteerDao volunteerDao;
+    private final ObservableList<Volunteer> availableVolunteers;
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
@@ -118,8 +125,6 @@ public class AllRequestsView extends Application {
      * @param request The request item to be assigned.
      */
     private void assignTaskToVolunteer(RequestItem request) {
-        ObservableList<Volunteer> availableVolunteers = DataManager.getVolunteers();
-
         if (availableVolunteers.isEmpty()) {
             new Alert(Alert.AlertType.WARNING, "There are no available volunteers to assign.", ButtonType.OK).show();
             return;
@@ -150,6 +155,9 @@ public class AllRequestsView extends Application {
     public AllRequestsView(Stage primaryStage, Scene previousScene) {
         this.primaryStage = primaryStage;
         this.previousScene = previousScene;
+        this.disasterDao = new DisasterDao();
+        this.volunteerDao = new VolunteerDao();
+        this.availableVolunteers = FXCollections.observableArrayList();
     }
 
     @Override
@@ -167,6 +175,20 @@ public class AllRequestsView extends Application {
         Scene scene = new Scene(scrollPane, 1280, 900);
         primaryStage.setScene(scene);
         primaryStage.setTitle("All Requests | NGO Dashboard");
+
+        // Listen for disaster reports from Firebase
+        ObservableList<Disaster> disasterReports = FXCollections.observableArrayList();
+        disasterDao.listenForDisasterReports(disasterReports);
+        disasterReports.addListener((ListChangeListener<Disaster>) c -> {
+            requestItems.setAll(
+                disasterReports.stream()
+                    .map(disaster -> new RequestItem(disaster, "Pending"))
+                    .collect(Collectors.toList())
+            );
+        });
+        
+        // Listen for volunteers from Firebase
+        volunteerDao.listenForVolunteers(availableVolunteers);
     }
 
     private Node createHeader() {
@@ -199,14 +221,9 @@ public class AllRequestsView extends Application {
                       "-fx-background-radius: 12; " +
                       "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
 
-        // Convert the list of Disasters from DataManager into a list of RequestItems for the view
-        ObservableList<RequestItem> requests = FXCollections.observableArrayList(
-            DataManager.getDisasterReports().stream()
-                .map(disaster -> new RequestItem(disaster, "Pending"))
-                .collect(Collectors.toList())
-        );
+        requestItems = FXCollections.observableArrayList();
 
-        listView = new ListView<>(requests);
+        listView = new ListView<>(requestItems);
         listView.setPlaceholder(new Label("No disaster reports to display."));
         listView.setCellFactory(param -> new RequestCell());
         listView.setStyle("-fx-background-color: transparent;");

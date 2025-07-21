@@ -1,6 +1,6 @@
 package com.thinkspark.view;
 
-import com.thinkspark.model.DataManager;
+import com.thinkspark.dao.DisasterDao;
 import com.thinkspark.model.Disaster;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
@@ -19,7 +19,6 @@ import javafx.util.Duration;
 
 public class AssistanceView extends Application {
 
-    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String FONT_COLOR_DARK = "#2D3748";
@@ -30,14 +29,17 @@ public class AssistanceView extends Application {
 
     private final Scene previousScene;
     private final Stage primaryStage;
+    private final String userName; // ADDED
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
 
-    public AssistanceView(Stage primaryStage, Scene previousScene) {
+    // UPDATED CONSTRUCTOR
+    public AssistanceView(Stage primaryStage, Scene previousScene, String userName) {
         this.primaryStage = primaryStage;
         this.previousScene = previousScene;
+        this.userName = userName;
     }
 
     @Override
@@ -47,10 +49,7 @@ public class AssistanceView extends Application {
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
-        Node header = createHeader();
-        Node assistanceForm = createAssistanceForm();
-
-        rootLayout.getChildren().addAll(header, assistanceForm);
+        rootLayout.getChildren().addAll(createHeader(), createAssistanceForm());
 
         ScrollPane scrollPane = new ScrollPane(rootLayout);
         scrollPane.setFitToWidth(true);
@@ -96,7 +95,6 @@ public class AssistanceView extends Application {
         formGrid.setHgap(20);
         formGrid.setVgap(15);
 
-        // --- Form Fields ---
         ComboBox<String> assistanceType = new ComboBox<>();
         assistanceType.getItems().addAll("Medical", "Food & Water", "Shelter", "Rescue", "Other");
         assistanceType.setPromptText("Select a type of help needed");
@@ -105,7 +103,7 @@ public class AssistanceView extends Application {
         Spinner<Integer> peopleSpinner = new Spinner<>(1, 50, 1);
         styleFormControl(peopleSpinner);
 
-        TextField locationField = createTextField("e.g., Near City Park, 456 Oak Ave");
+        TextField locationField = createTextField("e.g., Near City Park, 456 Oak Ave, Nashik");
         TextArea detailsArea = new TextArea();
         detailsArea.setPromptText("Describe your situation, e.g., 'Trapped on rooftop', 'Need baby formula'...");
         detailsArea.setWrapText(true);
@@ -125,7 +123,6 @@ public class AssistanceView extends Application {
         formGrid.add(createLabel("Contact Number"), 0, 4);
         formGrid.add(contactField, 1, 4);
 
-        // --- Form Actions ---
         Button submitButton = new Button("Submit Request");
         submitButton.setFont(getFont(18, FontWeight.BOLD));
         submitButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
@@ -138,7 +135,6 @@ public class AssistanceView extends Application {
         container.setAlignment(Pos.CENTER);
 
         submitButton.setOnAction(e -> {
-            // --- Data Submission Logic ---
             String type = assistanceType.getValue();
             String location = locationField.getText();
             String details = detailsArea.getText();
@@ -151,21 +147,21 @@ public class AssistanceView extends Application {
 
             String fullDescription = "Assistance for " + peopleCount + " person(s). Details: " + details;
             
-            // Add the request as a new Disaster to the central DataManager
-            DataManager.getDisasterReports().add(new Disaster(type, location, fullDescription));
+            // UPDATED to include the citizen's name
+            Disaster newDisaster = new Disaster(type, location, fullDescription, this.userName);
+            
+            DisasterDao disasterDao = new DisasterDao();
+            disasterDao.saveDisasterReport(newDisaster);
 
-            // --- Confirmation UI ---
             VBox confirmationVBox = new VBox(20);
             confirmationVBox.setAlignment(Pos.CENTER);
             confirmationVBox.setPadding(new Insets(40));
             
             Label confirmationTitle = new Label("✅ Request Sent!");
             confirmationTitle.setFont(getFont(24, FontWeight.BOLD));
-            confirmationTitle.setTextFill(Color.web(FONT_COLOR_DARK));
             
-            Label confirmationText = new Label("Your request for assistance has been received. Help is on the way. You will be redirected to the dashboard.");
+            Label confirmationText = new Label("Your request for assistance has been received. Help is on the way.");
             confirmationText.setFont(getFont(16, FontWeight.NORMAL));
-            confirmationText.setTextFill(Color.web(FONT_COLOR_DARK));
             confirmationText.setWrapText(true);
             confirmationText.setTextAlignment(TextAlignment.CENTER);
             

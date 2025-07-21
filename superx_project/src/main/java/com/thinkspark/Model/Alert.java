@@ -1,14 +1,25 @@
 package com.thinkspark.model;
 
+
+import java.util.Date;
+
 /**
- * Represents a broadcast alert sent by a government authority.
- * This class holds the content and priority of an official alert.
+ * Represents a broadcast alert.
+ * This class is structured as a JavaBean for Firestore compatibility.
  */
 public class Alert {
 
-    private final String title;
-    private final String message;
-    private final String priority;
+    private String title;
+    private String message;
+    private String priority;
+
+    @ServerTimestamp
+    private Date timestamp;
+
+    /**
+     * A no-argument constructor is REQUIRED by Firestore for deserialization.
+     */
+    public Alert() {}
 
     /**
      * Constructs a new Alert object.
@@ -23,25 +34,21 @@ public class Alert {
         this.priority = priority;
     }
 
-    // --- Getters ---
+    // --- Getters and Setters ---
+    // Firestore uses these to automatically map data to and from the object.
 
-    public String getTitle() {
-        return title;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public String getMessage() {
-        return message;
-    }
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
 
-    public String getPriority() {
-        return priority;
-    }
+    public String getPriority() { return priority; }
+    public void setPriority(String priority) { this.priority = priority; }
 
-    /**
-     * Provides a string representation of the alert, useful for UI lists and debugging.
-     *
-     * @return A formatted string with the alert's priority and title.
-     */
+    public Date getTimestamp() { return timestamp; }
+    public void setTimestamp(Date timestamp) { this.timestamp = timestamp; }
+
     @Override
     public String toString() {
         return "Alert [" + priority + "]: " + title;

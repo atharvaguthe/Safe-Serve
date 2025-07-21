@@ -1,9 +1,8 @@
 package com.thinkspark.view;
 
+import com.thinkspark.dao.AlertDao;
 import com.thinkspark.model.DataManager;
-// Note: We do not import com.thinkspark.model.Alert to avoid the name conflict.
-// We will use the fully qualified name instead.
-
+// We use the fully qualified name for com.thinkspark.model.Alert to avoid name conflicts
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -133,15 +132,21 @@ public class BroadcastAlertsView extends Application {
             String priority = priorityBox.getValue();
 
             if (title.isEmpty() || message.isEmpty() || priority == null) {
-                // This uses the JavaFX Alert dialog
                 new Alert(Alert.AlertType.ERROR, "Please fill in all fields to broadcast an alert.").showAndWait();
                 return;
             }
 
-            // *** THIS IS THE FIX ***
-            // We use the fully qualified name for our custom model class to avoid confusion.
-            DataManager.getBroadcastAlerts().add(new com.thinkspark.model.Alert(title, message, priority));
+            // 1. Create the Alert object using its fully qualified name
+            com.thinkspark.model.Alert newAlert = new com.thinkspark.model.Alert(title, message, priority);
 
+            // 2. Use the AlertDao to save the alert to the database
+            AlertDao alertDao = new AlertDao();
+            alertDao.saveAlert(newAlert);
+            
+            // 3. (Optional) Also add to the local DataManager for immediate UI updates.
+            DataManager.getBroadcastAlerts().add(newAlert);
+
+            // --- Confirmation UI ---
             VBox confirmationVBox = new VBox(20);
             confirmationVBox.setAlignment(Pos.CENTER);
             confirmationVBox.setPadding(new Insets(40));
@@ -149,7 +154,7 @@ public class BroadcastAlertsView extends Application {
             Label confirmationTitle = new Label("✅ Alert Sent Successfully!");
             confirmationTitle.setFont(getFont(24, FontWeight.BOLD));
             
-            Label confirmationText = new Label("The alert has been broadcast to all relevant channels.");
+            Label confirmationText = new Label("The alert has been broadcast and saved to the database.");
             confirmationText.setFont(getFont(16, FontWeight.NORMAL));
             confirmationText.setTextAlignment(TextAlignment.CENTER);
             

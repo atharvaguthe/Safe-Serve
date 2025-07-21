@@ -1,25 +1,18 @@
 package com.thinkspark.view;
 
+import com.thinkspark.dao.AlertDao;
+import com.thinkspark.dao.DisasterDao;
 import com.thinkspark.model.Alert;
-import com.thinkspark.model.DataManager;
 import com.thinkspark.model.Disaster;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -42,6 +35,12 @@ public class NgoDashboard extends Application {
     private Stage primaryStage;
     private Scene dashboardScene;
 
+    private AlertDao alertDao;
+    private DisasterDao disasterDao;
+    private ObservableList<Alert> liveAlertsList;
+    private ObservableList<Disaster> liveDisasterReportsList;
+
+
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
@@ -49,7 +48,15 @@ public class NgoDashboard extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        
+
+        alertDao = new AlertDao();
+        disasterDao = new DisasterDao();
+        liveAlertsList = FXCollections.observableArrayList();
+        liveDisasterReportsList = FXCollections.observableArrayList();
+        alertDao.listenForAlerts(liveAlertsList);
+        disasterDao.listenForDisasterReports(liveDisasterReportsList);
+
+
         VBox rootLayout = new VBox(40);
         rootLayout.setPadding(new Insets(20, 50, 50, 50));
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
@@ -87,7 +94,7 @@ public class NgoDashboard extends Application {
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(10, 0, 20, 0));
 
-        Label logo = new Label("🤝 NGO Helper");
+        Label logo = new Label("､NGO Helper");
         logo.setFont(getFont(32, FontWeight.BOLD));
         logo.setTextFill(Color.web(PRIMARY_BLUE));
 
@@ -96,7 +103,7 @@ public class NgoDashboard extends Application {
 
         HBox navLinks = new HBox(40);
         navLinks.setAlignment(Pos.CENTER);
-        String[] navItems = { "Dashboard", "Tasks", "Volunteers", "Reports" };
+        String[] navItems = { "Dashboard", "Volunteers", "Reports" };
         for (String item : navItems) {
             Label link = new Label(item);
             link.setFont(getFont(16, FontWeight.MEDIUM));
@@ -104,21 +111,18 @@ public class NgoDashboard extends Application {
             link.setStyle("-fx-cursor: hand;");
             link.setOnMouseEntered(e -> link.setUnderline(true));
             link.setOnMouseExited(e -> link.setUnderline(false));
-            
+
             if ("Dashboard".equals(item)) {
                 link.setOnMouseClicked(e -> primaryStage.setScene(dashboardScene));
-            } else if ("Tasks".equals(item)) {
-                link.setOnMouseClicked(e -> new MyTasksView(primaryStage, dashboardScene).start(primaryStage));
             } else if ("Volunteers".equals(item)) {
                 link.setOnMouseClicked(e -> new ManageVolunteersView(primaryStage, dashboardScene).start(primaryStage));
             } else if ("Reports".equals(item)) {
-                // This now points to the AllRequestsView, which is more relevant for NGOs
                 link.setOnMouseClicked(e -> new AllRequestsView(primaryStage, dashboardScene).start(primaryStage));
             }
-            
+
             navLinks.getChildren().add(link);
         }
-        
+
         MenuButton profileButton = new MenuButton("Profile");
         profileButton.setFont(getFont(16, FontWeight.MEDIUM));
         MenuItem settingsItem = new MenuItem("Settings");
@@ -126,8 +130,13 @@ public class NgoDashboard extends Application {
         profileButton.getItems().addAll(settingsItem, logoutItem);
 
         settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene).start(primaryStage));
-        logoutItem.setOnAction(e -> new DisasterHelperUI().start(new Stage()));
         
+        // --- UPDATED LOGOUT ACTION ---
+        logoutItem.setOnAction(e -> {
+            primaryStage.close(); // Close the current NGO Dashboard window
+            new DisasterHelperUI().start(new Stage()); // Open a new instance of the main UI
+        });
+
         navLinks.getChildren().add(profileButton);
 
         header.getChildren().addAll(logo, spacer, navLinks);
@@ -159,18 +168,16 @@ public class NgoDashboard extends Application {
         buttonGrid.setHgap(20);
         buttonGrid.setVgap(20);
         buttonGrid.setPadding(new Insets(15, 0, 0, 0));
-        
-        // This button takes the NGO to the screen where they can see all reports and assign tasks
-        Button allRequestsButton = createQuickAccessButton("📋 View & Assign Tasks", true);
+
+        Button allRequestsButton = createQuickAccessButton("View & Assign Tasks", true);
         allRequestsButton.setOnAction(e -> new AllRequestsView(primaryStage, dashboardScene).start(primaryStage));
-        
-        Button manageVolunteersButton = createQuickAccessButton("👥 Manage Volunteers", false);
+
+        Button manageVolunteersButton = createQuickAccessButton("Manage Volunteers", false);
         manageVolunteersButton.setOnAction(e -> new ManageVolunteersView(primaryStage, dashboardScene).start(primaryStage));
-        
-        Button viewMapButton = createQuickAccessButton("🗺️ View Map", false);
-        // Add map functionality here later
-        
-        Button viewDonationsButton = createQuickAccessButton("💖 View Donations", false);
+
+        Button viewMapButton = createQuickAccessButton("View Map", false);
+
+        Button viewDonationsButton = createQuickAccessButton("View Donations", false);
         viewDonationsButton.setOnAction(e -> new ViewDonationsView(primaryStage, dashboardScene).start(primaryStage));
 
         buttonGrid.add(allRequestsButton, 0, 0);
@@ -181,7 +188,7 @@ public class NgoDashboard extends Application {
         card.getChildren().add(buttonGrid);
         return card;
     }
-    
+
     private Button createQuickAccessButton(String text, boolean isPrimary) {
         Button button = new Button(text);
         button.setFont(getFont(16, FontWeight.BOLD));
@@ -197,19 +204,18 @@ public class NgoDashboard extends Application {
             button.setTextFill(Color.web(FONT_COLOR_DARK));
             style = "-fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + ";";
         }
-        
+
         button.setStyle(style + " -fx-background-radius: 10; -fx-border-radius: 10; -fx-cursor: hand;");
         return button;
     }
 
     private Node createLiveFeedsModule() {
         VBox card = createDashboardCard("Live Feeds");
-        
-        // Section for Citizen Disaster Reports
+
         Label disasterReportsTitle = new Label("Citizen Disaster Reports");
         disasterReportsTitle.setFont(getFont(16, FontWeight.BOLD));
-        
-        ListView<Disaster> disasterReportsList = new ListView<>(DataManager.getDisasterReports());
+
+        ListView<Disaster> disasterReportsList = new ListView<>(liveDisasterReportsList);
         disasterReportsList.setPlaceholder(new Label("No new disaster reports."));
         disasterReportsList.setCellFactory(param -> new ListCell<Disaster>() {
             @Override
@@ -221,39 +227,38 @@ public class NgoDashboard extends Application {
                     Text type = new Text(item.getType() + " at " + item.getLocation());
                     type.setFont(NgoDashboard.getFont(14, FontWeight.BOLD));
                     type.setFill(Color.web(ALERT_COLOR));
-                    
+
                     Text description = new Text(item.getDescription());
                     description.setWrappingWidth(param.getWidth() - 30);
-                    
+
                     VBox content = new VBox(5, type, description);
                     setGraphic(content);
                 }
             }
         });
 
-        // Section for Government Alerts
         Label govAlertsTitle = new Label("Government Alerts");
         govAlertsTitle.setFont(getFont(16, FontWeight.BOLD));
         govAlertsTitle.setPadding(new Insets(15, 0, 0, 0));
 
-        ListView<Alert> govAlertsList = new ListView<>(DataManager.getBroadcastAlerts());
+        ListView<Alert> govAlertsList = new ListView<>(liveAlertsList);
         govAlertsList.setPlaceholder(new Label("No new government alerts."));
         govAlertsList.setCellFactory(param -> new ListCell<Alert>() {
             @Override
             protected void updateItem(Alert item, boolean empty) {
                 super.updateItem(item, empty);
-                 if (empty || item == null) {
+                if (empty || item == null) {
                     setGraphic(null);
                 } else {
                     Text title = new Text(item.getTitle());
                     title.setFont(NgoDashboard.getFont(14, FontWeight.BOLD));
-                    
+
                     Text message = new Text(item.getMessage());
                     message.setWrappingWidth(param.getWidth() - 30);
 
                     String priorityColor = "High".equalsIgnoreCase(item.getPriority()) ? PRIMARY_ACCENT_ORANGE : FONT_COLOR_DARK;
                     title.setFill(Color.web(priorityColor));
-                    
+
                     VBox content = new VBox(5, title, message);
                     setGraphic(content);
                 }
@@ -262,7 +267,7 @@ public class NgoDashboard extends Application {
 
         VBox.setVgrow(disasterReportsList, Priority.ALWAYS);
         VBox.setVgrow(govAlertsList, Priority.ALWAYS);
-        
+
         card.getChildren().addAll(disasterReportsTitle, disasterReportsList, govAlertsTitle, govAlertsList);
         return card;
     }
@@ -295,19 +300,19 @@ public class NgoDashboard extends Application {
     private Node createStatItem(String number, String label) {
         VBox item = new VBox(-5);
         item.setAlignment(Pos.CENTER);
-        
+
         Label numberLabel = new Label(number);
         numberLabel.setFont(getFont(48, FontWeight.BOLD));
         numberLabel.setTextFill(Color.web(PRIMARY_BLUE));
-        
+
         Label textLabel = new Label(label);
         textLabel.setFont(getFont(16, FontWeight.NORMAL));
         textLabel.setTextFill(Color.web(FONT_COLOR_MEDIUM));
-        
+
         item.getChildren().addAll(numberLabel, textLabel);
         return item;
     }
-    
+
     private VBox createDashboardCard(String title) {
         VBox card = new VBox(10);
         card.setPadding(new Insets(25));
@@ -317,11 +322,11 @@ public class NgoDashboard extends Application {
                       "-fx-border-width: 1;");
         GridPane.setHgrow(card, Priority.ALWAYS);
         GridPane.setVgrow(card, Priority.ALWAYS);
-        
+
         Label titleLabel = new Label(title);
         titleLabel.setFont(getFont(22, FontWeight.BOLD));
         titleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
-        
+
         card.getChildren().add(titleLabel);
         return card;
     }
