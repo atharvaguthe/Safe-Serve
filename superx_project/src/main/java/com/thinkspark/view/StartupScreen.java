@@ -74,6 +74,7 @@ public class StartupScreen extends Application {
         Scene scene = new Scene(rootLayout, 1280, 900);
         primaryStage.setTitle("Welcome to Safe Serve");
         primaryStage.setScene(scene);
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.jpg")));
         primaryStage.show();
         
         // --- Animations ---

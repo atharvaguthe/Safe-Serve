@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -49,9 +50,10 @@ public class LoginUI extends Application {
         root.setPadding(new Insets(40));
 
         Scene scene = new Scene(root, 1200, 800);
-        stage.setTitle("Login - Disaster Relief Helper");
+        stage.setTitle("Safe Serve");
         stage.setScene(scene);
         stage.setResizable(true);
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.jpg")));
         stage.show();
     }
 

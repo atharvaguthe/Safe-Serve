@@ -1,6 +1,7 @@
 package com.thinkspark.view;
 
 import com.thinkspark.dao.DisasterDao;
+import com.thinkspark.dao.FileStorageDao;
 import com.thinkspark.model.Disaster;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
@@ -33,18 +34,19 @@ public class ReportDisasterView extends Application {
 
     private final Scene previousScene;
     private final Stage primaryStage;
-    private final String userName; // ADDED
+    private final String userName;
     private File selectedFile;
+    private final FileStorageDao fileStorageDao;
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
 
-    // UPDATED CONSTRUCTOR
     public ReportDisasterView(Stage primaryStage, Scene previousScene, String userName) {
         this.primaryStage = primaryStage;
         this.previousScene = previousScene;
         this.userName = userName;
+        this.fileStorageDao = new FileStorageDao();
     }
 
 
@@ -144,7 +146,7 @@ public class ReportDisasterView extends Application {
         submitButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
         submitButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-background-radius: 8; -fx-cursor: hand;");
         submitButton.setPadding(new Insets(12, 25, 12, 25));
-        
+
         HBox actionBox = new HBox(submitButton);
         actionBox.setAlignment(Pos.CENTER_RIGHT);
         actionBox.setPadding(new Insets(20, 0, 0, 0));
@@ -161,36 +163,41 @@ public class ReportDisasterView extends Application {
                 new Alert(Alert.AlertType.ERROR, "Please fill in all required fields: Type, Location, and Description.").showAndWait();
                 return;
             }
-            
-            // UPDATED to include the citizen's name
+
+            String imageUrl = null;
+            if (selectedFile != null) {
+                imageUrl = fileStorageDao.uploadFile(selectedFile);
+            }
+
             Disaster newDisaster = new Disaster(type, location, description, this.userName);
-            
+            newDisaster.setImageUrl(imageUrl); // Set the image URL
+
             DisasterDao disasterDao = new DisasterDao();
             disasterDao.saveDisasterReport(newDisaster);
-            
+
             VBox confirmationVBox = new VBox(20);
             confirmationVBox.setAlignment(Pos.CENTER);
             confirmationVBox.setPadding(new Insets(40));
-            
+
             Label confirmationTitle = new Label("✅ Submission Received!");
             confirmationTitle.setFont(getFont(24, FontWeight.BOLD));
-            
+
             Label confirmationText = new Label("Thank you! Your report has been sent to response teams.");
             confirmationText.setFont(getFont(16, FontWeight.NORMAL));
             confirmationText.setWrapText(true);
             confirmationText.setTextAlignment(TextAlignment.CENTER);
-            
+
             confirmationVBox.getChildren().addAll(confirmationTitle, confirmationText);
-            
+
             container.getChildren().setAll(confirmationVBox);
-            
+
             PauseTransition delay = new PauseTransition(Duration.seconds(4));
             delay.setOnFinished(event -> primaryStage.setScene(previousScene));
             delay.play();
         });
 
         card.getChildren().addAll(formGrid, actionBox);
-        
+
         return container;
     }
 

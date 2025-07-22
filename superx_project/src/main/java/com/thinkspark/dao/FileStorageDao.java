@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 public class FileStorageDao {
 
-    private static final String BUCKET_NAME = "gs://safe-serve-5065f.firebasestorage.app";
+    private static final String BUCKET_NAME = "safe-serve-5065f.firebasestorage.app"; 
 
     private Storage storage;
 

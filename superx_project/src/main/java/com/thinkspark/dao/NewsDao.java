@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 public class NewsDao {
 
-    private static final String API_KEY = "fdfe79c1c769498aab274a89f5d076df"; 
+    private static final String API_KEY = "fdfe79c1c769498aab274a89f5d076df";
     private static final String API_URL = "https://newsapi.org/v2/everything?q=general&apiKey=";
 
     public ObservableList<NewsArticle> getNews() {
@@ -36,7 +36,7 @@ public class NewsDao {
             for (int i = 0; i < articles.length(); i++) {
                 JSONObject article = articles.getJSONObject(i);
                 String title = article.getString("title");
-                String description = article.getString("description");
+                String description = article.isNull("description") ? "" : article.getString("description");
                 String articleUrl = article.getString("url");
                 newsList.add(new NewsArticle(title, description, articleUrl));
             }

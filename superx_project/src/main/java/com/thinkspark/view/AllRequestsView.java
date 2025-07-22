@@ -22,6 +22,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -90,6 +92,21 @@ public class AllRequestsView extends Application {
                 content.setPadding(new Insets(15));
                 content.setStyle("-fx-border-color: transparent transparent " + BORDER_COLOR + " transparent; -fx-border-width: 1;");
 
+                // Create an ImageView for the icon
+                ImageView icon;
+                if (item.getDisaster().getImageUrl() != null && !item.getDisaster().getImageUrl().isEmpty()) {
+                    try {
+                        icon = new ImageView(new Image(item.getDisaster().getImageUrl()));
+                    } catch (Exception e) {
+                        // If the URL is invalid or the image fails to load, use the logo as a fallback
+                        icon = new ImageView(new Image(getClass().getResourceAsStream("/logo.jpg")));
+                    }
+                } else {
+                    icon = new ImageView(new Image(getClass().getResourceAsStream("/logo.jpg")));
+                }
+                icon.setFitHeight(50);
+                icon.setFitWidth(50);
+
                 Label typeLabel = new Label(item.getDisaster().getType());
                 typeLabel.setFont(AllRequestsView.getFont(16, FontWeight.BOLD));
                 Label locationLabel = new Label(item.getDisaster().getLocation());
@@ -105,7 +122,7 @@ public class AllRequestsView extends Application {
                 String statusColor = "Pending".equalsIgnoreCase(item.getStatus()) ? STATUS_PENDING_COLOR : STATUS_ASSIGNED_COLOR;
                 statusLabel.setStyle("-fx-background-color: " + statusColor + "; -fx-background-radius: 6;");
 
-                content.getChildren().addAll(details, spacer, statusLabel);
+                content.getChildren().addAll(icon, details, spacer, statusLabel);
 
                 // Only show the assign button if the task is pending
                 if ("Pending".equalsIgnoreCase(item.getStatus())) {

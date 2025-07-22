@@ -87,14 +87,14 @@ public class VolunteerDashboard extends Application {
 
         dashboardScene = new Scene(scrollPane, 1366, 900);
         // CHANGED: Set the title dynamically
-        primaryStage.setTitle("Volunteer Dashboard | " + this.userName);
+        primaryStage.setTitle("Safe Serve");
         primaryStage.setScene(dashboardScene);
 
         // Listen for changes in assigned tasks from Firebase
         taskDao.listenForTasks(DataManager.getAssignedTasks());
         DataManager.getAssignedTasks().addListener((ListChangeListener<Task>) c -> updateAssignedTasks());
         updateAssignedTasks();
-
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.jpg")));
         primaryStage.show();
     }
 

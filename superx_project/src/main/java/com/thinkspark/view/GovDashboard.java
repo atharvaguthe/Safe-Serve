@@ -80,8 +80,9 @@ public class GovDashboard extends Application {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         dashboardScene = new Scene(scrollPane, 1366, 900);
-        primaryStage.setTitle("Government Dashboard | Disaster Command Center");
+        primaryStage.setTitle("Safe Serve");
         primaryStage.setScene(dashboardScene);
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.jpg")));
         primaryStage.show();
     }
 

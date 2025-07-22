@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -44,9 +45,10 @@ public class SignUpForm extends Application {
         root.setPadding(new Insets(40));
 
         Scene scene = new Scene(root, 1200, 800);
-        primaryStage.setTitle("Sign Up - Disaster Relief Helper");
+        primaryStage.setTitle("Safe Serve");
         primaryStage.setScene(scene);
         primaryStage.setResizable(true);
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.jpg")));
         primaryStage.show();
     }
 

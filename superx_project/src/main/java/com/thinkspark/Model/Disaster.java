@@ -8,7 +8,8 @@ public class Disaster {
     private String type;
     private String location;
     private String description;
-    private String citizenName; // ADDED: To track the user who created the report
+    private String citizenName;
+    private String imageUrl;
 
     @ServerTimestamp
     private Date timestamp;
@@ -22,7 +23,7 @@ public class Disaster {
         this.description = description;
         this.citizenName = citizenName;
     }
-    
+
     // --- Getters and Setters ---
 
     public String getType() { return type; }
@@ -34,9 +35,11 @@ public class Disaster {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    // ADDED GETTER AND SETTER for citizenName
     public String getCitizenName() { return citizenName; }
     public void setCitizenName(String citizenName) { this.citizenName = citizenName; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; } 
 
     public Date getTimestamp() { return timestamp; }
     public void setTimestamp(Date timestamp) { this.timestamp = timestamp; }

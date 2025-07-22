@@ -37,7 +37,8 @@ public class DisasterDao {
         disasterData.put("type", disaster.getType());
         disasterData.put("location", disaster.getLocation());
         disasterData.put("description", disaster.getDescription());
-        disasterData.put("citizenName", disaster.getCitizenName()); // ADDED
+        disasterData.put("citizenName", disaster.getCitizenName());
+        disasterData.put("imageUrl", disaster.getImageUrl()); // ADDED
         disasterData.put("timestamp", FieldValue.serverTimestamp());
 
         ApiFuture<DocumentReference> future = db.collection("disasters").add(disasterData);
@@ -51,7 +52,7 @@ public class DisasterDao {
             }
         }, Runnable::run);
     }
-    
+
     public void listenForDisasterReports(ObservableList<Disaster> targetList) {
         if (db == null) {
             System.err.println("Firestore is not initialized. Cannot listen for disaster reports.");

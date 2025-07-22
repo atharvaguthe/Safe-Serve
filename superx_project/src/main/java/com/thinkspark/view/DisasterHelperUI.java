@@ -103,7 +103,7 @@ public class DisasterHelperUI extends Application {
         scrollPane.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background: " + BACKGROUND_COLOR + ";");
         scrollPane.getStyleClass().add("edge-to-edge");
 
-
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.jpg")));
         primaryStage.show();
     }
 
