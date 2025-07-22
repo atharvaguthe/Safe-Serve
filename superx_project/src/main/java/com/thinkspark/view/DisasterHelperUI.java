@@ -13,6 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -110,9 +112,19 @@ public class DisasterHelperUI extends Application {
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(10, 0, 20, 0));
 
-        Label logo = new Label("🏢 Safe Serve");
-        logo.setFont(getFont(32, FontWeight.BOLD));
-        logo.setTextFill(Color.web(PRIMARY_BLUE));
+        // Create an ImageView for the logo
+        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.jpg")));
+        logoView.setFitHeight(40); // Adjust size as needed
+        logoView.setPreserveRatio(true);
+
+        // Create the text label
+        Label logoLabel = new Label("Safe Serve");
+        logoLabel.setFont(getFont(32, FontWeight.BOLD));
+        logoLabel.setTextFill(Color.web(PRIMARY_BLUE));
+
+        // Combine image and text into an HBox
+        HBox logoBox = new HBox(10, logoView, logoLabel);
+        logoBox.setAlignment(Pos.CENTER_LEFT);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -166,7 +178,7 @@ public class DisasterHelperUI extends Application {
         authButtons.getChildren().addAll(loginBtn, signupBtn);
         HBox.setMargin(navLinks, new Insets(0, 50, 0, 0));
 
-        header.getChildren().addAll(logo, spacer, navLinks, authButtons);
+        header.getChildren().addAll(logoBox, spacer, navLinks, authButtons);
         return header;
     }
     

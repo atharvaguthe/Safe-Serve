@@ -16,6 +16,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -100,9 +102,19 @@ public class GovDashboard extends Application {
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(10, 0, 20, 0));
 
-        Label logo = new Label("Safe Serve");
-        logo.setFont(getFont(32, FontWeight.BOLD));
-        logo.setTextFill(Color.web(PRIMARY_BLUE));
+        // Create an ImageView for the logo
+        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.jpg")));
+        logoView.setFitHeight(40); // Adjust size as needed
+        logoView.setPreserveRatio(true);
+
+        // Create the text label
+        Label logoLabel = new Label("Safe Serve");
+        logoLabel.setFont(getFont(32, FontWeight.BOLD));
+        logoLabel.setTextFill(Color.web(PRIMARY_BLUE));
+
+        // Combine image and text into an HBox
+        HBox logoBox = new HBox(10, logoView, logoLabel);
+        logoBox.setAlignment(Pos.CENTER_LEFT);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -120,7 +132,7 @@ public class GovDashboard extends Application {
             new DisasterHelperUI().start(new Stage());
         });
 
-        header.getChildren().addAll(logo, spacer, profileButton);
+        header.getChildren().addAll(logoBox, spacer, profileButton);
         return header;
     }
 

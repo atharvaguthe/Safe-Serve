@@ -14,6 +14,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -116,9 +118,19 @@ public class VolunteerDashboard extends Application {
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(10, 0, 20, 0));
 
-        Label logo = new Label("Safe Serve");
-        logo.setFont(getFont(32, FontWeight.BOLD));
-        logo.setTextFill(Color.web(PRIMARY_BLUE));
+        // Create an ImageView for the logo
+        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.jpg")));
+        logoView.setFitHeight(40); // Adjust size as needed
+        logoView.setPreserveRatio(true);
+
+        // Create the text label
+        Label logoLabel = new Label("Safe Serve");
+        logoLabel.setFont(getFont(32, FontWeight.BOLD));
+        logoLabel.setTextFill(Color.web(PRIMARY_BLUE));
+
+        // Combine image and text into an HBox
+        HBox logoBox = new HBox(10, logoView, logoLabel);
+        logoBox.setAlignment(Pos.CENTER_LEFT);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -147,7 +159,7 @@ public class VolunteerDashboard extends Application {
 
         navLinks.getChildren().add(profileButton);
 
-        header.getChildren().addAll(logo, spacer, navLinks);
+        header.getChildren().addAll(logoBox, spacer, navLinks);
         return header;
     }
 
