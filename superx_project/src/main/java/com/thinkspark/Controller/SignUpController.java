@@ -1,7 +1,7 @@
 package com.thinkspark.Controller;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.thinkspark.model.FirebaseConfig; // Import FirebaseConfig
+import com.thinkspark.model.FirebaseConfig;
 import com.thinkspark.model.User;
 import com.thinkspark.model.UserService;
 import java.io.BufferedReader;
@@ -13,18 +13,18 @@ import java.util.HashMap;
 import java.util.Map;
 import org.json.JSONObject;
 
+// Handles user registration.
 public class SignUpController {
 
+    // Registers a new user with their name, email, password, and role.
     public Result signUp(String name, String email, String password, String role) {
         if (email == null || email.isEmpty() || password == null || password.isEmpty() || name == null || name.isEmpty() || role == null || role.isEmpty()) {
             return new Result(false, "All fields are required and cannot be empty");
         }
         try {
-            // --- FIX: Initialize Firebase at the start ---
             FirebaseConfig.initialize();
 
-            // This is a placeholder API key and should be kept secure.
-            String apiKey = "AIzaSyAZ0tYGpqtLb3OvVNj0RROf4eDMx5Uk330"; // Your Web API Key from Firebase Console
+            String apiKey = "AIzaSyAZ0tYGpqtLb3OvVNj0RROf4eDMx5Uk330";
             URL url = new URL("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + apiKey);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
@@ -51,12 +51,10 @@ public class SignUpController {
                 JSONObject jsonResponse = new JSONObject(response.toString());
                 String uid = jsonResponse.getString("localId");
 
-                // Set the custom claim using the Admin SDK
                 Map<String, Object> claims = new HashMap<>();
                 claims.put("role", role);
                 FirebaseAuth.getInstance().setCustomUserClaims(uid, claims);
 
-                // Save user data to Firestore (without password)
                 UserService userService = new UserService();
                 User newUser = new User(name, email, role);
                 boolean isRegistered = userService.registerUser(newUser);
@@ -75,6 +73,7 @@ public class SignUpController {
         }
     }
 
+    // Represents the result of a sign-up attempt.
     public static class Result {
         public Boolean success;
         public String message;

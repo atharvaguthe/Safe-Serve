@@ -116,7 +116,7 @@ public class VolunteerDashboard extends Application {
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(10, 0, 20, 0));
 
-        Label logo = new Label("🤝 Volunteer Helper");
+        Label logo = new Label("Safe Serve");
         logo.setFont(getFont(32, FontWeight.BOLD));
         logo.setTextFill(Color.web(PRIMARY_BLUE));
 

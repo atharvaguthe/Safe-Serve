@@ -8,8 +8,10 @@ import java.net.URL;
 import java.util.Base64;
 import org.json.JSONObject;
 
+// Handles user authentication.
 public class LoginController {
 
+    // Authenticates a user with their email, password, and role.
     public Result login(String email, String password, String selectedRole) {
         try {
             String apiKey = "AIzaSyAZ0tYGpqtLb3OvVNj0RROf4eDMx5Uk330"; // Your Web API Key
@@ -37,17 +39,14 @@ public class LoginController {
                 }
                 in.close();
 
-                // --- Read the ID Token from the response ---
                 JSONObject jsonResponse = new JSONObject(response.toString());
                 String idToken = jsonResponse.getString("idToken");
 
-                // --- Decode the token payload to get custom claims ---
                 String[] chunks = idToken.split("\\.");
                 Base64.Decoder decoder = Base64.getUrlDecoder();
                 String payload = new String(decoder.decode(chunks[1]));
                 JSONObject payloadJson = new JSONObject(payload);
 
-                // --- Check for the 'role' claim ---
                 if (payloadJson.has("role") && payloadJson.getString("role").equals(selectedRole)) {
                     return new Result(true, "Login Successful");
                 } else {
@@ -61,7 +60,7 @@ public class LoginController {
             return new Result(false, "Login Unsuccessful: " + e.getMessage());
         }
     }
-    // ... Result class remains the same
+    // Represents the result of a login attempt.
     public static class Result {
         public final boolean success;
         public final String message;

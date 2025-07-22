@@ -62,7 +62,7 @@ public class LoginUI extends Application {
         brandingPane.setPadding(new Insets(40));
         brandingPane.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 16 0 0 16;");
 
-        Label logo = new Label("🏢 Helper");
+        Label logo = new Label("Safe Serve");
         logo.setFont(getFont(40, FontWeight.BOLD));
         logo.setTextFill(Color.web(FONT_COLOR_LIGHT));
 
