@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -98,6 +99,30 @@ public class SignUpForm extends Application {
         HBox bottomLinkPane = new HBox(loginLink);
         bottomLinkPane.setAlignment(Pos.CENTER);
         VBox.setMargin(bottomLinkPane, new Insets(10, 0, 0, 0));
+
+        nameField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                emailField.requestFocus();
+            }
+        });
+
+        emailField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                passwordField.requestFocus();
+            }
+        });
+
+        passwordField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                userType.requestFocus();
+            }
+        });
+
+        userType.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                signUpButton.fire();
+            }
+        });
 
         signUpButton.setOnAction(e -> {
             String name = nameField.getText();

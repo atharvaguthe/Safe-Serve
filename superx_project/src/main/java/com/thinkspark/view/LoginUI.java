@@ -1,13 +1,13 @@
 package com.thinkspark.view;
 
 import com.thinkspark.Controller.LoginController;
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -108,6 +108,26 @@ public class LoginUI extends Application {
         HBox bottomLinks = new HBox(forgotPasswordLink, signUpLink);
         HBox.setHgrow(forgotPasswordLink, Priority.ALWAYS);
         bottomLinks.setAlignment(Pos.CENTER);
+
+        // Event handlers for Enter key
+        emailField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                passwordField.requestFocus();
+            }
+        });
+
+        passwordField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                roleComboBox.requestFocus();
+            }
+        });
+        
+        roleComboBox.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                loginBtn.fire();
+            }
+        });
+
 
         loginBtn.setOnAction(e -> handleLogin(stage, emailField.getText(), passwordField.getText(), roleComboBox.getValue()));
         signUpLink.setOnAction(e -> handleSignUp(stage));
