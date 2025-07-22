@@ -1,7 +1,9 @@
 package com.thinkspark.view;
 
 import com.thinkspark.dao.AlertDao;
+import com.thinkspark.dao.NewsDao;
 import com.thinkspark.model.Alert;
+import com.thinkspark.model.NewsArticle;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -87,7 +89,7 @@ public class CitizenDashboard extends Application {
         mainGrid.add(createQuickAccessModule(), 0, 0);
         mainGrid.add(createLiveAlertsModule(), 1, 0);
         mainGrid.add(createStatisticsModule(), 0, 1);
-        mainGrid.add(createFeaturedNewsModule(), 1, 1);
+        mainGrid.add(createNewsFeedModule(), 1, 1);
         
         return mainGrid;
     }
@@ -295,38 +297,37 @@ public class CitizenDashboard extends Application {
         return item;
     }
 
-    private Node createFeaturedNewsModule() {
-        VBox card = createDashboardCard("Featured News");
-        VBox newsList = new VBox(15);
-        newsList.setPadding(new Insets(10, 0, 0, 0));
+    private Node createNewsFeedModule() {
+        VBox card = createDashboardCard("Latest News on Disasters");
+        NewsDao newsDao = new NewsDao();
+        ObservableList<NewsArticle> newsList = newsDao.getNews();
 
-        newsList.getChildren().add(createNewsItem("Community Rallies to Provide Aid", "Volunteers from across the city..."));
-        newsList.getChildren().add(createNewsItem("New Early Warning System Deployed", "The new city-wide siren system was..."));
-        newsList.getChildren().add(createNewsItem("How to Prepare an Emergency Kit", "Experts advise having a kit with essentials..."));
+        ListView<NewsArticle> listView = new ListView<>(newsList);
+        listView.setCellFactory(param -> new ListCell<NewsArticle>() {
+            @Override
+            protected void updateItem(NewsArticle item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    VBox vbox = new VBox(5);
+                    Label title = new Label(item.getTitle());
+                    title.setWrapText(true);
+                    title.setStyle("-fx-font-weight: bold;");
+                    Label description = new Label(item.getDescription());
+                    description.setWrapText(true);
+                    vbox.getChildren().addAll(title, description);
+                    setGraphic(vbox);
+                }
+            }
+        });
 
-        card.getChildren().add(newsList);
+        ScrollPane scrollPane = new ScrollPane(listView);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefHeight(300); // Set a preferred height
+
+        card.getChildren().add(scrollPane);
         return card;
-    }
-    
-    private Node createNewsItem(String title, String summary) {
-        VBox item = new VBox(5);
-        Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(16, FontWeight.BOLD));
-        titleLabel.setTextFill(Color.web(PRIMARY_BLUE));
-        
-        Label summaryLabel = new Label(summary);
-        summaryLabel.setFont(getFont(14, FontWeight.NORMAL));
-        summaryLabel.setTextFill(Color.web(FONT_COLOR_DARK));
-        summaryLabel.setWrapText(true);
-        
-        item.getChildren().addAll(titleLabel, summaryLabel);
-        item.setStyle("-fx-border-color: " + BORDER_COLOR + " transparent transparent transparent; -fx-border-width: 1; -fx-padding: 10 0 0 0;");
-        
-        if (item.getParent() instanceof VBox && ((VBox) item.getParent()).getChildren().isEmpty()) {
-            item.setStyle("-fx-border-width: 0; -fx-padding: 0;");
-        }
-
-        return item;
     }
     
     private VBox createDashboardCard(String title) {

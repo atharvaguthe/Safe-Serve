@@ -1,14 +1,24 @@
 package com.thinkspark.view;
 
+import com.thinkspark.dao.NewsDao;
+import com.thinkspark.model.NewsArticle;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -68,7 +78,7 @@ public class DisasterHelperUI extends Application {
         VBox leftColumn = new VBox(40);
         leftColumn.getChildren().addAll(
             createQuickAccessModule(primaryStage, scene), // Pass stage and scene for navigation
-            createFeaturedNewsModule()
+            createNewsFeedModule()
         );
 
         // --- Right Column Content ---
@@ -289,40 +299,37 @@ public class DisasterHelperUI extends Application {
         return item;
     }
 
-    private Node createFeaturedNewsModule() {
-        VBox card = createDashboardCard("Featured News");
-        VBox newsList = new VBox(20);
-        newsList.setPadding(new Insets(15, 0, 0, 0));
+    private Node createNewsFeedModule() {
+        VBox card = createDashboardCard("Latest News");
+        NewsDao newsDao = new NewsDao();
+        ObservableList<NewsArticle> newsList = newsDao.getNews();
 
-        newsList.getChildren().add(createNewsItem("How to Stay Safe During a Flood", "Essential tips from experts on preparing for and reacting to flood warnings in your area."));
-        newsList.getChildren().add(createNewsItem("Volunteer Spotlight: The Unsung Heroes", "Meet the dedicated volunteers who are working tirelessly behind the scenes to provide aid."));
-        newsList.getChildren().add(createNewsItem("Donation Drive Exceeds Goals", "Thanks to overwhelming community support, our latest donation drive has successfully..."));
-
-        card.getChildren().add(newsList);
-        return card;
-    }
-    
-    private Node createNewsItem(String title, String summary) {
-        VBox item = new VBox(5);
-        Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(18, FontWeight.BOLD));
-        titleLabel.setTextFill(Color.web(PRIMARY_BLUE));
-        
-        Label summaryLabel = new Label(summary);
-        summaryLabel.setFont(getFont(15, FontWeight.NORMAL));
-        summaryLabel.setTextFill(Color.web(FONT_COLOR_DARK));
-        summaryLabel.setWrapText(true);
-        
-        item.getChildren().addAll(titleLabel, summaryLabel);
-        item.setStyle("-fx-border-color: " + BORDER_COLOR + " transparent transparent transparent; -fx-border-width: 1; -fx-padding: 15 0 0 0;");
-        
-        item.parentProperty().addListener((obs, oldParent, newParent) -> {
-            if (newParent != null && ((VBox)newParent).getChildren().get(0) == item) {
-                item.setStyle("-fx-border-width: 0; -fx-padding: 0;");
+        ListView<NewsArticle> listView = new ListView<>(newsList);
+        listView.setCellFactory(param -> new ListCell<NewsArticle>() {
+            @Override
+            protected void updateItem(NewsArticle item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    VBox vbox = new VBox(5);
+                    Label title = new Label(item.getTitle());
+                    title.setWrapText(true);
+                    title.setStyle("-fx-font-weight: bold;");
+                    Label description = new Label(item.getDescription());
+                    description.setWrapText(true);
+                    vbox.getChildren().addAll(title, description);
+                    setGraphic(vbox);
+                }
             }
         });
 
-        return item;
+        ScrollPane scrollPane = new ScrollPane(listView);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefHeight(300); // Set a preferred height for independent scrolling
+
+        card.getChildren().add(scrollPane);
+        return card;
     }
     
     private VBox createDashboardCard(String title) {
