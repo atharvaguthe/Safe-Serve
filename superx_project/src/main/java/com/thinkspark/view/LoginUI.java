@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -58,24 +59,30 @@ public class LoginUI extends Application {
     }
 
     private Node createBrandingPane() {
-        VBox brandingPane = new VBox(20);
-        brandingPane.setPrefWidth(480);
-        brandingPane.setAlignment(Pos.CENTER_LEFT);
-        brandingPane.setPadding(new Insets(40));
-        brandingPane.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 16 0 0 16;");
+    VBox brandingPane = new VBox(20);
+    brandingPane.setPrefWidth(480);
+    brandingPane.setAlignment(Pos.CENTER_LEFT);
+    brandingPane.setPadding(new Insets(40));
+    brandingPane.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 16 0 0 16;");
 
-        Label logo = new Label("Safe Serve");
-        logo.setFont(getFont(40, FontWeight.BOLD));
-        logo.setTextFill(Color.web(FONT_COLOR_LIGHT));
+    // Add ImageView for the logo
+    ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
+    logoView.setFitHeight(230); // Adjust size as needed
+    logoView.setPreserveRatio(true);
 
-        Text welcomeText = new Text("A unified platform for citizens, volunteers, NGOs, and government agencies to collaborate during crises.");
-        welcomeText.setFont(getFont(18, FontWeight.NORMAL));
-        welcomeText.setFill(Color.web(FONT_COLOR_LIGHT));
-        welcomeText.setOpacity(0.9);
-        welcomeText.setWrappingWidth(380);
+    Label logo = new Label("Safe Serve");
+    logo.setFont(getFont(40, FontWeight.BOLD));
+    logo.setTextFill(Color.web(FONT_COLOR_LIGHT));
 
-        brandingPane.getChildren().addAll(logo, welcomeText);
-        return brandingPane;
+    Text welcomeText = new Text("A unified platform for citizens, volunteers, NGOs, and government agencies to collaborate during crises.");
+    welcomeText.setFont(getFont(18, FontWeight.NORMAL));
+    welcomeText.setFill(Color.web(FONT_COLOR_LIGHT));
+    welcomeText.setOpacity(0.9);
+    welcomeText.setWrappingWidth(380);
+
+    // Add logoView before the "Safe Serve" label (which is assigned to 'logo')
+    brandingPane.getChildren().addAll(logoView, logo, welcomeText);
+    return brandingPane;
     }
 
     private Node createLoginForm(Stage stage) {
