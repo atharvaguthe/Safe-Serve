@@ -10,9 +10,6 @@ public class Volunteer {
     private String email;
     private String role;
 
-    /**
-     * A no-argument constructor is REQUIRED by Firestore for deserialization.
-     */
     public Volunteer() {}
 
     /**
@@ -24,7 +21,6 @@ public class Volunteer {
         this.name = name;
     }
 
-    // --- Getters and Setters ---
     // Firestore uses these to automatically map data.
 
     public String getName() {

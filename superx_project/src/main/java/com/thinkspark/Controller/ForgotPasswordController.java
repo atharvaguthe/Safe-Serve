@@ -9,7 +9,6 @@ public class ForgotPasswordController {
 
     public boolean sendPasswordResetEmail(String email) {
         try {
-            // Initialize Firebase before using its services
             FirebaseConfig.initialize();
             FirebaseAuth.getInstance().generatePasswordResetLink(email);
             return true;

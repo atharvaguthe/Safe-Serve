@@ -16,9 +16,6 @@ public class Alert {
     @ServerTimestamp
     private Date timestamp;
 
-    /**
-     * A no-argument constructor is REQUIRED by Firestore for deserialization.
-     */
     public Alert() {}
 
     /**
@@ -34,7 +31,6 @@ public class Alert {
         this.priority = priority;
     }
 
-    // --- Getters and Setters ---
     // Firestore uses these to automatically map data to and from the object.
 
     public String getTitle() { return title; }

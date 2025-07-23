@@ -15,16 +15,13 @@ public class Disaster {
     private Date timestamp;
 
     public Disaster() {}
-
-    // UPDATED CONSTRUCTOR
+    
     public Disaster(String type, String location, String description, String citizenName) {
         this.type = type;
         this.location = location;
         this.description = description;
         this.citizenName = citizenName;
     }
-
-    // --- Getters and Setters ---
 
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }

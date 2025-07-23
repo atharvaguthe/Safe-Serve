@@ -24,12 +24,6 @@ public class NgoDao {
         this.db = initializedDb;
     }
 
-    /**
-     * Attaches a real-time listener to the 'users' collection in Firestore,
-     * filtering for documents where the role is "NGO".
-     *
-     * @param targetList The ObservableList from the UI to keep updated with live NGO data.
-     */
     public void listenForNgos(ObservableList<ManageNgosView.NgoItem> targetList) {
         if (db == null) {
             System.err.println("Firestore is not initialized. Cannot listen for NGOs.");
@@ -49,7 +43,7 @@ public class NgoDao {
                         if (doc.exists()) {
                             targetList.add(new ManageNgosView.NgoItem(
                                 doc.getString("name"),
-                                "Pending Verification", // You can enhance this to fetch status from DB
+                                "Pending Verification", 
                                 doc.getString("email")
                             ));
                         }

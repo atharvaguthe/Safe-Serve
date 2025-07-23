@@ -24,12 +24,6 @@ public class VolunteerDao {
         this.db = initializedDb;
     }
 
-    /**
-     * Attaches a real-time listener to the 'users' collection in Firestore,
-     * filtering for documents where the role is "Volunteer".
-     *
-     * @param targetList The ObservableList from the UI to keep updated with live volunteer data.
-     */
     public void listenForVolunteers(ObservableList<Volunteer> targetList) {
         if (db == null) {
             System.err.println("Firestore is not initialized. Cannot listen for volunteers.");

@@ -92,13 +92,11 @@ public class AllRequestsView extends Application {
                 content.setPadding(new Insets(15));
                 content.setStyle("-fx-border-color: transparent transparent " + BORDER_COLOR + " transparent; -fx-border-width: 1;");
 
-                // Create an ImageView for the icon
                 ImageView icon;
                 if (item.getDisaster().getImageUrl() != null && !item.getDisaster().getImageUrl().isEmpty()) {
                     try {
                         icon = new ImageView(new Image(item.getDisaster().getImageUrl()));
                     } catch (Exception e) {
-                        // If the URL is invalid or the image fails to load, use the logo as a fallback
                         icon = new ImageView(new Image(getClass().getResourceAsStream("/logo.jpg")));
                     }
                 } else {

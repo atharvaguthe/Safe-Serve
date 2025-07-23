@@ -1,13 +1,9 @@
 package com.thinkspark.model;
 
-/**
- * Represents a specific task assigned to a volunteer.
- * This links a disaster-related need to a specific person for action.
- */
 public class Task {
 
     private final String description;
-    private final String assignedTo; // Stores the name of the volunteer
+    private final String assignedTo; 
 
     /**
      * Constructs a new Task object.
@@ -20,7 +16,6 @@ public class Task {
         this.assignedTo = assignedTo;
     }
 
-    // --- Getters ---
 
     public String getDescription() {
         return description;

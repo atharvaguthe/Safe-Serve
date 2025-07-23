@@ -11,10 +11,8 @@ public class UserService {
 
     public UserService() {
         try {
-            // Ensure Firebase is initialized before using the service
             FirebaseConfig.initialize();
         } catch (IOException e) {
-            // Using System.err for logging errors is a common practice
             System.err.println("Error initializing Firebase: " + e.getMessage());
         }
     }

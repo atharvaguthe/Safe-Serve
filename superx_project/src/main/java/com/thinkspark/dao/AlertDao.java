@@ -92,12 +92,12 @@ public class AlertDao {
 
                 // Use Platform.runLater to ensure UI updates happen on the JavaFX Application Thread.
                 Platform.runLater(() -> {
-                    targetList.clear(); // Clear the old list before adding new data
+                    targetList.clear(); 
                     for (QueryDocumentSnapshot doc : snapshots) {
                         if (doc.exists()) {
                             // Convert the document from Firestore into an Alert object
                             Alert alert = doc.toObject(Alert.class);
-                            targetList.add(alert); // Add it to our UI list
+                            targetList.add(alert); 
                         }
                     }
                 });

@@ -1,6 +1,6 @@
 package com.thinkspark.model;
 
-import com.thinkspark.view.ManageNgosView; // Assuming NgoItem is a public static class in ManageNgosView
+import com.thinkspark.view.ManageNgosView; 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -9,8 +9,6 @@ import javafx.collections.ObservableList;
  * It uses ObservableLists to allow UI components to update automatically when data changes.
  */
 public class DataManager {
-
-    // --- Private Observable Lists for Data Storage ---
 
     // Stores reports submitted by citizens.
     private static final ObservableList<Disaster> disasterReports = FXCollections.observableArrayList();
@@ -42,8 +40,6 @@ public class DataManager {
         );
     }
 
-
-    // --- Public Getters to Access the Data ---
 
     /**
      * @return The observable list of all disaster reports.
