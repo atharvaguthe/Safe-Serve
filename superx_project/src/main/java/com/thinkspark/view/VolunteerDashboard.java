@@ -85,8 +85,10 @@ public class VolunteerDashboard extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        dashboardScene = new Scene(scrollPane);
+        dashboardScene = new Scene(scrollPane,1920,1080);
         primaryStage.setTitle("Safe Serve");
+        primaryStage.setMaximized(true);
+        primaryStage.setResizable(true);
         primaryStage.setScene(dashboardScene);
 
         // Listen for changes in assigned tasks from Firebase

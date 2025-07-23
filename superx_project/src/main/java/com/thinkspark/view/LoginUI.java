@@ -49,7 +49,7 @@ public class LoginUI extends Application {
         root.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         root.setPadding(new Insets(40));
 
-        Scene scene = new Scene(root); 
+        Scene scene = new Scene(root,1980,1080); 
         stage.setTitle("Safe Serve");
         stage.setResizable(true);
         stage.setScene(scene);

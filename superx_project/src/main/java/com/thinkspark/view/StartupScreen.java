@@ -38,7 +38,7 @@ public class StartupScreen extends Application {
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
 
         // Logo
-        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.jpg")));
+        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
         logoView.setFitHeight(350);
         logoView.setPreserveRatio(true);
         logoView.setOpacity(0); // Start transparent for fade-in
@@ -74,7 +74,7 @@ public class StartupScreen extends Application {
         Scene scene = new Scene(rootLayout, 1920, 1080);
         primaryStage.setTitle("Welcome to Safe Serve");
         primaryStage.setScene(scene);
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.jpg")));
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
         
         // Set to full screen
         primaryStage.setMaximized(true);
