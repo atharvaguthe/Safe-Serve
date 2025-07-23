@@ -61,9 +61,9 @@ public class MyRequestsView extends Application {
         ScrollPane scrollPane = new ScrollPane(rootLayout);
         scrollPane.setFitToWidth(true);
 
-        Scene scene = new Scene(scrollPane, 1280, 900);
+        Scene scene = new Scene(scrollPane);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("My Requests | Citizen Dashboard");
+        primaryStage.setTitle("Safe Serve");
     }
 
     private Node createHeader() {

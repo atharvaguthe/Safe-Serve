@@ -82,7 +82,7 @@ public class NgoDashboard extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        dashboardScene = new Scene(scrollPane, 1366, 900);
+        dashboardScene = new Scene(scrollPane);
         primaryStage.setTitle("Safe Serve");
         primaryStage.setScene(dashboardScene);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.jpg")));

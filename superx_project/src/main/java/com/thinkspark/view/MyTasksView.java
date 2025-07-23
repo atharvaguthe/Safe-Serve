@@ -146,9 +146,9 @@ public class MyTasksView extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        Scene scene = new Scene(scrollPane, 1280, 900);
+        Scene scene = new Scene(scrollPane);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("My Tasks | Volunteer Dashboard");
+        primaryStage.setTitle("Safe Serve");
     }
 
     private Node createHeader() {

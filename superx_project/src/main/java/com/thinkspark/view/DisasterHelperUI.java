@@ -53,8 +53,8 @@ public class DisasterHelperUI extends Application {
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
         // --- Scene and Stage Setup ---
-        Scene scene = new Scene(new ScrollPane(rootLayout), 1366, 800);
-        primaryStage.setTitle("Safe Serve | Disaster Relief Helper");
+        Scene scene = new Scene(new ScrollPane(rootLayout));
+        primaryStage.setTitle("Safe Serve");
         primaryStage.setScene(scene);
 
         // --- Header / Navigation Bar ---

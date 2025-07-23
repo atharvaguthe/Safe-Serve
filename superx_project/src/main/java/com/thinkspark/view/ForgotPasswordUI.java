@@ -43,8 +43,8 @@ public class ForgotPasswordUI extends Application {
         root.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         root.setPadding(new Insets(40));
 
-        Scene scene = new Scene(root, 1200, 800);
-        stage.setTitle("Forgot Password - Disaster Relief Helper");
+        Scene scene = new Scene(root);
+        stage.setTitle("Safe Serve");
         stage.setScene(scene);
         stage.setResizable(true);
         stage.show();

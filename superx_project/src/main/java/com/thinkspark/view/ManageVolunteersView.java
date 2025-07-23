@@ -125,9 +125,9 @@ public class ManageVolunteersView extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        Scene scene = new Scene(scrollPane, 1280, 900);
+        Scene scene = new Scene(scrollPane);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Manage Volunteers | NGO Dashboard");
+        primaryStage.setTitle("Safe Serve");
 
         // --- Firebase Listeners ---
         ObservableList<Task> allTasks = FXCollections.observableArrayList();

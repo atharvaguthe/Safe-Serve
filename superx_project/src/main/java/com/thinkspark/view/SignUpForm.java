@@ -44,9 +44,10 @@ public class SignUpForm extends Application {
         root.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         root.setPadding(new Insets(40));
 
-        Scene scene = new Scene(root, 1200, 800);
+        Scene scene = new Scene(root);
         primaryStage.setTitle("Safe Serve");
         primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);
         primaryStage.setResizable(true);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.jpg")));
         primaryStage.show();

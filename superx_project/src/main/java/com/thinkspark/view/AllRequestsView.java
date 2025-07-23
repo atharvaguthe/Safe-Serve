@@ -187,9 +187,9 @@ public class AllRequestsView extends Application {
         ScrollPane scrollPane = new ScrollPane(rootLayout);
         scrollPane.setFitToWidth(true);
 
-        Scene scene = new Scene(scrollPane, 1280, 900);
+        Scene scene = new Scene(scrollPane);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("All Requests | NGO Dashboard");
+        primaryStage.setTitle("Safe Serve");
 
         // Listen for disaster reports from Firebase
         ObservableList<Disaster> disasterReports = FXCollections.observableArrayList();

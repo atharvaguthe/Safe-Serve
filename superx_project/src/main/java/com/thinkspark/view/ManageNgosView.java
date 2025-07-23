@@ -123,9 +123,9 @@ public class ManageNgosView extends Application {
 
         ScrollPane scrollPane = new ScrollPane(rootLayout);
         scrollPane.setFitToWidth(true);
-        Scene scene = new Scene(scrollPane, 1280, 900);
+        Scene scene = new Scene(scrollPane);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Manage NGOs | Government Dashboard");
+        primaryStage.setTitle("Safe Serve");
 
         // Start listening for NGOs from Firebase
         ngoDao.listenForNgos(ngosList);

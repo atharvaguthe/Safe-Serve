@@ -62,9 +62,9 @@ public class SettingsView extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        Scene scene = new Scene(scrollPane, 1280, 900);
+        Scene scene = new Scene(scrollPane);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Settings | Disaster Relief Helper");
+        primaryStage.setTitle("Safe Serve");
     }
 
     private Node createHeader() {

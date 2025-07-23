@@ -40,9 +40,9 @@ public class AnalyticsView extends Application {
 
         rootLayout.getChildren().addAll(createHeader(), createPlaceholderContent());
 
-        Scene scene = new Scene(rootLayout, 1280, 900);
+        Scene scene = new Scene(rootLayout);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Analytics | Government Dashboard");
+        primaryStage.setTitle("Safe Serve");
     }
 
     private Node createHeader() {
