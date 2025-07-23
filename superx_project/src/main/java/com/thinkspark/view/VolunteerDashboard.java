@@ -95,7 +95,7 @@ public class VolunteerDashboard extends Application {
         taskDao.listenForTasks(DataManager.getAssignedTasks());
         DataManager.getAssignedTasks().addListener((ListChangeListener<Task>) c -> updateAssignedTasks());
         updateAssignedTasks();
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.jpg")));
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
         primaryStage.show();
     }
 
@@ -120,7 +120,7 @@ public class VolunteerDashboard extends Application {
         header.setPadding(new Insets(10, 0, 20, 0));
 
         // Create an ImageView for the logo
-        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.jpg")));
+        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
         logoView.setFitHeight(40); // Adjust size as needed
         logoView.setPreserveRatio(true);
 
