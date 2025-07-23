@@ -149,8 +149,8 @@ public class CitizenDashboard extends Application {
 
         settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         logoutItem.setOnAction(e -> {
-            primaryStage.close();
-            new DisasterHelperUI().start(new Stage());
+            // Reuse the existing primary stage to go back to DisasterHelperUI
+            new DisasterHelperUI().start(primaryStage);
         });
 
         profileButton.setFont(getFont(16, FontWeight.BOLD));

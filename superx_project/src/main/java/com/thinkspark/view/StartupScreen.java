@@ -65,16 +65,20 @@ public class StartupScreen extends Application {
 
         // Button Action
         startButton.setOnAction(e -> {
-            primaryStage.close();
-            new DisasterHelperUI().start(new Stage());
+            // No longer closing the primary stage, just setting a new scene
+            new DisasterHelperUI().start(primaryStage);
         });
 
         rootLayout.getChildren().addAll(logoView, title, startButton);
 
-        Scene scene = new Scene(rootLayout, 1280, 900);
+        Scene scene = new Scene(rootLayout, 1920, 1080);
         primaryStage.setTitle("Welcome to Safe Serve");
         primaryStage.setScene(scene);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.jpg")));
+        
+        // Set to full screen
+        primaryStage.setMaximized(true);
+
         primaryStage.show();
         
         // --- Animations ---

@@ -162,17 +162,13 @@ public class DisasterHelperUI extends Application {
         signupBtn.setStyle("-fx-background-color: " + SECONDARY_BLUE + "; -fx-background-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;");
         
         loginBtn.setOnAction(e -> {
-            Stage currentStage = (Stage) loginBtn.getScene().getWindow();
-            currentStage.close();
-            Stage loginStage = new Stage();
-            new LoginUI().start(loginStage);
+            // Reuse the existing stage
+            new LoginUI().start(stage);
         });
 
         signupBtn.setOnAction(e -> {
-            Stage currentStage = (Stage) signupBtn.getScene().getWindow();
-            currentStage.close();
-            Stage signUpStage = new Stage();
-            new SignUpForm().start(signUpStage);
+            // Reuse the existing stage
+            new SignUpForm().start(stage);
         });
         
         authButtons.getChildren().addAll(loginBtn, signupBtn);

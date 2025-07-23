@@ -129,8 +129,8 @@ public class GovDashboard extends Application {
         
         settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         logoutItem.setOnAction(e -> {
-            primaryStage.close();
-            new DisasterHelperUI().start(new Stage());
+            // Reuse the existing primary stage to go back to DisasterHelperUI
+            new DisasterHelperUI().start(primaryStage);
         });
 
         header.getChildren().addAll(logoBox, spacer, profileButton);
@@ -248,7 +248,10 @@ public class GovDashboard extends Application {
     private VBox createDashboardCard(String title) {
         VBox card = new VBox(10);
         card.setPadding(new Insets(25));
-        card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 12; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1;");
+        card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
+                      "-fx-background-radius: 12; " +
+                      "-fx-border-color: " + BORDER_COLOR + "; " +
+                      "-fx-border-width: 1;");
         GridPane.setHgrow(card, Priority.ALWAYS);
         GridPane.setVgrow(card, Priority.ALWAYS);
         Label titleLabel = new Label(title);

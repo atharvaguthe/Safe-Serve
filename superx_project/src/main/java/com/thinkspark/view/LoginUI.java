@@ -187,8 +187,7 @@ public class LoginUI extends Application {
         LoginController.Result result = loginController.login(email, password, selectedRole);
 
         if (result.success) {
-            currentStage.close();
-            Stage dashboardStage = new Stage();
+            // No longer closing the current stage, just reusing it
             Application dashboard = null;
 
             switch (selectedRole) {
@@ -208,7 +207,7 @@ public class LoginUI extends Application {
 
             if (dashboard != null) {
                 try {
-                    dashboard.start(dashboardStage);
+                    dashboard.start(currentStage); // Use the existing stage
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     showAlert("Application Error", "Could not open the dashboard.");
@@ -222,15 +221,13 @@ public class LoginUI extends Application {
     }
 
     private void handleSignUp(Stage currentStage) {
-        currentStage.close();
-        Stage signUpStage = new Stage();
-        new SignUpForm().start(signUpStage);
+        // No longer closing the current stage, just reusing it
+        new SignUpForm().start(currentStage); // Use the existing stage
     }
     
     private void handleForgotPassword(Stage currentStage) {
-        currentStage.close();
-        Stage forgotPasswordStage = new Stage();
-        new ForgotPasswordUI().start(forgotPasswordStage);
+        // No longer closing the current stage, just reusing it
+        new ForgotPasswordUI().start(currentStage); // Use the existing stage
     }
 
     private void showAlert(String title, String message) {

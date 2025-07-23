@@ -142,16 +142,16 @@ public class SignUpForm extends Application {
 
             if (result.success) {
                 showAlert("Success", "User registered successfully! Please log in.");
-                primaryStage.close();
-                 new LoginUI().start(new Stage());
+                // Reuse the existing primary stage
+                 new LoginUI().start(primaryStage);
             } else {
                 showAlert("Error", "Failed to register user. " + result.message);
             }
         });
         
         loginLink.setOnAction(e -> {
-            primaryStage.close();
-            new LoginUI().start(new Stage());
+            // Reuse the existing primary stage
+            new LoginUI().start(primaryStage);
         });
 
         formPane.getChildren().addAll(

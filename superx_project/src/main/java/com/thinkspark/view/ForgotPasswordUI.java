@@ -124,16 +124,16 @@ public class ForgotPasswordUI extends Application {
 
         if (success) {
             showAlert("Success", "Password reset email sent successfully! Please check your inbox.");
-            currentStage.close();
-            new LoginUI().start(new Stage());
+            // Reuse the existing stage
+            new LoginUI().start(currentStage);
         } else {
             showAlert("Error", "Failed to send password reset email. Please try again.");
         }
     }
 
     private void handleBackToLogin(Stage currentStage) {
-        currentStage.close();
-        new LoginUI().start(new Stage());
+        // Reuse the existing stage
+        new LoginUI().start(currentStage);
     }
 
     private void showAlert(String title, String message) {

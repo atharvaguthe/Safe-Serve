@@ -153,8 +153,8 @@ public class VolunteerDashboard extends Application {
         // CHANGED: Pass the dynamic user name to the settings view
         settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         logoutItem.setOnAction(e -> {
-            primaryStage.close();
-            new DisasterHelperUI().start(new Stage());
+            // Reuse the existing primary stage to go back to DisasterHelperUI
+            new DisasterHelperUI().start(primaryStage);
         });
 
         navLinks.getChildren().add(profileButton);

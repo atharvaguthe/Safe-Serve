@@ -156,8 +156,8 @@ public class NgoDashboard extends Application {
         
         // --- UPDATED LOGOUT ACTION ---
         logoutItem.setOnAction(e -> {
-            primaryStage.close(); // Close the current NGO Dashboard window
-            new DisasterHelperUI().start(new Stage()); // Open a new instance of the main UI
+            // Reuse the existing primary stage to go back to DisasterHelperUI
+            new DisasterHelperUI().start(primaryStage);
         });
 
         navLinks.getChildren().add(profileButton);
