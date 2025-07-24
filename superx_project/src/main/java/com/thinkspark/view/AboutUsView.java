@@ -53,7 +53,7 @@ public class AboutUsView extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        Scene scene = new Scene(scrollPane, 1920, 1080);
+        Scene scene = new Scene(scrollPane, 1920,1080);
         primaryStage.setScene(scene);
         primaryStage.setTitle("About Us | Disaster Relief Helper");
     }
@@ -64,20 +64,20 @@ public class AboutUsView extends Application {
         header.setPadding(new Insets(0, 0, 20, 0));
 
         Label title = new Label("💡 About Safe Serve");
-        title.setFont(getFont(32, FontWeight.BOLD));
+        title.setFont(getFont(36, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅ Back to Dashboard");
-        backButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backButton.setFont(getFont(18, FontWeight.MEDIUM));
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
         backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
         backButton.setPadding(new Insets(8, 16, 8, 16));
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
-            primaryStage.setTitle("Safe Serve");
+            primaryStage.setTitle("Citizen Dashboard | Disaster Relief Helper");
         });
 
         header.getChildren().addAll(title, spacer, backButton);
@@ -85,72 +85,122 @@ public class AboutUsView extends Application {
     }
 
     private Node createAboutContent() {
-    VBox card = new VBox(30);
-    card.setPadding(new Insets(40));
-    card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                  "-fx-background-radius: 12; " +
-                  "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
-    card.setMaxWidth(1100);
+        VBox card = new VBox(30);
+        card.setPadding(new Insets(40));
+        card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
+                "-fx-background-radius: 12; " +
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
+        card.setMaxWidth(1100);
 
-    VBox projectSection = (VBox) createSection(
-        "Our Project : Safe Serve",
-        "Safe Serve is a comprehensive disaster relief platform designed to connect citizens, volunteers, and authorities during emergencies. Our mission is to streamline the process of reporting incidents, requesting aid, and distributing resources efficiently to save lives and support communities in times of crisis."
-    );
+        // Safe Serve Project Section (Text Left, Logo Right)
+        HBox projectSection = new HBox(30);
+        projectSection.setAlignment(Pos.CENTER_LEFT);
+        projectSection.setPadding(new Insets(10, 0, 30, 0));
 
-    VBox spacerBeforeTeacher = new VBox();
-    spacerBeforeTeacher.setPrefHeight(50);
-    projectSection.getChildren().add(spacerBeforeTeacher);
+        VBox projectTextBox = new VBox(10);
+        Label projectTitle = new Label("📌 Our Project : Safe Serve");
+        projectTitle.setFont(getFont(24, FontWeight.BOLD));
+        projectTitle.setTextFill(Color.web(PRIMARY_BLUE));
 
-    Label teacherSubTitle = new Label("Our Teacher : Shashi Bagal");
-    teacherSubTitle.setFont(getFont(22, FontWeight.BOLD));
-    teacherSubTitle.setTextFill(Color.web(PRIMARY_BLUE));
-    projectSection.getChildren().add(teacherSubTitle);
+        Text projectText = new Text(
+                "Safe Serve is a comprehensive disaster relief platform designed to connect citizens, volunteers, and authorities during emergencies. "
+                        + "Our mission is to streamline the process of reporting incidents, requesting aid, and distributing resources efficiently to save lives and support communities in times of crisis."
+        );
+        projectText.setFont(getFont(18, FontWeight.NORMAL));
+        projectText.setWrappingWidth(700);
+        projectText.setFill(Color.web(FONT_COLOR_DARK));
+        projectText.setTextAlignment(TextAlignment.JUSTIFY);
+        projectTextBox.getChildren().addAll(projectTitle, projectText);
 
-    VBox teacherCardContainer = new VBox();
-    teacherCardContainer.setAlignment(Pos.CENTER);
-    // Corrected path for shashisir.jpg
-    teacherCardContainer.getChildren().add(createPersonCard("Shashi Bagal", "/Assets/Images/shashisir.jpg", 471, 471));
-    projectSection.getChildren().add(teacherCardContainer);
+        ImageView logoImage = loadImage("/logo.png", 250, 250); // Corrected path
+        projectSection.getChildren().addAll(projectTextBox, logoImage);
 
-    VBox teamSection = (VBox) createSection(
-        "Our Team : ThinkSpark",
-        "ThinkSpark is a team of passionate developers, designers, and problem-solvers dedicated to using technology for social good. We believe in the power of innovation to create practical solutions for real-world challenges. The Safe Serve project is our commitment to building a more resilient and connected society."
-    );
+        // Core2web Section
+        VBox coreTitleBox = new VBox();
+        Label coreTitle = new Label("🏫 About Core2web – Pune");
+        coreTitle.setFont(getFont(24, FontWeight.BOLD));
+        coreTitle.setTextFill(Color.web(PRIMARY_BLUE));
+        coreTitleBox.getChildren().add(coreTitle);
 
-    HBox teamRow = new HBox(30);
-    teamRow.setAlignment(Pos.CENTER);
-    teamRow.getChildren().addAll(
-        // Corrected paths and typo for team members
-        createPersonCard("Shivkumar Kapse(Team Lead)", "/Assets/Images/shiv.jpg"),
-        createPersonCard("Atharva Guthe", "/Assets/Images/atharva.jpg"),
-        createPersonCard("Varad Wani", "/Assets/Images/varad.jpg"),
-        createPersonCard("Harish Gangurde", "/Assets/Images/harish.jpg")
-    );
+        HBox core2webBox = new HBox(20);
+        core2webBox.setAlignment(Pos.CENTER_LEFT);
+        core2webBox.setPadding(new Insets(10, 0, 30, 0));
 
-    teamSection.getChildren().add(teamRow);
+        ImageView core2webImage = loadImage("/Assets/Images/core2web.jpg", 300, 300);
+        Text core2webText = new Text(
+                "Core2web is a top-tier IT training institute founded in 2017 in Pune, Maharashtra. Known for its hands-on approach to programming education, Core2web offers industry-focused training in Java, Python, C++, Data Structures, Operating Systems, and more. "
+                        + "The institute has empowered over 10,000 students by equipping them with strong technical skills and preparing them for real-world challenges. Its mission is to make every learner industry-ready by teaching them to 'Know the Code Till the Core.' "
+                        + "Core2web is a trusted choice for anyone looking to build a career in the software industry."
+        );
+        core2webText.setFont(getFont(18, FontWeight.NORMAL));
+        core2webText.setWrappingWidth(700);
+        core2webText.setFill(Color.web(FONT_COLOR_DARK));
+        core2webText.setTextAlignment(TextAlignment.JUSTIFY);
+        core2webBox.getChildren().addAll(core2webImage, core2webText);
 
-    Node missionSection = createSection(
-        "Our Goal : ",
-        "To empower communities with a reliable and intuitive platform that facilitates rapid response and effective communication during disasters, ensuring that help reaches those who need it most, as quickly as possible."
-    );
+        // Shashi Sir Section
+        VBox teacherTitleBox = new VBox();
+        Label teacherTitle = new Label("📘 Our Teacher: Shashi Bagal");
+        teacherTitle.setFont(getFont(24, FontWeight.BOLD));
+        teacherTitle.setTextFill(Color.web(PRIMARY_BLUE));
+        teacherTitleBox.getChildren().add(teacherTitle);
 
-    card.getChildren().addAll(projectSection, teamSection, missionSection);
+        HBox shashiBox = new HBox(20);
+        shashiBox.setAlignment(Pos.CENTER_RIGHT);
+        shashiBox.setPadding(new Insets(10, 0, 30, 0));
 
-    VBox container = new VBox(card);
-    container.setAlignment(Pos.CENTER);
+        Text shashiText = new Text(
+                "Mr. Shashi Bagal is the founder and chief mentor at Core2web, a premier software training institute in Pune. With over 9 years of experience in software development and education, he is widely respected for his deep knowledge and clarity in teaching core programming concepts. "
+                        + "His areas of expertise include Java, Data Structures, and Object-Oriented Programming. Shashi Sir's passion for teaching and his practical approach have helped thousands of students start successful careers in tech. "
+                        + "He continues to mentor learners across India through online and offline platforms."
+        );
+        shashiText.setFont(getFont(18, FontWeight.NORMAL));
+        shashiText.setWrappingWidth(700);
+        shashiText.setFill(Color.web(FONT_COLOR_DARK));
+        shashiText.setTextAlignment(TextAlignment.JUSTIFY);
 
-    return container;
-}
+        ImageView shashiImage = loadImage("/Assets/Images/shashisir.jpg", 300, 300);
+        shashiBox.getChildren().addAll(shashiText, shashiImage);
+
+        // Team Section
+        VBox teamSection = (VBox) createSection(
+                "👥 Our Team : ThinkSpark",
+                "ThinkSpark is a team of passionate developers, designers, and problem-solvers dedicated to using technology for social good. We believe in the power of innovation to create practical solutions for real-world challenges. The Safe Serve project is our commitment to building a more resilient and connected society."
+        );
+
+        HBox teamRow = new HBox(30);
+        teamRow.setAlignment(Pos.CENTER);
+        teamRow.getChildren().addAll(
+                createPersonCard("Shivkumar Kapse (Team Lead)", "/Assets/Images/shiv.jpg"),
+                createPersonCard("Atharva Guthe", "/Assets/Images/atharva.jpg"), // Corrected typo in image file name
+                createPersonCard("Varad Wani", "/Assets/Images/varad.jpg"), // Corrected image file name
+                createPersonCard("Harish Gangurde", "/Assets/Images/harish.jpg")
+        );
+
+        teamSection.getChildren().add(teamRow);
+
+        Node missionSection = createSection(
+                "🎯 Our Goal :",
+                "To empower communities with a reliable and intuitive platform that facilitates rapid response and effective communication during disasters, ensuring that help reaches those who need it most, as quickly as possible."
+        );
+
+        card.getChildren().addAll(projectSection, coreTitleBox, core2webBox, teacherTitleBox, shashiBox, teamSection, missionSection);
+
+        VBox container = new VBox(card);
+        container.setAlignment(Pos.CENTER);
+
+        return container;
+    }
 
     private Node createSection(String title, String content) {
         VBox section = new VBox(10);
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(22, FontWeight.BOLD));
+        titleLabel.setFont(getFont(24, FontWeight.BOLD));
         titleLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
         Text contentText = new Text(content);
-        contentText.setFont(getFont(16, FontWeight.NORMAL));
+        contentText.setFont(getFont(18, FontWeight.NORMAL));
         contentText.setFill(Color.web(FONT_COLOR_DARK));
         contentText.setWrappingWidth(1000);
         contentText.setTextAlignment(TextAlignment.JUSTIFY);
@@ -159,29 +209,29 @@ public class AboutUsView extends Application {
         return section;
     }
 
-    private Node createPersonCard(String name, String imagePath) {
-        return createPersonCard(name, imagePath, 200, 200);
+    private ImageView loadImage(String path, double width, double height) {
+        try {
+            Image image = new Image(getClass().getResource(path).toExternalForm());
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(width);
+            imageView.setFitHeight(height);
+            imageView.setPreserveRatio(true);
+            return imageView;
+        } catch (Exception e) {
+            System.err.println("Image not found: " + path);
+            return new ImageView();
+        }
     }
 
-    private Node createPersonCard(String name, String imagePath, double width, double height) {
+    private Node createPersonCard(String name, String imagePath) {
         VBox personCard = new VBox(10);
         personCard.setAlignment(Pos.CENTER);
         personCard.setPadding(new Insets(10));
 
-        ImageView imageView;
-        try {
-            Image image = new Image(getClass().getResource(imagePath).toExternalForm());
-            imageView = new ImageView(image);
-            imageView.setFitWidth(width);
-            imageView.setFitHeight(height);
-            imageView.setPreserveRatio(false);
-        } catch (NullPointerException e) {
-            System.err.println("Warning: Image not found at path: " + imagePath);
-            imageView = new ImageView();
-        }
+        ImageView imageView = loadImage(imagePath, 200, 200);
 
         Label nameLabel = new Label(name);
-        nameLabel.setFont(getFont(16, FontWeight.BOLD));
+        nameLabel.setFont(getFont(18, FontWeight.BOLD));
         nameLabel.setTextFill(Color.web(FONT_COLOR_DARK));
         nameLabel.setTextAlignment(TextAlignment.CENTER);
         nameLabel.setWrapText(true);

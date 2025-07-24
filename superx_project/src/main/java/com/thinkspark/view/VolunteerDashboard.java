@@ -2,6 +2,7 @@ package com.thinkspark.view;
 
 import com.thinkspark.dao.AlertDao;
 import com.thinkspark.dao.TaskDao;
+import com.thinkspark.dao.DisasterDao; // NEW IMPORT
 import com.thinkspark.model.Alert;
 import com.thinkspark.model.DataManager;
 import com.thinkspark.model.Task;
@@ -34,19 +35,20 @@ public class VolunteerDashboard extends Application {
     private static final String FONT_COLOR_LIGHT = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
     private static final String ALERT_COLOR = "#E53E3E";
-
+    private static final String STATUS_COMPLETED_COLOR = "#38A169"; 
+    private static final String STATUS_ASSIGNED_COLOR = "#3182CE"; 
 
     private Stage primaryStage;
     private Scene dashboardScene;
     private ListView<Task> tasksListView;
-    // CHANGED: Use userName instead of a hardcoded name
     private String userName;
 
     private AlertDao alertDao;
     private TaskDao taskDao;
+    private DisasterDao disasterDao; 
     private ObservableList<Alert> liveAlertsList;
+    private ObservableList<Task> assignedTasksData; 
 
-    // CHANGED: Made the default constructor public
     public VolunteerDashboard() {
         this.userName = "Volunteer";
     }
@@ -67,9 +69,12 @@ public class VolunteerDashboard extends Application {
         // --- Initialize DAOs and start listening for data ---
         alertDao = new AlertDao();
         taskDao = new TaskDao();
+        disasterDao = new DisasterDao(); 
         liveAlertsList = FXCollections.observableArrayList();
-        alertDao.listenForAlerts(liveAlertsList);
+        assignedTasksData = FXCollections.observableArrayList(); 
 
+        alertDao.listenForAlerts(liveAlertsList);
+        taskDao.listenForTasks(assignedTasksData, this.userName); 
 
         VBox rootLayout = new VBox(40);
         rootLayout.setPadding(new Insets(20, 50, 50, 50));
@@ -91,10 +96,8 @@ public class VolunteerDashboard extends Application {
         primaryStage.setResizable(true);
         primaryStage.setScene(dashboardScene);
 
-        // Listen for changes in assigned tasks from Firebase
-        taskDao.listenForTasks(DataManager.getAssignedTasks());
-        DataManager.getAssignedTasks().addListener((ListChangeListener<Task>) c -> updateAssignedTasks());
-        updateAssignedTasks();
+        tasksListView.setItems(assignedTasksData); 
+
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
         primaryStage.show();
     }
@@ -109,7 +112,6 @@ public class VolunteerDashboard extends Application {
         mainGrid.add(createAssignedTasksModule(), 1, 0);
         mainGrid.add(createTeamStatsModule(), 0, 1);
         mainGrid.add(createLiveAlertsModule(), 1, 1);
-
 
         return mainGrid;
     }
@@ -151,10 +153,8 @@ public class VolunteerDashboard extends Application {
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(settingsItem, logoutItem);
 
-        // CHANGED: Pass the dynamic user name to the settings view
         settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         logoutItem.setOnAction(e -> {
-            // Reuse the existing primary stage to go back to DisasterHelperUI
             new DisasterHelperUI().start(primaryStage);
         });
 
@@ -170,7 +170,6 @@ public class VolunteerDashboard extends Application {
         overviewBox.setPadding(new Insets(30));
         overviewBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 16; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1;");
 
-        // CHANGED: Use the dynamic user name
         Label title = new Label("Welcome, " + this.userName + "!");
         title.setFont(getFont(36, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
@@ -191,7 +190,6 @@ public class VolunteerDashboard extends Application {
         buttonGrid.setVgap(20);
         buttonGrid.setPadding(new Insets(15, 0, 0, 0));
 
-        // CHANGED: Pass the dynamic user name to other views
         Button reportButton = createQuickAccessButton("🚨 Report Incident", true);
         reportButton.setOnAction(e -> new ReportDisasterView(primaryStage, dashboardScene, this.userName).start(primaryStage));
 
@@ -203,7 +201,6 @@ public class VolunteerDashboard extends Application {
 
         Button viewMapButton = createQuickAccessButton("🗺️ View Map", false);
         viewMapButton.setOnAction(e -> new MapView(primaryStage, dashboardScene).start(primaryStage));
-
 
         buttonGrid.add(reportButton, 0, 0);
         buttonGrid.add(requestHelpButton, 1, 0);
@@ -236,18 +233,48 @@ public class VolunteerDashboard extends Application {
 
     private Node createAssignedTasksModule() {
         VBox card = createDashboardCard("Your Assigned Tasks");
-        tasksListView = new ListView<>();
+        tasksListView = new ListView<>(); // No need to pass ObservableList here anymore
         tasksListView.setPlaceholder(new Label("You have no assigned tasks."));
         tasksListView.setCellFactory(param -> new ListCell<Task>() {
             @Override
             protected void updateItem(Task item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
-                    setText(null);
+                    setGraphic(null);
                 } else {
-                    setText(item.getDescription());
-                    setFont(VolunteerDashboard.getFont(15, FontWeight.MEDIUM));
-                    setTextFill(Color.web(FONT_COLOR_DARK));
+                    HBox content = new HBox(10);
+                    content.setAlignment(Pos.CENTER_LEFT);
+                    
+                    Label descriptionLabel = new Label(item.getDescription());
+                    descriptionLabel.setFont(VolunteerDashboard.getFont(15, FontWeight.MEDIUM));
+                    descriptionLabel.setTextFill(Color.web(FONT_COLOR_DARK));
+                    descriptionLabel.setWrapText(true);
+                    
+                    Region spacer = new Region();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                    Button statusButton = new Button(item.getStatus()); // Display current status
+                    statusButton.setFont(VolunteerDashboard.getFont(12, FontWeight.BOLD));
+                    statusButton.setTextFill(Color.WHITE);
+                    statusButton.setPadding(new Insets(4, 8, 4, 8));
+                    String buttonColor;
+                    if ("Completed".equalsIgnoreCase(item.getStatus())) {
+                        buttonColor = STATUS_COMPLETED_COLOR;
+                        statusButton.setDisable(true); // Disable if already completed
+                    } else {
+                        buttonColor = STATUS_ASSIGNED_COLOR;
+                        // Add action only if not completed
+                        statusButton.setOnAction(e -> {
+                            // Mark task as completed in Firestore
+                            taskDao.updateTaskStatus(item.getFirebaseDocId(), "Completed");
+                            // Mark corresponding disaster as completed in Firestore
+                            disasterDao.updateDisasterStatus(item.getDisasterId(), "Completed");
+                        });
+                    }
+                    statusButton.setStyle("-fx-background-color: " + buttonColor + "; -fx-background-radius: 6; -fx-cursor: hand;");
+
+                    content.getChildren().addAll(descriptionLabel, spacer, statusButton);
+                    setGraphic(content);
                 }
             }
         });
@@ -256,16 +283,7 @@ public class VolunteerDashboard extends Application {
         card.getChildren().add(tasksListView);
         return card;
     }
-
-    private void updateAssignedTasks() {
-        tasksListView.getItems().clear();
-        for (Task task : DataManager.getAssignedTasks()) {
-            // CHANGED: Filter tasks based on the dynamic user name
-            if (this.userName.equals(task.getAssignedTo())) {
-                tasksListView.getItems().add(task);
-            }
-        }
-    }
+    // Removed updateAssignedTasks() as it's no longer needed, replaced by tasksListView.setItems()
 
     private Node createTeamStatsModule() {
         VBox card = createDashboardCard("Your Team's Contribution");

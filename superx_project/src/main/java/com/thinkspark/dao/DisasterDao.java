@@ -38,7 +38,8 @@ public class DisasterDao {
         disasterData.put("location", disaster.getLocation());
         disasterData.put("description", disaster.getDescription());
         disasterData.put("citizenName", disaster.getCitizenName());
-        disasterData.put("imageUrl", disaster.getImageUrl()); // ADDED
+        disasterData.put("imageUrl", disaster.getImageUrl());
+        disasterData.put("status", disaster.getStatus()); // NEW: Save initial status
         disasterData.put("timestamp", FieldValue.serverTimestamp());
 
         ApiFuture<DocumentReference> future = db.collection("disasters").add(disasterData);
@@ -51,6 +52,18 @@ public class DisasterDao {
                 e.printStackTrace();
             }
         }, Runnable::run);
+    }
+
+    // NEW METHOD: Update the status of a disaster report
+    public void updateDisasterStatus(String disasterId, String newStatus) {
+        if (db == null) {
+            System.err.println("Firestore is not initialized. Cannot update disaster status.");
+            return;
+        }
+        db.collection("disasters").document(disasterId).update("status", newStatus)
+            .addListener(() -> {
+                System.out.println("Disaster report " + disasterId + " status updated to " + newStatus);
+            }, Runnable::run);
     }
 
     public void listenForDisasterReports(ObservableList<Disaster> targetList) {
@@ -71,6 +84,12 @@ public class DisasterDao {
                     for (QueryDocumentSnapshot doc : snapshots) {
                         if (doc.exists()) {
                             Disaster disaster = doc.toObject(Disaster.class);
+                            disaster.setFirebaseDocId(doc.getId()); // NEW: Set the Firebase document ID
+                            // Ensure status is correctly retrieved. If not set, it will be null.
+                            // Firestore's toObject() will set properties that exist in the document.
+                            // If 'status' is missing in some documents, it will remain null.
+                            // We should explicitly retrieve it as a String if it might be null from Firestore's toObject.
+                            disaster.setStatus(doc.getString("status")); 
                             targetList.add(disaster);
                         }
                     }
@@ -78,7 +97,6 @@ public class DisasterDao {
             });
     }
 
-    // NEW METHOD to listen for requests by a specific citizen
     public void listenForDisastersByCitizen(ObservableList<Disaster> targetList, String citizenName) {
         if (db == null) {
             System.err.println("Firestore is not initialized. Cannot listen for disaster reports.");
@@ -86,7 +104,7 @@ public class DisasterDao {
         }
 
         db.collection("disasters")
-            .whereEqualTo("citizenName", citizenName) // Filter by citizenName
+            .whereEqualTo("citizenName", citizenName)
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener((snapshots, e) -> {
                 if (e != null) {
@@ -99,6 +117,8 @@ public class DisasterDao {
                     for (QueryDocumentSnapshot doc : snapshots) {
                         if (doc.exists()) {
                             Disaster disaster = doc.toObject(Disaster.class);
+                            disaster.setFirebaseDocId(doc.getId()); // NEW: Set the Firebase document ID
+                            disaster.setStatus(doc.getString("status")); // NEW: Set the status from Firestore
                             targetList.add(disaster);
                         }
                     }

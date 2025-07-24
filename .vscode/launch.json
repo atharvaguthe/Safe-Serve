@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AllRequestsView",
+            "request": "launch",
+            "mainClass": "com.thinkspark.view.AllRequestsView",
+            "projectName": "superx_project"
+        },
+        {
+            "type": "java",
             "name": "ReportDisasterView",
             "request": "launch",
             "mainClass": "com.thinkspark.view.ReportDisasterView",

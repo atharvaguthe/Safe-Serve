@@ -54,7 +54,7 @@ public class LoginUI extends Application {
         stage.setTitle("Safe Serve");
         stage.setResizable(true);
         stage.setScene(scene);
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.jpg")));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
         stage.show();
     }
 

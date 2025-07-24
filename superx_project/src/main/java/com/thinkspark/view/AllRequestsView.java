@@ -1,8 +1,8 @@
 package com.thinkspark.view;
 
 import com.thinkspark.dao.DisasterDao;
+import com.thinkspark.dao.TaskDao;
 import com.thinkspark.dao.VolunteerDao;
-import com.thinkspark.model.DataManager;
 import com.thinkspark.model.Disaster;
 import com.thinkspark.model.Task;
 import com.thinkspark.model.Volunteer;
@@ -33,6 +33,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.io.InputStream;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,6 +47,7 @@ public class AllRequestsView extends Application {
     private static final String BORDER_COLOR = "#E2E8F0";
     private static final String STATUS_PENDING_COLOR = "#DD6B20"; // Orange
     private static final String STATUS_ASSIGNED_COLOR = "#3182CE"; // Blue
+    private static final String STATUS_COMPLETED_COLOR = "#38A169"; // Green
     private static final String ACTION_BUTTON_COLOR = "#38A169"; // Green
 
     private final Scene previousScene;
@@ -54,7 +56,9 @@ public class AllRequestsView extends Application {
     private ObservableList<RequestItem> requestItems;
     private final DisasterDao disasterDao;
     private final VolunteerDao volunteerDao;
+    private final TaskDao taskDao;
     private final ObservableList<Volunteer> availableVolunteers;
+    private final ObservableList<Task> allTasks;
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
@@ -80,10 +84,11 @@ public class AllRequestsView extends Application {
     /**
      * Custom ListCell to display RequestItem data and provide an "Assign Task" button.
      */
-    private class RequestCell extends ListCell<RequestItem> {
+     private class RequestCell extends ListCell<RequestItem> {
         @Override
         protected void updateItem(RequestItem item, boolean empty) {
             super.updateItem(item, empty);
+
             if (empty || item == null) {
                 setGraphic(null);
             } else {
@@ -92,38 +97,72 @@ public class AllRequestsView extends Application {
                 content.setPadding(new Insets(15));
                 content.setStyle("-fx-border-color: transparent transparent " + BORDER_COLOR + " transparent; -fx-border-width: 1;");
 
-                ImageView icon;
-                if (item.getDisaster().getImageUrl() != null && !item.getDisaster().getImageUrl().isEmpty()) {
-                    try {
-                        icon = new ImageView(new Image(item.getDisaster().getImageUrl()));
-                    } catch (Exception e) {
-                        icon = new ImageView(new Image(getClass().getResourceAsStream("/logo.jpg")));
-                    }
-                } else {
-                    icon = new ImageView(new Image(getClass().getResourceAsStream("/logo.jpg")));
-                }
+                // Always initialize icon as empty ImageView
+                ImageView icon = new ImageView();
                 icon.setFitHeight(50);
                 icon.setFitWidth(50);
+                // Only try to load an image if possible
+                if (item.getDisaster() != null) {
+                    String imgUrl = item.getDisaster().getImageUrl();
+                    if (imgUrl != null && !imgUrl.isEmpty()) {
+                        try {
+                            icon.setImage(new Image(imgUrl));
+                        } catch (Exception e) {
+                            System.err.println("Error loading image from URL: " + imgUrl + ". Falling back to default logo.");
+                            e.printStackTrace();
+                            InputStream defaultLogoStream = getClass().getResourceAsStream("/logo.png");
+                            if (defaultLogoStream != null) {
+                                icon.setImage(new Image(defaultLogoStream));
+                            } else {
+                                System.err.println("Default logo.png not found in resources!");
+                            }
+                        }
+                    } else {
+                        InputStream defaultLogoStream = getClass().getResourceAsStream("/logo.png");
+                        if (defaultLogoStream != null) {
+                            icon.setImage(new Image(defaultLogoStream));
+                        } else {
+                            System.err.println("Default logo.png not found in resources!");
+                        }
+                    }
+                }
 
-                Label typeLabel = new Label(item.getDisaster().getType());
+                // Add null checks for item.getDisaster()
+                Label typeLabel = new Label(item.getDisaster() != null ? item.getDisaster().getType() : "N/A");
                 typeLabel.setFont(AllRequestsView.getFont(16, FontWeight.BOLD));
-                Label locationLabel = new Label(item.getDisaster().getLocation());
+                Label locationLabel = new Label(item.getDisaster() != null ? item.getDisaster().getLocation() : "N/A");
                 VBox details = new VBox(5, typeLabel, locationLabel);
 
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                Label statusLabel = new Label(item.getStatus().toUpperCase());
+                Label statusLabel = new Label(item.getStatus() != null ? item.getStatus().toUpperCase() : "N/A");
                 statusLabel.setFont(AllRequestsView.getFont(12, FontWeight.BOLD));
                 statusLabel.setTextFill(Color.WHITE);
                 statusLabel.setPadding(new Insets(4, 8, 4, 8));
-                String statusColor = "Pending".equalsIgnoreCase(item.getStatus()) ? STATUS_PENDING_COLOR : STATUS_ASSIGNED_COLOR;
+
+                String statusLower = item.getStatus() != null ? item.getStatus().toLowerCase() : "";
+                String statusColor;
+                switch (statusLower) {
+                    case "pending":
+                        statusColor = STATUS_PENDING_COLOR;
+                        break;
+                    case "assigned":
+                        statusColor = STATUS_ASSIGNED_COLOR;
+                        break;
+                    case "completed":
+                        statusColor = STATUS_COMPLETED_COLOR;
+                        break;
+                    default:
+                        statusColor = FONT_COLOR_DARK;
+                        break;
+                }
                 statusLabel.setStyle("-fx-background-color: " + statusColor + "; -fx-background-radius: 6;");
 
                 content.getChildren().addAll(icon, details, spacer, statusLabel);
 
                 // Only show the assign button if the task is pending
-                if ("Pending".equalsIgnoreCase(item.getStatus())) {
+                if ("pending".equalsIgnoreCase(item.getStatus())) {
                     Button assignButton = new Button("Assign Task");
                     assignButton.setTextFill(Color.WHITE);
                     assignButton.setStyle("-fx-background-color: " + ACTION_BUTTON_COLOR + "; -fx-background-radius: 6; -fx-cursor: hand;");
@@ -140,12 +179,19 @@ public class AllRequestsView extends Application {
      * @param request The request item to be assigned.
      */
     private void assignTaskToVolunteer(RequestItem request) {
-        if (availableVolunteers.isEmpty()) {
-            new Alert(Alert.AlertType.WARNING, "There are no available volunteers to assign.", ButtonType.OK).show();
+        // Filter out volunteers who are already assigned to a task that is not completed
+        ObservableList<Volunteer> currentlyAvailableVolunteers = availableVolunteers.stream()
+            .filter(volunteer -> allTasks.stream()
+                .noneMatch(task -> task.getAssignedTo().equals(volunteer.getName()) && !task.getStatus().equalsIgnoreCase("completed")))
+            .collect(Collectors.toCollection(FXCollections::observableArrayList));
+
+
+        if (currentlyAvailableVolunteers.isEmpty()) {
+            new Alert(Alert.AlertType.WARNING, "There are no available volunteers to assign. All are currently assigned tasks or none registered.", ButtonType.OK).show();
             return;
         }
 
-        ChoiceDialog<Volunteer> dialog = new ChoiceDialog<>(availableVolunteers.get(0), availableVolunteers);
+        ChoiceDialog<Volunteer> dialog = new ChoiceDialog<>(currentlyAvailableVolunteers.get(0), currentlyAvailableVolunteers);
         dialog.setTitle("Assign Task to Volunteer");
         dialog.setHeaderText("Select a volunteer for this task:");
         dialog.setContentText("Task: " + request.getDisaster().getType() + " at " + request.getDisaster().getLocation());
@@ -154,15 +200,14 @@ public class AllRequestsView extends Application {
         result.ifPresent(volunteer -> {
             String taskDescription = request.getDisaster().getType() + ": " + request.getDisaster().getDescription();
             
-            // Create a new Task and add it to the central data manager
-            DataManager.getAssignedTasks().add(new Task(taskDescription, volunteer.getName()));
+            // Create a new Task with the disasterId
+            Task newTask = new Task(taskDescription, volunteer.getName(), request.getDisaster().getFirebaseDocId());
+            taskDao.saveTask(newTask); // Save task to Firestore
+
+            // Update the status of the original Disaster report in Firestore
+            disasterDao.updateDisasterStatus(request.getDisaster().getFirebaseDocId(), "Assigned");
             
-            // Update the status of the item in this view
-            request.setStatus("Assigned");
-            
-            // Refresh the ListView to show the change in status and hide the button
-            listView.refresh();
-            
+            // The ListChangeListener on disasterReports will update requestItems and refresh the view
             new Alert(Alert.AlertType.INFORMATION, "Task successfully assigned to " + volunteer.getName() + ".", ButtonType.OK).show();
         });
     }
@@ -172,7 +217,9 @@ public class AllRequestsView extends Application {
         this.previousScene = previousScene;
         this.disasterDao = new DisasterDao();
         this.volunteerDao = new VolunteerDao();
+        this.taskDao = new TaskDao();
         this.availableVolunteers = FXCollections.observableArrayList();
+        this.allTasks = FXCollections.observableArrayList();
     }
 
     @Override
@@ -197,13 +244,16 @@ public class AllRequestsView extends Application {
         disasterReports.addListener((ListChangeListener<Disaster>) c -> {
             requestItems.setAll(
                 disasterReports.stream()
-                    .map(disaster -> new RequestItem(disaster, "Pending"))
+                    .map(disaster -> new RequestItem(disaster, disaster.getStatus()))
                     .collect(Collectors.toList())
             );
         });
         
-        // Listen for volunteers from Firebase
+        // Listen for all volunteers from Firebase
         volunteerDao.listenForVolunteers(availableVolunteers);
+
+        // Listen for all tasks from Firebase (needed to check volunteer availability)
+        taskDao.listenForTasks(allTasks);
     }
 
     private Node createHeader() {

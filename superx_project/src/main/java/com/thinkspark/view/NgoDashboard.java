@@ -33,6 +33,7 @@ public class NgoDashboard extends Application {
     private static final String BORDER_COLOR = "#E2E8F0";
     private static final String ALERT_COLOR = "#E53E3E";
     private static final String PRIMARY_ACCENT_ORANGE = "#FCA311";
+    private static final String STATUS_COMPLETED_COLOR = "#38A169"; 
 
     private Stage primaryStage;
     private Scene dashboardScene;
@@ -153,12 +154,9 @@ public class NgoDashboard extends Application {
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(settingsItem, logoutItem);
 
-
         settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         
-        // --- UPDATED LOGOUT ACTION ---
         logoutItem.setOnAction(e -> {
-            // Reuse the existing primary stage to go back to DisasterHelperUI
             new DisasterHelperUI().start(primaryStage);
         });
 
@@ -238,6 +236,7 @@ public class NgoDashboard extends Application {
     private Node createLiveFeedsModule() {
         VBox card = createDashboardCard("Live Feeds");
 
+        // Citizen Disaster Reports Section
         Label disasterReportsTitle = new Label("Citizen Disaster Reports");
         disasterReportsTitle.setFont(getFont(16, FontWeight.BOLD));
 
@@ -250,19 +249,37 @@ public class NgoDashboard extends Application {
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
-                    Text type = new Text(item.getType() + " at " + item.getLocation());
-                    type.setFont(NgoDashboard.getFont(14, FontWeight.BOLD));
-                    type.setFill(Color.web(ALERT_COLOR));
+                    Text typeAndLocation = new Text(item.getType() + " at " + item.getLocation());
+                    typeAndLocation.setFont(NgoDashboard.getFont(14, FontWeight.BOLD));
+                    
+                    // Safely check item.getStatus() before using it
+                    String status = item.getStatus();
+                    String statusColor = ALERT_COLOR; // Default for pending/unassigned
+                    if (status != null) { // Add null check
+                        if (status.equalsIgnoreCase("assigned")) {
+                            statusColor = PRIMARY_BLUE;
+                        } else if (status.equalsIgnoreCase("completed")) {
+                            statusColor = STATUS_COMPLETED_COLOR; // Use green for completed
+                        }
+                    }
+                    typeAndLocation.setFill(Color.web(statusColor));
 
                     Text description = new Text(item.getDescription());
                     description.setWrappingWidth(param.getWidth() - 30);
 
-                    VBox content = new VBox(5, type, description);
+                    // Display status explicitly
+                    // Safely display status, defaulting to "Unknown" if null
+                    Text statusText = new Text("Status: " + (status != null ? status : "Unknown"));
+                    statusText.setFont(NgoDashboard.getFont(12, FontWeight.MEDIUM));
+                    statusText.setFill(Color.web(statusColor));
+
+                    VBox content = new VBox(5, typeAndLocation, description, statusText); // Added statusText
                     setGraphic(content);
                 }
             }
         });
 
+        // Government Alerts Section
         Label govAlertsTitle = new Label("Government Alerts");
         govAlertsTitle.setFont(getFont(16, FontWeight.BOLD));
         govAlertsTitle.setPadding(new Insets(15, 0, 0, 0));
