@@ -65,7 +65,7 @@ public class MapView extends Application {
         
         rootLayout.getChildren().addAll(header, webView);
 
-        Scene scene = new Scene(rootLayout);
+        Scene scene = new Scene(rootLayout,1920,1080);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Safe Serve");
     }

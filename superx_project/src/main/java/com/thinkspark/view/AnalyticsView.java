@@ -40,7 +40,7 @@ public class AnalyticsView extends Application {
 
         rootLayout.getChildren().addAll(createHeader(), createPlaceholderContent());
 
-        Scene scene = new Scene(rootLayout);
+        Scene scene = new Scene(rootLayout,1920,1080);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Safe Serve");
     }

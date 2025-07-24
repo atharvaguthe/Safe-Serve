@@ -53,7 +53,7 @@ public class ResourcesView extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        Scene scene = new Scene(scrollPane);
+        Scene scene = new Scene(scrollPane,1920,1080);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Safe Serve");
     }

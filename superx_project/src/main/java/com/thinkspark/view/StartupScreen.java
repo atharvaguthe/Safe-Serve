@@ -76,7 +76,6 @@ public class StartupScreen extends Application {
         primaryStage.setScene(scene);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
         
-        // Set to full screen
         primaryStage.setMaximized(true);
 
         primaryStage.show();

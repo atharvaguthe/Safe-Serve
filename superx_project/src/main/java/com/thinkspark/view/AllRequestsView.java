@@ -187,7 +187,7 @@ public class AllRequestsView extends Application {
         ScrollPane scrollPane = new ScrollPane(rootLayout);
         scrollPane.setFitToWidth(true);
 
-        Scene scene = new Scene(scrollPane);
+        Scene scene = new Scene(scrollPane,1920,1080);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Safe Serve");
 

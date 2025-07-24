@@ -100,73 +100,76 @@ public class CitizenDashboard extends Application {
     }
 
     private Node createHeader() {
-        HBox header = new HBox();
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(10, 0, 20, 0));
+    HBox header = new HBox();
+    header.setAlignment(Pos.CENTER_LEFT);
+    header.setPadding(new Insets(10, 0, 20, 0));
 
-        // Create an ImageView for the logo
-        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
-        logoView.setFitHeight(40); // Adjust size as needed
-        logoView.setPreserveRatio(true);
+    // Create an ImageView for the logo
+    ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
+    logoView.setFitHeight(40); // Adjust size as needed
+    logoView.setPreserveRatio(true);
 
-        // Create the text label
-        Label logoLabel = new Label("Safe Serve");
-        logoLabel.setFont(getFont(32, FontWeight.BOLD));
-        logoLabel.setTextFill(Color.web(PRIMARY_BLUE));
+    // Create the text label
+    Label logoLabel = new Label("Safe Serve");
+    logoLabel.setFont(getFont(32, FontWeight.BOLD));
+    logoLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
-        // Combine image and text into an HBox
-        HBox logoBox = new HBox(10, logoView, logoLabel);
-        logoBox.setAlignment(Pos.CENTER_LEFT);
+    // Combine image and text into an HBox
+    HBox logoBox = new HBox(10, logoView, logoLabel);
+    logoBox.setAlignment(Pos.CENTER_LEFT);
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+    Region spacer = new Region();
+    HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox navLinks = new HBox(30);
-        navLinks.setAlignment(Pos.CENTER);
-        String[] navItems = { "Home", "Assistance", "Resources", "About Us" };
-        for (String item : navItems) {
-            Label link = new Label(item);
-            link.setFont(getFont(16, FontWeight.MEDIUM));
-            link.setTextFill(Color.web(FONT_COLOR_DARK));
-            link.setStyle("-fx-cursor: hand;");
-            link.setOnMouseEntered(e -> link.setUnderline(true));
-            link.setOnMouseExited(e -> link.setUnderline(false));
-            
-            if ("Home".equals(item)) {
-                 link.setOnMouseClicked(e -> new CitizenDashboard(this.userName).start(primaryStage));
-            } else if ("Assistance".equals(item)) {
-                link.setOnMouseClicked(e -> new AssistanceView(primaryStage, dashboardScene, this.userName).start(primaryStage));
-            } else if ("About Us".equals(item)) {
-                link.setOnMouseClicked(e -> new AboutUsView(primaryStage, dashboardScene).start(primaryStage));
-            } else if ("Resources".equals(item)) {
-                link.setOnMouseClicked(e -> new ResourcesView(primaryStage, dashboardScene).start(primaryStage));
-            }
-            navLinks.getChildren().add(link);
+    HBox navLinks = new HBox(30);
+    navLinks.setAlignment(Pos.CENTER);
+    String[] navItems = { "Home", "Assistance", "Resources", "About Us" };
+    for (String item : navItems) {
+        Label link = new Label(item);
+        link.setFont(getFont(16, FontWeight.MEDIUM));
+        link.setTextFill(Color.web(FONT_COLOR_DARK));
+        link.setStyle("-fx-cursor: hand;");
+        link.setOnMouseEntered(e -> link.setUnderline(true));
+        link.setOnMouseExited(e -> link.setUnderline(false));
+        
+        if ("Home".equals(item)) {
+             link.setOnMouseClicked(e -> new CitizenDashboard(this.userName).start(primaryStage));
+        } else if ("Assistance".equals(item)) {
+            link.setOnMouseClicked(e -> new AssistanceView(primaryStage, dashboardScene, this.userName).start(primaryStage));
+        } else if ("About Us".equals(item)) {
+            link.setOnMouseClicked(e -> new AboutUsView(primaryStage, dashboardScene).start(primaryStage));
+        } else if ("Resources".equals(item)) {
+            link.setOnMouseClicked(e -> new ResourcesView(primaryStage, dashboardScene).start(primaryStage));
         }
+        navLinks.getChildren().add(link);
+    }
 
-        MenuButton profileButton = new MenuButton(this.userName.substring(0, 1).toUpperCase());
-        MenuItem settingsItem = new MenuItem("Settings");
-        MenuItem logoutItem = new MenuItem("Log Out");
-        profileButton.getItems().addAll(settingsItem, logoutItem);
+    MenuButton profileButton = new MenuButton(this.userName.substring(0, 1).toUpperCase());
+    MenuItem settingsItem = new MenuItem("Settings");
+    MenuItem logoutItem = new MenuItem("Log Out");
+    profileButton.getItems().addAll(settingsItem, logoutItem);
 
-        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
-        logoutItem.setOnAction(e -> {
-            // Reuse the existing primary stage to go back to DisasterHelperUI
-            new DisasterHelperUI().start(primaryStage);
-        });
+    settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
+    logoutItem.setOnAction(e -> {
+        // Reuse the existing primary stage to go back to DisasterHelperUI
+        new DisasterHelperUI().start(primaryStage);
+    });
 
-        profileButton.setFont(getFont(16, FontWeight.BOLD));
-        profileButton.setStyle(
-            "-fx-background-color: " + PRIMARY_BLUE + "; " +
-            "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " +
-            "-fx-background-radius: 50em; -fx-padding: 0;"
-        );
-        profileButton.setMinSize(40, 40);
-        profileButton.setMaxSize(40, 40);
-        profileButton.setAlignment(Pos.CENTER);
+    profileButton.setFont(getFont(16, FontWeight.BOLD));
+    profileButton.setStyle(
+        "-fx-background-color: " + PRIMARY_BLUE + "; " +
+        "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " +
+        "-fx-background-radius: 50em; -fx-padding: 0;"
+    );
+    profileButton.setMinSize(40, 40);
+    profileButton.setMaxSize(40, 40);
+    profileButton.setAlignment(Pos.CENTER);
 
-        header.getChildren().addAll(logoBox, spacer, navLinks, profileButton);
-        return header;
+    // Add a margin to create space between navLinks and profileButton
+    HBox.setMargin(navLinks, new Insets(0, 20, 0, 0)); // 20 pixels to the right
+
+    header.getChildren().addAll(logoBox, spacer, navLinks, profileButton);
+    return header;
     }
 
     private Node createHeroSection() {

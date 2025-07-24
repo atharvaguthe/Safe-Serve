@@ -53,7 +53,7 @@ public class AboutUsView extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        Scene scene = new Scene(scrollPane, 1280, 900);
+        Scene scene = new Scene(scrollPane, 1920, 1080);
         primaryStage.setScene(scene);
         primaryStage.setTitle("About Us | Disaster Relief Helper");
     }
@@ -77,7 +77,7 @@ public class AboutUsView extends Application {
         backButton.setPadding(new Insets(8, 16, 8, 16));
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
-            primaryStage.setTitle("Citizen Dashboard | Disaster Relief Helper");
+            primaryStage.setTitle("Safe Serve");
         });
 
         header.getChildren().addAll(title, spacer, backButton);
