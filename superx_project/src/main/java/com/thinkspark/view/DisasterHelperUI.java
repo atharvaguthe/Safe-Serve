@@ -21,6 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane; // Import StackPane
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -46,21 +47,52 @@ public class DisasterHelperUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // --- Root Layout ---
+        // --- Root Layout (existing content) ---
         VBox rootLayout = new VBox(40);
         rootLayout.setPadding(new Insets(20, 50, 50, 50));
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
-        // --- Scene and Stage Setup ---
-        Scene scene = new Scene(new ScrollPane(rootLayout),1920,1080);
+        // --- ScrollPane for Responsiveness ---
+        ScrollPane scrollPane = new ScrollPane(rootLayout); 
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background: " + BACKGROUND_COLOR + ";");
+        scrollPane.getStyleClass().add("edge-to-edge");
+
+        // --- Floating Circular Button ---
+        Button floatingButton = new Button("🤖"); 
+        floatingButton.setStyle(
+            "-fx-background-color: " + SECONDARY_BLUE + "; " +
+            "-fx-background-radius: 50%; " + // Makes it circular
+            "-fx-min-width: 60px; -fx-min-height: 60px; " +
+            "-fx-max-width: 60px; -fx-max-height: 60px; " +
+            "-fx-font-size: 24px; " +
+            "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 5); " +
+            "-fx-cursor: hand;"
+        );
+        // Position the button at bottom-right with padding
+        StackPane.setAlignment(floatingButton, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(floatingButton, new Insets(0, 30, 100, 0)); // Changed bottom padding from 30 to 80 (30 + 50)
+
+        // --- Create a new StackPane as the overall root for the Scene ---
+        StackPane overallRoot = new StackPane();
+        overallRoot.getChildren().addAll(scrollPane, floatingButton);
+
+        // --- Final Scene and Stage Setup ---
+        // Create the scene directly with the overallRoot
+        Scene scene = new Scene(overallRoot, 1920, 1080); 
         primaryStage.setTitle("Safe Serve");
         primaryStage.setMaximized(true);
         primaryStage.setResizable(true);
-        primaryStage.setScene(scene);
+        primaryStage.setScene(scene); // Set the scene to the primary stage
 
+        // Now that the scene is created and set, pass it to methods that need it
+        final Scene finalScene = scene; 
+        
         // --- Header / Navigation Bar ---
-        Node header = createHeader(primaryStage, scene);
+        Node header = createHeader(primaryStage, finalScene);
 
         // --- Hero Section ---
         Node heroSection = createHeroSection();
@@ -81,7 +113,7 @@ public class DisasterHelperUI extends Application {
         // --- Left Column Content ---
         VBox leftColumn = new VBox(40);
         leftColumn.getChildren().addAll(
-            createQuickAccessModule(primaryStage, scene), // Pass stage and scene for navigation
+            createQuickAccessModule(primaryStage, finalScene), 
             createNewsFeedModule()
         );
 
@@ -95,15 +127,14 @@ public class DisasterHelperUI extends Application {
         mainGrid.add(leftColumn, 0, 0);
         mainGrid.add(rightColumn, 1, 0);
 
-        // --- Assemble the Main Layout ---
+        // --- Assemble the Main Layout (before ScrollPane) ---
+        // Add all main content to rootLayout before it's used in ScrollPane
         rootLayout.getChildren().addAll(header, heroSection, mainGrid);
 
-        // --- ScrollPane for Responsiveness ---
-        ScrollPane scrollPane = (ScrollPane) scene.getRoot();
-        scrollPane.setFitToWidth(true);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background: " + BACKGROUND_COLOR + ";");
-        scrollPane.getStyleClass().add("edge-to-edge");
+        floatingButton.setOnAction(e -> {
+            // Open the new FloatingButtonPage
+            new FloatingButtonPage(primaryStage, finalScene).start(primaryStage);
+        });
 
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
         primaryStage.show();
@@ -136,7 +167,7 @@ public class DisasterHelperUI extends Application {
         navLinks.setAlignment(Pos.CENTER);
         
         Button homeLink = createNavLink("Home");
-        homeLink.setOnAction(e -> this.start(stage));
+        homeLink.setOnAction(e -> this.start(stage)); // Navigates back to this UI
 
         Button assistanceLink = createNavLink("Assistance");
         assistanceLink.setOnAction(e -> new AssistanceView(stage, scene, "Citizen").start(stage));
