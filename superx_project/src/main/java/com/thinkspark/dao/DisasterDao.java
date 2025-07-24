@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors; // NEW IMPORT
 
 public class DisasterDao {
 
@@ -44,6 +45,7 @@ public class DisasterDao {
 
         ApiFuture<DocumentReference> future = db.collection("disasters").add(disasterData);
 
+        // Execute the listener on a separate single-thread executor to prevent blocking the UI.
         future.addListener(() -> {
             try {
                 System.out.println("DAO Success: Disaster report saved to Firebase with new ID: " + future.get().getId());
@@ -51,7 +53,7 @@ public class DisasterDao {
                 System.err.println("DAO Error: Failed to save disaster report to Firebase. " + e.getMessage());
                 e.printStackTrace();
             }
-        }, Runnable::run);
+        }, Executors.newSingleThreadExecutor()); 
     }
 
     // NEW METHOD: Update the status of a disaster report
@@ -60,10 +62,11 @@ public class DisasterDao {
             System.err.println("Firestore is not initialized. Cannot update disaster status.");
             return;
         }
+        // Execute the listener on a separate single-thread executor to prevent blocking the UI.
         db.collection("disasters").document(disasterId).update("status", newStatus)
             .addListener(() -> {
                 System.out.println("Disaster report " + disasterId + " status updated to " + newStatus);
-            }, Runnable::run);
+            }, Executors.newSingleThreadExecutor()); // Corrected: Run on a background thread
     }
 
     public void listenForDisasterReports(ObservableList<Disaster> targetList) {

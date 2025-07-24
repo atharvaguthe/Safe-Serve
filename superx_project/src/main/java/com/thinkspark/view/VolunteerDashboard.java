@@ -96,6 +96,8 @@ public class VolunteerDashboard extends Application {
         primaryStage.setResizable(true);
         primaryStage.setScene(dashboardScene);
 
+        // This line correctly links the ListView to the ObservableList.
+        // Updates to assignedTasksData from Firestore listener should reflect here.
         tasksListView.setItems(assignedTasksData); 
 
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
@@ -123,7 +125,7 @@ public class VolunteerDashboard extends Application {
 
         // Create an ImageView for the logo
         ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
-        logoView.setFitHeight(40); // Adjust size as needed
+        logoView.setFitHeight(40); 
         logoView.setPreserveRatio(true);
 
         // Create the text label
@@ -233,7 +235,7 @@ public class VolunteerDashboard extends Application {
 
     private Node createAssignedTasksModule() {
         VBox card = createDashboardCard("Your Assigned Tasks");
-        tasksListView = new ListView<>(); // No need to pass ObservableList here anymore
+        tasksListView = new ListView<>(); 
         tasksListView.setPlaceholder(new Label("You have no assigned tasks."));
         tasksListView.setCellFactory(param -> new ListCell<Task>() {
             @Override
@@ -242,6 +244,12 @@ public class VolunteerDashboard extends Application {
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
+                    // DEBUG PRINT STATEMENT ADDED HERE
+                    System.out.println("DEBUG VD: Displaying task: " + item.getDescription() + 
+                                       " (Status: " + item.getStatus() + 
+                                       ", AssignedTo: " + item.getAssignedTo() + 
+                                       ", FirebaseID: " + item.getFirebaseDocId() + ")");
+
                     HBox content = new HBox(10);
                     content.setAlignment(Pos.CENTER_LEFT);
                     

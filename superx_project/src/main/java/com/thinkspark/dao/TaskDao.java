@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors; // NEW IMPORT
 
 public class TaskDao {
 
@@ -39,12 +40,15 @@ public class TaskDao {
 
         Map<String, Object> taskData = new HashMap<>();
         taskData.put("description", task.getDescription());
-        taskData.put("assignedTo", task.getAssignedTo());
+        taskData.put("assignedTo", task.getAssignedTo()); // This field is crucial for filtering!
         taskData.put("status", task.getStatus()); // Save initial status (Assigned)
         taskData.put("disasterId", task.getDisasterId()); // Save linked disaster ID
 
+        System.out.println("DEBUG DAO: Saving Task Data: " + taskData); // DEBUG PRINT
+
         ApiFuture<DocumentReference> future = db.collection("tasks").add(taskData);
 
+        // Execute the listener on a separate single-thread executor to prevent blocking the UI.
         future.addListener(() -> {
             try {
                 System.out.println("DAO Success: Task saved to Firebase with new ID: " + future.get().getId());
@@ -52,7 +56,7 @@ public class TaskDao {
                 System.err.println("DAO Error: Failed to save task to Firebase. " + e.getMessage());
                 e.printStackTrace();
             }
-        }, Runnable::run);
+        }, Executors.newSingleThreadExecutor()); // Corrected: Run on a background thread
     }
 
     // NEW METHOD: Update the status of a task
@@ -61,10 +65,11 @@ public class TaskDao {
             System.err.println("Firestore is not initialized. Cannot update task status.");
             return;
         }
+        // Execute the listener on a separate single-thread executor to prevent blocking the UI.
         db.collection("tasks").document(taskId).update("status", newStatus)
             .addListener(() -> {
                 System.out.println("Task " + taskId + " status updated to " + newStatus);
-            }, Runnable::run);
+            }, Executors.newSingleThreadExecutor()); // Corrected: Run on a background thread
     }
 
     // Modified to filter by assignedTo and include firebaseDocId
@@ -85,13 +90,16 @@ public class TaskDao {
 
                 Platform.runLater(() -> {
                     targetList.clear();
+                    System.out.println("DEBUG DAO: Clearing targetList for " + assignedToVolunteerName + ". List size before adding: " + targetList.size()); // DEBUG PRINT
                     for (QueryDocumentSnapshot doc : snapshots) {
                         if (doc.exists()) {
                             Task task = doc.toObject(Task.class);
                             task.setFirebaseDocId(doc.getId()); // NEW: Set Firebase document ID
                             targetList.add(task);
+                            System.out.println("DEBUG DAO: Added task: " + task.getDescription() + " (Status: " + task.getStatus() + ", AssignedTo: " + task.getAssignedTo() + ", ID: " + task.getFirebaseDocId() + ")"); // DEBUG PRINT
                         }
                     }
+                    System.out.println("DEBUG DAO: targetList size after adding: " + targetList.size()); // DEBUG PRINT
                 });
             });
     }
@@ -113,13 +121,17 @@ public class TaskDao {
 
                 Platform.runLater(() -> {
                     targetList.clear();
+                    // No specific assignedTo name for this overload, so no name in debug print
+                    System.out.println("DEBUG DAO (All Tasks): Clearing targetList. List size before adding: " + targetList.size()); // DEBUG PRINT
                     for (QueryDocumentSnapshot doc : snapshots) {
                         if (doc.exists()) {
                             Task task = doc.toObject(Task.class);
                             task.setFirebaseDocId(doc.getId()); // Set Firebase document ID
                             targetList.add(task);
+                            System.out.println("DEBUG DAO (All Tasks): Added task: " + task.getDescription() + " (Status: " + task.getStatus() + ", AssignedTo: " + task.getAssignedTo() + ", ID: " + task.getFirebaseDocId() + ")"); // DEBUG PRINT
                         }
                     }
+                    System.out.println("DEBUG DAO (All Tasks): targetList size after adding: " + targetList.size()); // DEBUG PRINT
                 });
             });
     }

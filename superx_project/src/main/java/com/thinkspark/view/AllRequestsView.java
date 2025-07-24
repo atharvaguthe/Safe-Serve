@@ -201,7 +201,7 @@ public class AllRequestsView extends Application {
             String taskDescription = request.getDisaster().getType() + ": " + request.getDisaster().getDescription();
             
             // Create a new Task with the disasterId
-            Task newTask = new Task(taskDescription, volunteer.getName(), request.getDisaster().getFirebaseDocId());
+            Task newTask = new Task(taskDescription, volunteer.getEmail(), request.getDisaster().getFirebaseDocId());
             taskDao.saveTask(newTask); // Save task to Firestore
 
             // Update the status of the original Disaster report in Firestore
