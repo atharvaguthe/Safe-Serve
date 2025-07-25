@@ -69,30 +69,32 @@
 <script>
     // Initialize the map and set its view to a central point in Pune
     // Adjusted view to better encompass all locations
-    var map = L.map('map').setView([18.5100, 73.8500], 11); // Slightly higher zoom out for wider Pune view
+    var map = L.map('map').setView([18.5204, 73.8567], 12); // Centered on Pune, Zoom 12
 
     // Add a tile layer to add to our map
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Data for areas
+    // Data for areas with corrected coordinates
     var disasterAreas = [
-        { name: "NBN College Pune (Katraj)", lat: 18.4502, lon: 73.8447 },
-        { name: "Katraj Bus Stop", lat: 18.4437, lon: 73.8666 },
-        { name: "Nawale Bridge", lat: 18.4830, lon: 73.8050 },
-        { name: "Hinjawadi Phase 1", lat: 18.5830, lon: 73.7440 }, // Added: IT hub, known for waterlogging during heavy rains
-        { name: "Deccan Gymkhana", lat: 18.5140, lon: 73.8370 } // Added: Central area, can face issues during heavy rains
+        { name: "NBN Sinhgad College (Katraj)", lat: 18.4593, lon: 73.8345 },
+        { name: "Katraj Bus Stop", lat: 18.4445, lon:  73.8586 },
+         { name: "Chandani Chowk", lat: 18.5050, lon: 73.7760 },
+        { name: "Hinjawadi Phase 1", lat: 18.5898, lon: 73.7385 },
+        { name: "Deccan Gymkhana", lat: 18.5186, lon: 73.8430 },
+        
     ];
 
     var shelterAreas = [
-        { name: "Core2Web (Narhe)", lat: 18.4716, lon: 73.8182 }, // Corrected: Narhe address
-        { name: "Swargate", lat: 18.5011, lon: 73.8627 },
-        { name: "Chandani Chowk", lat: 18.5140, lon: 73.7840 },
-        { name: "Warje", lat: 18.4820, lon: 73.7930 },
-        { name: "Pune Railway Station", lat: 18.5284, lon: 73.8738 }, // Added: Major transport hub, often used as temporary shelter
-        { name: "Shivaji Nagar Court", lat: 18.5204, lon: 73.8436 }, // Added: Central, large area, potential for community halls
-        { name: "Aga Khan Palace (Nagar Road)", lat: 18.5620, lon: 73.8890 } // Corrected
+        { name: "Core2Web (Narhe)", lat: 18.453677, lon: 73.827616 },
+        { name: "BAPS Shri Swaminarayan Temple", lat: 18.441960, lon: 73.836580 },
+        { name: "Swargate", lat: 18.5005, lon: 73.8655 },
+       
+        { name: "Warje", lat: 18.4900, lon: 73.8000 },
+        { name: "Pune Railway Station", lat: 18.5278, lon: 73.8732 },
+        { name: "Shivaji Nagar Court", lat: 18.5300, lon: 73.8530 },
+        { name: "Aga Khan Palace (Nagar Road)", lat: 18.5525, lon: 73.9030 }
     ];
 
     // --- Add Disaster Areas (Red Circles with Labels) ---
