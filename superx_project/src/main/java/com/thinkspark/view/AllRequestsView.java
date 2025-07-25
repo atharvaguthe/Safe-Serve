@@ -92,15 +92,15 @@ public class AllRequestsView extends Application {
             if (empty || item == null) {
                 setGraphic(null);
             } else {
-                HBox content = new HBox(20);
+                HBox content = new HBox(25); // Increased spacing
                 content.setAlignment(Pos.CENTER);
-                content.setPadding(new Insets(15));
+                content.setPadding(new Insets(20)); // Increased padding
                 content.setStyle("-fx-border-color: transparent transparent " + BORDER_COLOR + " transparent; -fx-border-width: 1;");
 
                 // Always initialize icon as empty ImageView
                 ImageView icon = new ImageView();
-                icon.setFitHeight(50);
-                icon.setFitWidth(50);
+                icon.setFitHeight(60); // Increased size
+                icon.setFitWidth(60); // Increased size
                 // Only try to load an image if possible
                 if (item.getDisaster() != null) {
                     String imgUrl = item.getDisaster().getImageUrl();
@@ -129,17 +129,18 @@ public class AllRequestsView extends Application {
 
                 // Add null checks for item.getDisaster()
                 Label typeLabel = new Label(item.getDisaster() != null ? item.getDisaster().getType() : "N/A");
-                typeLabel.setFont(AllRequestsView.getFont(16, FontWeight.BOLD));
+                typeLabel.setFont(AllRequestsView.getFont(20, FontWeight.BOLD)); // Increased font size
                 Label locationLabel = new Label(item.getDisaster() != null ? item.getDisaster().getLocation() : "N/A");
-                VBox details = new VBox(5, typeLabel, locationLabel);
+                locationLabel.setFont(AllRequestsView.getFont(18, FontWeight.NORMAL)); // Increased font size
+                VBox details = new VBox(8, typeLabel, locationLabel); // Increased spacing
 
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
                 Label statusLabel = new Label(item.getStatus() != null ? item.getStatus().toUpperCase() : "N/A");
-                statusLabel.setFont(AllRequestsView.getFont(12, FontWeight.BOLD));
+                statusLabel.setFont(AllRequestsView.getFont(14, FontWeight.BOLD)); // Increased font size
                 statusLabel.setTextFill(Color.WHITE);
-                statusLabel.setPadding(new Insets(4, 8, 4, 8));
+                statusLabel.setPadding(new Insets(6, 12, 6, 12)); // Increased padding
 
                 String statusLower = item.getStatus() != null ? item.getStatus().toLowerCase() : "";
                 String statusColor;
@@ -157,15 +158,17 @@ public class AllRequestsView extends Application {
                         statusColor = FONT_COLOR_DARK;
                         break;
                 }
-                statusLabel.setStyle("-fx-background-color: " + statusColor + "; -fx-background-radius: 6;");
+                statusLabel.setStyle("-fx-background-color: " + statusColor + "; -fx-background-radius: 8;"); // Increased radius
 
                 content.getChildren().addAll(icon, details, spacer, statusLabel);
 
                 // Only show the assign button if the task is pending
                 if ("pending".equalsIgnoreCase(item.getStatus())) {
                     Button assignButton = new Button("Assign Task");
+                    assignButton.setFont(AllRequestsView.getFont(16, FontWeight.BOLD)); // Increased font size
                     assignButton.setTextFill(Color.WHITE);
-                    assignButton.setStyle("-fx-background-color: " + ACTION_BUTTON_COLOR + "; -fx-background-radius: 6; -fx-cursor: hand;");
+                    assignButton.setStyle("-fx-background-color: " + ACTION_BUTTON_COLOR + "; -fx-background-radius: 8; -fx-cursor: hand;"); // Increased radius
+                    assignButton.setPadding(new Insets(10, 20, 10, 20)); // Increased padding
                     assignButton.setOnAction(e -> assignTaskToVolunteer(item));
                     content.getChildren().add(assignButton);
                 }
@@ -224,8 +227,8 @@ public class AllRequestsView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(30);
-        rootLayout.setPadding(new Insets(40));
+        VBox rootLayout = new VBox(40); // Increased spacing
+        rootLayout.setPadding(new Insets(60, 80, 80, 80)); // Increased padding
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -259,20 +262,20 @@ public class AllRequestsView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 20, 0));
+        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding
 
         Label title = new Label("📋 All Disaster Reports");
-        title.setFont(getFont(32, FontWeight.BOLD));
+        title.setFont(getFont(42, FontWeight.BOLD)); // Increased font size
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
-        backButton.setPadding(new Insets(8, 16, 8, 16));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12;"); // Increased radius
+        backButton.setPadding(new Insets(15, 28, 15, 28)); // Increased padding
         backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
@@ -280,16 +283,17 @@ public class AllRequestsView extends Application {
     }
 
     private Node createRequestsList() {
-        VBox card = new VBox(0);
-        card.setPadding(new Insets(20));
+        VBox card = new VBox(15); // Increased spacing
+        card.setPadding(new Insets(40)); // Increased padding
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
+                      "-fx-background-radius: 20; " + // Increased radius
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); // Increased shadow
 
         requestItems = FXCollections.observableArrayList();
 
         listView = new ListView<>(requestItems);
         listView.setPlaceholder(new Label("No disaster reports to display."));
+        listView.setPrefHeight(600); // Set a preferred height to make the list box big
         listView.setCellFactory(param -> new RequestCell());
         listView.setStyle("-fx-background-color: transparent;");
 

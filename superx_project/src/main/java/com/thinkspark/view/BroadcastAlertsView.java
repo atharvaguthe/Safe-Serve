@@ -42,8 +42,8 @@ public class BroadcastAlertsView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(30);
-        rootLayout.setPadding(new Insets(40));
+        VBox rootLayout = new VBox(50); // Increased spacing
+        rootLayout.setPadding(new Insets(60, 80, 80, 80)); // Increased padding
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -61,20 +61,20 @@ public class BroadcastAlertsView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 20, 0));
+        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding
 
         Label title = new Label("📢 Broadcast New Alert");
-        title.setFont(getFont(32, FontWeight.BOLD));
+        title.setFont(getFont(42, FontWeight.BOLD)); // Increased font size
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
-        backButton.setPadding(new Insets(8, 16, 8, 16));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12;"); // Increased radius
+        backButton.setPadding(new Insets(15, 28, 15, 28)); // Increased padding
         backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
@@ -82,31 +82,34 @@ public class BroadcastAlertsView extends Application {
     }
 
     private Node createBroadcastForm() {
-        VBox card = new VBox(25);
-        card.setPadding(new Insets(30));
+        VBox card = new VBox(35); // Increased spacing
+        card.setPadding(new Insets(50)); // Increased padding
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
-        card.setMaxWidth(800);
+                      "-fx-background-radius: 20; " + // Increased radius
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); // Increased shadow
+        card.setMaxWidth(1000); // Increased max width
 
         GridPane formGrid = new GridPane();
-        formGrid.setHgap(20);
-        formGrid.setVgap(15);
+        formGrid.setHgap(30); // Increased gap
+        formGrid.setVgap(25); // Increased gap
 
         TextField titleField = new TextField();
         titleField.setPromptText("e.g., Evacuation Notice for Sector 5");
         styleFormControl(titleField);
+        titleField.setPrefHeight(60); // Set preferred height
 
         TextArea messageArea = new TextArea();
         messageArea.setPromptText("Enter the full alert details here...");
         messageArea.setWrapText(true);
-        messageArea.setPrefRowCount(6);
+        messageArea.setPrefRowCount(5); // Increased row count
         styleFormControl(messageArea);
+        messageArea.setPrefHeight(150); // Set preferred height
 
         ComboBox<String> priorityBox = new ComboBox<>();
         priorityBox.getItems().addAll("High", "Medium", "Low");
         priorityBox.setPromptText("Select Priority");
         styleFormControl(priorityBox);
+        priorityBox.setPrefHeight(60); // Set preferred height
 
         formGrid.add(createLabel("Alert Title"), 0, 0);
         formGrid.add(titleField, 1, 0);
@@ -116,10 +119,10 @@ public class BroadcastAlertsView extends Application {
         formGrid.add(priorityBox, 1, 2);
 
         Button submitButton = new Button("Broadcast Alert");
-        submitButton.setFont(getFont(18, FontWeight.BOLD));
+        submitButton.setFont(getFont(22, FontWeight.BOLD)); // Increased font size
         submitButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
-        submitButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-background-radius: 8; -fx-cursor: hand;");
-        submitButton.setPadding(new Insets(12, 25, 12, 25));
+        submitButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-background-radius: 12; -fx-cursor: hand;"); // Increased radius
+        submitButton.setPadding(new Insets(18, 35, 18, 35)); // Increased padding
         HBox actionBox = new HBox(submitButton);
         actionBox.setAlignment(Pos.CENTER_RIGHT);
 
@@ -147,15 +150,15 @@ public class BroadcastAlertsView extends Application {
             DataManager.getBroadcastAlerts().add(newAlert);
 
             // --- Confirmation UI ---
-            VBox confirmationVBox = new VBox(20);
+            VBox confirmationVBox = new VBox(30); // Increased spacing
             confirmationVBox.setAlignment(Pos.CENTER);
-            confirmationVBox.setPadding(new Insets(40));
+            confirmationVBox.setPadding(new Insets(60)); // Increased padding
             
             Label confirmationTitle = new Label("✅ Alert Sent Successfully!");
-            confirmationTitle.setFont(getFont(24, FontWeight.BOLD));
+            confirmationTitle.setFont(getFont(32, FontWeight.BOLD)); // Increased font size
             
             Label confirmationText = new Label("The alert has been broadcast and saved to the database.");
-            confirmationText.setFont(getFont(16, FontWeight.NORMAL));
+            confirmationText.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size
             confirmationText.setTextAlignment(TextAlignment.CENTER);
             
             confirmationVBox.getChildren().addAll(confirmationTitle, confirmationText);
@@ -173,12 +176,13 @@ public class BroadcastAlertsView extends Application {
 
     private Label createLabel(String text) {
         Label label = new Label(text);
-        label.setFont(getFont(16, FontWeight.MEDIUM));
+        label.setFont(getFont(18, FontWeight.MEDIUM)); // Increased font size
         label.setTextFill(Color.web(FONT_COLOR_DARK));
         return label;
     }
 
     private void styleFormControl(Control control) {
-        control.setStyle("-fx-font-size: 14px; -fx-background-color: #FFFFFF; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 8; -fx-padding: 8;");
+        control.setStyle("-fx-font-size: 16px; -fx-background-color: #FFFFFF; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-padding: 10;"); // Increased font size, padding, radius
+        GridPane.setHgrow(control, Priority.ALWAYS); // Ensure it grows within the grid
     }
 }

@@ -43,8 +43,8 @@ public class LogHoursView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(30);
-        rootLayout.setPadding(new Insets(40));
+        VBox rootLayout = new VBox(50); // Increased spacing
+        rootLayout.setPadding(new Insets(60, 80, 80, 80)); // Increased padding
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -65,20 +65,20 @@ public class LogHoursView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 20, 0));
+        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding
 
         Label title = new Label("📋 Log Your Hours");
-        title.setFont(getFont(32, FontWeight.BOLD));
+        title.setFont(getFont(42, FontWeight.BOLD)); // Increased font size
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
-        backButton.setPadding(new Insets(8, 16, 8, 16));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12;"); // Increased radius
+        backButton.setPadding(new Insets(15, 28, 15, 28)); // Increased padding
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
             primaryStage.setTitle("Volunteer Dashboard | Disaster Relief");
@@ -89,27 +89,29 @@ public class LogHoursView extends Application {
     }
 
     private Node createLogHoursForm() {
-        VBox card = new VBox(25);
-        card.setPadding(new Insets(30));
+        VBox card = new VBox(35); // Increased spacing
+        card.setPadding(new Insets(50)); // Increased padding
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
-        card.setMaxWidth(800);
+                      "-fx-background-radius: 20; " + // Increased radius
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); // Increased shadow
+        card.setMaxWidth(1000); // Increased max width
 
         GridPane formGrid = new GridPane();
-        formGrid.setHgap(20);
-        formGrid.setVgap(15);
+        formGrid.setHgap(30); // Increased gap
+        formGrid.setVgap(25); // Increased gap
 
         // Date
         formGrid.add(createLabel("Date of Activity"), 0, 0);
         DatePicker datePicker = new DatePicker(LocalDate.now());
         styleFormControl(datePicker);
+        datePicker.setPrefHeight(60); // Set preferred height
         formGrid.add(datePicker, 1, 0);
 
         // Hours Worked
         formGrid.add(createLabel("Hours Worked"), 0, 1);
         Spinner<Double> hoursSpinner = new Spinner<>(0.5, 24.0, 1.0, 0.5);
         styleFormControl(hoursSpinner);
+        hoursSpinner.setPrefHeight(60); // Set preferred height
         formGrid.add(hoursSpinner, 1, 1);
 
         // Activity Description
@@ -117,16 +119,17 @@ public class LogHoursView extends Application {
         TextArea descriptionArea = new TextArea();
         descriptionArea.setPromptText("Briefly describe your work (e.g., 'Distributed supplies at shelter')...");
         descriptionArea.setWrapText(true);
-        descriptionArea.setPrefRowCount(4);
+        descriptionArea.setPrefRowCount(5); // Increased row count
         styleFormControl(descriptionArea);
+        descriptionArea.setPrefHeight(120); // Set preferred height
         formGrid.add(descriptionArea, 1, 2);
 
         // --- Form Actions ---
         Button submitButton = new Button("Submit Hours");
-        submitButton.setFont(getFont(18, FontWeight.BOLD));
+        submitButton.setFont(getFont(22, FontWeight.BOLD)); // Increased font size
         submitButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
-        submitButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-background-radius: 8; -fx-cursor: hand;");
-        submitButton.setPadding(new Insets(12, 25, 12, 25));
+        submitButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-background-radius: 12; -fx-cursor: hand;"); // Increased radius
+        submitButton.setPadding(new Insets(18, 35, 18, 35)); // Increased padding
         HBox actionBox = new HBox(submitButton);
         actionBox.setAlignment(Pos.CENTER_RIGHT);
 
@@ -136,16 +139,16 @@ public class LogHoursView extends Application {
         submitButton.setOnAction(e -> {
             System.out.println("Hours Logged!");
             
-            VBox confirmationVBox = new VBox(20);
+            VBox confirmationVBox = new VBox(30); // Increased spacing
             confirmationVBox.setAlignment(Pos.CENTER);
-            confirmationVBox.setPadding(new Insets(40));
+            confirmationVBox.setPadding(new Insets(60)); // Increased padding
             
             Label confirmationTitle = new Label("✅ Hours Submitted!");
-            confirmationTitle.setFont(getFont(24, FontWeight.BOLD));
+            confirmationTitle.setFont(getFont(32, FontWeight.BOLD)); // Increased font size
             confirmationTitle.setTextFill(Color.web(FONT_COLOR_DARK));
             
             Label confirmationText = new Label("Thank you for logging your time. Your contribution is greatly appreciated.");
-            confirmationText.setFont(getFont(16, FontWeight.NORMAL));
+            confirmationText.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size
             confirmationText.setTextFill(Color.web(FONT_COLOR_DARK));
             confirmationText.setWrapText(true);
             confirmationText.setTextAlignment(TextAlignment.CENTER);
@@ -168,13 +171,12 @@ public class LogHoursView extends Application {
 
     private Label createLabel(String text) {
         Label label = new Label(text);
-        label.setFont(getFont(16, FontWeight.MEDIUM));
+        label.setFont(getFont(18, FontWeight.MEDIUM)); // Increased font size
         label.setTextFill(Color.web(FONT_COLOR_DARK));
         return label;
     }
 
     private void styleFormControl(Control control) {
-        control.setStyle("-fx-font-size: 14px; -fx-background-color: #FFFFFF; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 8; -fx-padding: 8; -fx-max-width: infinity;");
+        control.setStyle("-fx-font-size: 16px; -fx-background-color: #FFFFFF; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-padding: 10; -fx-max-width: infinity;"); // Increased font size, padding, radius
     }
-
 }

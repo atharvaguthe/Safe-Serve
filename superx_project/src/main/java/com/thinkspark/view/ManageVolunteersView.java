@@ -61,7 +61,7 @@ public class ManageVolunteersView extends Application {
 
     private static class VolunteerCell extends ListCell<VolunteerItem> {
         private final HBox content = new HBox();
-        private final VBox details = new VBox(5);
+        private final VBox details = new VBox(10); // Increased spacing
         private final Label nameLabel = new Label();
         private final Label taskLabel = new Label();
         private final Label statusLabel = new Label();
@@ -69,19 +69,19 @@ public class ManageVolunteersView extends Application {
 
         public VolunteerCell() {
             super();
-            nameLabel.setFont(ManageVolunteersView.getFont(16, FontWeight.BOLD));
-            taskLabel.setFont(ManageVolunteersView.getFont(14, FontWeight.NORMAL));
+            nameLabel.setFont(ManageVolunteersView.getFont(20, FontWeight.BOLD)); // Increased font size
+            taskLabel.setFont(ManageVolunteersView.getFont(18, FontWeight.NORMAL)); // Increased font size
             taskLabel.setOpacity(0.8);
-            statusLabel.setFont(ManageVolunteersView.getFont(12, FontWeight.BOLD));
-            statusLabel.setPadding(new Insets(4, 8, 4, 8));
+            statusLabel.setFont(ManageVolunteersView.getFont(16, FontWeight.BOLD)); // Increased font size
+            statusLabel.setPadding(new Insets(8, 12, 8, 12)); // Increased padding
             statusLabel.setTextFill(Color.WHITE);
 
             details.getChildren().addAll(nameLabel, taskLabel);
             HBox.setHgrow(spacer, Priority.ALWAYS);
             content.setAlignment(Pos.CENTER);
-            content.setSpacing(20);
+            content.setSpacing(25); // Increased spacing
             content.getChildren().addAll(details, spacer, statusLabel);
-            content.setPadding(new Insets(15));
+            content.setPadding(new Insets(25)); // Increased padding
             content.setStyle("-fx-border-color: transparent transparent " + BORDER_COLOR + " transparent; -fx-border-width: 1;");
         }
 
@@ -96,9 +96,9 @@ public class ManageVolunteersView extends Application {
                 statusLabel.setText(item.status.toUpperCase());
 
                 if ("Active".equalsIgnoreCase(item.status)) {
-                    statusLabel.setStyle("-fx-background-color: " + STATUS_ACTIVE_COLOR + "; -fx-background-radius: 6;");
+                    statusLabel.setStyle("-fx-background-color: " + STATUS_ACTIVE_COLOR + "; -fx-background-radius: 10;"); // Increased radius
                 } else {
-                    statusLabel.setStyle("-fx-background-color: " + STATUS_INACTIVE_COLOR + "; -fx-background-radius: 6;");
+                    statusLabel.setStyle("-fx-background-color: " + STATUS_INACTIVE_COLOR + "; -fx-background-radius: 10;"); // Increased radius
                 }
                 setGraphic(content);
             }
@@ -114,8 +114,8 @@ public class ManageVolunteersView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(30);
-        rootLayout.setPadding(new Insets(40));
+        VBox rootLayout = new VBox(40); // Increased spacing
+        rootLayout.setPadding(new Insets(60, 80, 80, 80)); // Increased padding
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -163,20 +163,20 @@ public class ManageVolunteersView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 20, 0));
+        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding
 
         Label title = new Label("Manage Volunteers");
-        title.setFont(getFont(32, FontWeight.BOLD));
+        title.setFont(getFont(42, FontWeight.BOLD)); // Increased font size
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
-        backButton.setPadding(new Insets(8, 16, 8, 16));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12;"); // Increased radius
+        backButton.setPadding(new Insets(15, 28, 15, 28)); // Increased padding
         backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
@@ -184,11 +184,11 @@ public class ManageVolunteersView extends Application {
     }
 
     private Node createVolunteersList() {
-        VBox card = new VBox(0);
-        card.setPadding(new Insets(10));
+        VBox card = new VBox(15); // Increased spacing
+        card.setPadding(new Insets(40)); // Increased padding
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
+                      "-fx-background-radius: 20; " + // Increased radius
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); // Increased shadow
 
         volunteerItems = FXCollections.observableArrayList();
 
@@ -196,6 +196,7 @@ public class ManageVolunteersView extends Application {
         listView.setCellFactory(param -> new VolunteerCell());
         listView.setStyle("-fx-background-color: transparent;");
         listView.setPlaceholder(new Label("No volunteers found in the database."));
+        listView.setPrefHeight(600); // Increased preferred height
 
         card.getChildren().add(listView);
         

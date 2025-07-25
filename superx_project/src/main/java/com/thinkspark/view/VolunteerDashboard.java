@@ -76,8 +76,8 @@ public class VolunteerDashboard extends Application {
         alertDao.listenForAlerts(liveAlertsList);
         taskDao.listenForTasks(assignedTasksData, this.userName); 
 
-        VBox rootLayout = new VBox(40);
-        rootLayout.setPadding(new Insets(20, 50, 50, 50));
+        VBox rootLayout = new VBox(60); // Increased spacing further
+        rootLayout.setPadding(new Insets(40, 80, 80, 80)); // Increased padding further
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -106,8 +106,8 @@ public class VolunteerDashboard extends Application {
 
     private GridPane createMainGrid(){
         GridPane mainGrid = new GridPane();
-        mainGrid.setHgap(40);
-        mainGrid.setVgap(40);
+        mainGrid.setHgap(50); // Increased gap further
+        mainGrid.setVgap(50); // Increased gap further
         mainGrid.setAlignment(Pos.CENTER);
 
         mainGrid.add(createQuickAccessModule(), 0, 0);
@@ -121,41 +121,41 @@ public class VolunteerDashboard extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(10, 0, 20, 0));
+        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding further
 
         // Create an ImageView for the logo
         ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
-        logoView.setFitHeight(40); 
+        logoView.setFitHeight(60); // Increased size further
         logoView.setPreserveRatio(true);
 
         // Create the text label
         Label logoLabel = new Label("Safe Serve");
-        logoLabel.setFont(getFont(32, FontWeight.BOLD));
+        logoLabel.setFont(getFont(42, FontWeight.BOLD)); // Increased font size further
         logoLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
         // Combine image and text into an HBox
-        HBox logoBox = new HBox(10, logoView, logoLabel);
+        HBox logoBox = new HBox(20, logoView, logoLabel); // Increased spacing further
         logoBox.setAlignment(Pos.CENTER_LEFT);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox navLinks = new HBox(40);
+        HBox navLinks = new HBox(50); // Increased spacing further
         navLinks.setAlignment(Pos.CENTER);
 
         Label dashboardLink = new Label("Dashboard");
-        dashboardLink.setFont(getFont(16, FontWeight.MEDIUM));
+        dashboardLink.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size further
         dashboardLink.setOnMouseClicked(e -> primaryStage.setScene(dashboardScene));
 
         navLinks.getChildren().add(dashboardLink);
 
         MenuButton profileButton = new MenuButton("Profile");
-        profileButton.setFont(getFont(16, FontWeight.MEDIUM));
-        MenuItem settingsItem = new MenuItem("Settings");
+        profileButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size further
+        MenuItem profileItem = new MenuItem("Settings");
         MenuItem logoutItem = new MenuItem("Log Out");
-        profileButton.getItems().addAll(settingsItem, logoutItem);
+        profileButton.getItems().addAll(profileItem, logoutItem);
 
-        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
+        profileItem.setOnAction(e -> new ProfileView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         logoutItem.setOnAction(e -> {
             new DisasterHelperUI().start(primaryStage);
         });
@@ -167,17 +167,17 @@ public class VolunteerDashboard extends Application {
     }
 
     private Node createOverviewSection() {
-        VBox overviewBox = new VBox(15);
+        VBox overviewBox = new VBox(25); // Increased spacing further
         overviewBox.setAlignment(Pos.CENTER_LEFT);
-        overviewBox.setPadding(new Insets(30));
-        overviewBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 16; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1;");
+        overviewBox.setPadding(new Insets(50)); // Increased padding further
+        overviewBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 20; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1;"); // Increased radius
 
         Label title = new Label("Welcome, " + this.userName + "!");
-        title.setFont(getFont(36, FontWeight.BOLD));
+        title.setFont(getFont(48, FontWeight.BOLD)); // Increased font size further
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Label subtitle = new Label("Thank you for your dedication. Here are your tasks and team progress.");
-        subtitle.setFont(getFont(18, FontWeight.NORMAL));
+        subtitle.setFont(getFont(22, FontWeight.NORMAL)); // Increased font size further
         subtitle.setTextFill(Color.web(FONT_COLOR_MEDIUM));
         subtitle.setWrapText(true);
 
@@ -188,9 +188,9 @@ public class VolunteerDashboard extends Application {
     private Node createQuickAccessModule() {
         VBox card = createDashboardCard("Quick Actions");
         GridPane buttonGrid = new GridPane();
-        buttonGrid.setHgap(20);
-        buttonGrid.setVgap(20);
-        buttonGrid.setPadding(new Insets(15, 0, 0, 0));
+        buttonGrid.setHgap(30); // Increased gap further
+        buttonGrid.setVgap(30); // Increased gap further
+        buttonGrid.setPadding(new Insets(25, 0, 0, 0)); // Increased padding further
 
         Button reportButton = createQuickAccessButton("🚨 Report Incident", true);
         reportButton.setOnAction(e -> new ReportDisasterView(primaryStage, dashboardScene, this.userName).start(primaryStage));
@@ -215,8 +215,8 @@ public class VolunteerDashboard extends Application {
 
     private Button createQuickAccessButton(String text, boolean isPrimary) {
         Button button = new Button(text);
-        button.setFont(getFont(16, FontWeight.BOLD));
-        button.setPrefSize(250, 80);
+        button.setFont(getFont(20, FontWeight.BOLD)); // Increased font size further
+        button.setPrefSize(300, 100); // Increased size further
         GridPane.setHgrow(button, Priority.ALWAYS);
         GridPane.setVgrow(button, Priority.ALWAYS);
 
@@ -229,7 +229,7 @@ public class VolunteerDashboard extends Application {
             style = "-fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + ";";
         }
 
-        button.setStyle(style + " -fx-background-radius: 10; -fx-border-radius: 10; -fx-cursor: hand;");
+        button.setStyle(style + " -fx-background-radius: 15; -fx-border-radius: 15; -fx-cursor: hand;"); // Increased radius further
         return button;
     }
 
@@ -250,11 +250,11 @@ public class VolunteerDashboard extends Application {
                                        ", AssignedTo: " + item.getAssignedTo() + 
                                        ", FirebaseID: " + item.getFirebaseDocId() + ")");
 
-                    HBox content = new HBox(10);
+                    HBox content = new HBox(20); // Increased spacing further
                     content.setAlignment(Pos.CENTER_LEFT);
                     
                     Label descriptionLabel = new Label(item.getDescription());
-                    descriptionLabel.setFont(VolunteerDashboard.getFont(15, FontWeight.MEDIUM));
+                    descriptionLabel.setFont(VolunteerDashboard.getFont(20, FontWeight.MEDIUM)); // Increased font size further
                     descriptionLabel.setTextFill(Color.web(FONT_COLOR_DARK));
                     descriptionLabel.setWrapText(true);
                     
@@ -262,9 +262,9 @@ public class VolunteerDashboard extends Application {
                     HBox.setHgrow(spacer, Priority.ALWAYS);
 
                     Button statusButton = new Button(item.getStatus()); // Display current status
-                    statusButton.setFont(VolunteerDashboard.getFont(12, FontWeight.BOLD));
+                    statusButton.setFont(VolunteerDashboard.getFont(16, FontWeight.BOLD)); // Increased font size further
                     statusButton.setTextFill(Color.WHITE);
-                    statusButton.setPadding(new Insets(4, 8, 4, 8));
+                    statusButton.setPadding(new Insets(8, 12, 8, 12)); // Increased padding further
                     String buttonColor;
                     if ("Completed".equalsIgnoreCase(item.getStatus())) {
                         buttonColor = STATUS_COMPLETED_COLOR;
@@ -279,14 +279,14 @@ public class VolunteerDashboard extends Application {
                             disasterDao.updateDisasterStatus(item.getDisasterId(), "Completed");
                         });
                     }
-                    statusButton.setStyle("-fx-background-color: " + buttonColor + "; -fx-background-radius: 6; -fx-cursor: hand;");
+                    statusButton.setStyle("-fx-background-color: " + buttonColor + "; -fx-background-radius: 10; -fx-cursor: hand;"); // Increased radius further
 
                     content.getChildren().addAll(descriptionLabel, spacer, statusButton);
                     setGraphic(content);
                 }
             }
         });
-
+        tasksListView.setPrefHeight(350); // Set a preferred height for the list view
         VBox.setVgrow(tasksListView, Priority.ALWAYS);
         card.getChildren().add(tasksListView);
         return card;
@@ -297,8 +297,8 @@ public class VolunteerDashboard extends Application {
         VBox card = createDashboardCard("Your Team's Contribution");
         HBox statsBox = new HBox();
         statsBox.setAlignment(Pos.CENTER);
-        statsBox.setSpacing(40);
-        statsBox.setPadding(new Insets(15, 0, 0, 0));
+        statsBox.setSpacing(60); // Increased spacing further
+        statsBox.setPadding(new Insets(25, 0, 0, 0)); // Increased padding further
         HBox.setHgrow(statsBox, Priority.ALWAYS);
 
         String[][] statsData = {
@@ -319,15 +319,15 @@ public class VolunteerDashboard extends Application {
     }
 
     private Node createStatItem(String number, String label) {
-        VBox item = new VBox(-5);
+        VBox item = new VBox(-8); // Adjusted spacing further
         item.setAlignment(Pos.CENTER);
 
         Label numberLabel = new Label(number);
-        numberLabel.setFont(getFont(48, FontWeight.BOLD));
+        numberLabel.setFont(getFont(60, FontWeight.BOLD)); // Increased font size further
         numberLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
         Label textLabel = new Label(label);
-        textLabel.setFont(getFont(16, FontWeight.NORMAL));
+        textLabel.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size further
         textLabel.setTextFill(Color.web(FONT_COLOR_MEDIUM));
 
         item.getChildren().addAll(numberLabel, textLabel);
@@ -347,11 +347,11 @@ public class VolunteerDashboard extends Application {
                     setGraphic(null);
                 } else {
                     Text title = new Text(item.getTitle());
-                    title.setFont(VolunteerDashboard.getFont(14, FontWeight.BOLD));
+                    title.setFont(VolunteerDashboard.getFont(20, FontWeight.BOLD)); // Increased font size further
 
                     Text message = new Text(item.getMessage());
-                    message.setFont(VolunteerDashboard.getFont(14, FontWeight.NORMAL));
-                    message.setWrappingWidth(param.getWidth() - 30);
+                    message.setFont(VolunteerDashboard.getFont(20, FontWeight.NORMAL)); // Increased font size further
+                    message.setWrappingWidth(param.getWidth() - 60); // Adjusted wrapping width further
 
                     if ("High".equalsIgnoreCase(item.getPriority())) {
                         title.setFill(Color.web(ALERT_COLOR));
@@ -359,29 +359,30 @@ public class VolunteerDashboard extends Application {
                         title.setFill(Color.web(FONT_COLOR_DARK));
                     }
                     
-                    VBox alertContent = new VBox(5, title, message);
-                    alertContent.setPadding(new Insets(5));
+                    VBox alertContent = new VBox(12, title, message); // Increased spacing further
+                    alertContent.setPadding(new Insets(12)); // Increased padding further
                     setGraphic(alertContent);
                 }
             }
         });
+        alertsList.setPrefHeight(350); // Set a preferred height for the list view
         VBox.setVgrow(alertsList, Priority.ALWAYS);
         card.getChildren().add(alertsList);
         return card;
     }
 
     private VBox createDashboardCard(String title) {
-        VBox card = new VBox(10);
-        card.setPadding(new Insets(25));
+        VBox card = new VBox(25); // Increased spacing further
+        card.setPadding(new Insets(35)); // Increased padding further
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
+                      "-fx-background-radius: 20; " + // Increased radius further
                       "-fx-border-color: " + BORDER_COLOR + "; " +
                       "-fx-border-width: 1;");
         GridPane.setHgrow(card, Priority.ALWAYS);
         GridPane.setVgrow(card, Priority.ALWAYS);
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(22, FontWeight.BOLD));
+        titleLabel.setFont(getFont(32, FontWeight.BOLD)); // Increased font size further
         titleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
 
         card.getChildren().add(titleLabel);

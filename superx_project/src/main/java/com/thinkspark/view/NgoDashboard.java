@@ -69,8 +69,8 @@ public class NgoDashboard extends Application {
         disasterDao.listenForDisasterReports(liveDisasterReportsList);
 
 
-        VBox rootLayout = new VBox(40);
-        rootLayout.setPadding(new Insets(20, 50, 50, 50));
+        VBox rootLayout = new VBox(60); // Increased spacing
+        rootLayout.setPadding(new Insets(40, 80, 80, 80)); // Increased padding
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -94,8 +94,8 @@ public class NgoDashboard extends Application {
 
     private GridPane createMainGrid() {
         GridPane mainGrid = new GridPane();
-        mainGrid.setHgap(40);
-        mainGrid.setVgap(40);
+        mainGrid.setHgap(50); // Increased gap
+        mainGrid.setVgap(50); // Increased gap
         mainGrid.setAlignment(Pos.CENTER);
 
         mainGrid.add(createQuickAccessModule(), 0, 0);
@@ -107,31 +107,31 @@ public class NgoDashboard extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(10, 0, 20, 0));
+        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding
 
         // Create an ImageView for the logo
         ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
-        logoView.setFitHeight(40); // Adjust size as needed
+        logoView.setFitHeight(60); // Increased size
         logoView.setPreserveRatio(true);
 
         // Create the text label
         Label logoLabel = new Label("Safe Serve");
-        logoLabel.setFont(getFont(32, FontWeight.BOLD));
+        logoLabel.setFont(getFont(42, FontWeight.BOLD)); // Increased font size
         logoLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
         // Combine image and text into an HBox
-        HBox logoBox = new HBox(10, logoView, logoLabel);
+        HBox logoBox = new HBox(20, logoView, logoLabel); // Increased spacing
         logoBox.setAlignment(Pos.CENTER_LEFT);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox navLinks = new HBox(40);
+        HBox navLinks = new HBox(50); // Increased spacing
         navLinks.setAlignment(Pos.CENTER);
         String[] navItems = { "Dashboard", "Volunteers", "Reports" };
         for (String item : navItems) {
             Label link = new Label(item);
-            link.setFont(getFont(16, FontWeight.MEDIUM));
+            link.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
             link.setTextFill(Color.web(FONT_COLOR_DARK));
             link.setStyle("-fx-cursor: hand;");
             link.setOnMouseEntered(e -> link.setUnderline(true));
@@ -149,12 +149,12 @@ public class NgoDashboard extends Application {
         }
 
         MenuButton profileButton = new MenuButton("Profile");
-        profileButton.setFont(getFont(16, FontWeight.MEDIUM));
-        MenuItem settingsItem = new MenuItem("Settings");
+        profileButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
+        MenuItem profileItem = new MenuItem("Profile");
         MenuItem logoutItem = new MenuItem("Log Out");
-        profileButton.getItems().addAll(settingsItem, logoutItem);
+        profileButton.getItems().addAll(profileItem, logoutItem);
 
-        settingsItem.setOnAction(e -> new SettingsView(primaryStage, dashboardScene, this.userName).start(primaryStage));
+        profileItem.setOnAction(e -> new ProfileView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         
         logoutItem.setOnAction(e -> {
             new DisasterHelperUI().start(primaryStage);
@@ -167,17 +167,17 @@ public class NgoDashboard extends Application {
     }
 
     private Node createOverviewSection() {
-        VBox overviewBox = new VBox(15);
+        VBox overviewBox = new VBox(25); // Increased spacing
         overviewBox.setAlignment(Pos.CENTER_LEFT);
-        overviewBox.setPadding(new Insets(30));
-        overviewBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 16; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1;");
+        overviewBox.setPadding(new Insets(50)); // Increased padding
+        overviewBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 20; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1;"); // Increased radius
 
         Label title = new Label("Operations Dashboard");
-        title.setFont(getFont(36, FontWeight.BOLD));
+        title.setFont(getFont(48, FontWeight.BOLD)); // Increased font size
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Label subtitle = new Label("Coordinate your team, manage requests, and track your impact in real-time.");
-        subtitle.setFont(getFont(18, FontWeight.NORMAL));
+        subtitle.setFont(getFont(22, FontWeight.NORMAL)); // Increased font size
         subtitle.setTextFill(Color.web(FONT_COLOR_MEDIUM));
         subtitle.setWrapText(true);
 
@@ -188,9 +188,9 @@ public class NgoDashboard extends Application {
     private Node createQuickAccessModule() {
         VBox card = createDashboardCard("Quick Actions");
         GridPane buttonGrid = new GridPane();
-        buttonGrid.setHgap(20);
-        buttonGrid.setVgap(20);
-        buttonGrid.setPadding(new Insets(15, 0, 0, 0));
+        buttonGrid.setHgap(30); // Increased gap
+        buttonGrid.setVgap(30); // Increased gap
+        buttonGrid.setPadding(new Insets(25, 0, 0, 0)); // Increased padding
 
         Button allRequestsButton = createQuickAccessButton("View & Assign Tasks", true);
         allRequestsButton.setOnAction(e -> new AllRequestsView(primaryStage, dashboardScene).start(primaryStage));
@@ -215,8 +215,8 @@ public class NgoDashboard extends Application {
 
     private Button createQuickAccessButton(String text, boolean isPrimary) {
         Button button = new Button(text);
-        button.setFont(getFont(16, FontWeight.BOLD));
-        button.setPrefSize(250, 80);
+        button.setFont(getFont(20, FontWeight.BOLD)); // Increased font size
+        button.setPrefSize(300, 100); // Increased size
         GridPane.setHgrow(button, Priority.ALWAYS);
         GridPane.setVgrow(button, Priority.ALWAYS);
 
@@ -229,7 +229,7 @@ public class NgoDashboard extends Application {
             style = "-fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + ";";
         }
 
-        button.setStyle(style + " -fx-background-radius: 10; -fx-border-radius: 10; -fx-cursor: hand;");
+        button.setStyle(style + " -fx-background-radius: 15; -fx-border-radius: 15; -fx-cursor: hand;"); // Increased radius
         return button;
     }
 
@@ -238,10 +238,11 @@ public class NgoDashboard extends Application {
 
         // Citizen Disaster Reports Section
         Label disasterReportsTitle = new Label("Citizen Disaster Reports");
-        disasterReportsTitle.setFont(getFont(16, FontWeight.BOLD));
+        disasterReportsTitle.setFont(getFont(20, FontWeight.BOLD)); // Increased font size
 
         ListView<Disaster> disasterReportsList = new ListView<>(liveDisasterReportsList);
         disasterReportsList.setPlaceholder(new Label("No new disaster reports."));
+        disasterReportsList.setPrefHeight(350); // Set a preferred height
         disasterReportsList.setCellFactory(param -> new ListCell<Disaster>() {
             @Override
             protected void updateItem(Disaster item, boolean empty) {
@@ -250,7 +251,7 @@ public class NgoDashboard extends Application {
                     setGraphic(null);
                 } else {
                     Text typeAndLocation = new Text(item.getType() + " at " + item.getLocation());
-                    typeAndLocation.setFont(NgoDashboard.getFont(14, FontWeight.BOLD));
+                    typeAndLocation.setFont(NgoDashboard.getFont(18, FontWeight.BOLD)); // Increased font size
                     
                     // Safely check item.getStatus() before using it
                     String status = item.getStatus();
@@ -265,15 +266,17 @@ public class NgoDashboard extends Application {
                     typeAndLocation.setFill(Color.web(statusColor));
 
                     Text description = new Text(item.getDescription());
-                    description.setWrappingWidth(param.getWidth() - 30);
+                    description.setWrappingWidth(param.getWidth() - 50); // Adjusted wrapping width
+                    description.setFont(NgoDashboard.getFont(16, FontWeight.NORMAL)); // Set font size
 
                     // Display status explicitly
                     // Safely display status, defaulting to "Unknown" if null
                     Text statusText = new Text("Status: " + (status != null ? status : "Unknown"));
-                    statusText.setFont(NgoDashboard.getFont(12, FontWeight.MEDIUM));
+                    statusText.setFont(NgoDashboard.getFont(14, FontWeight.MEDIUM)); // Increased font size
                     statusText.setFill(Color.web(statusColor));
 
-                    VBox content = new VBox(5, typeAndLocation, description, statusText); // Added statusText
+                    VBox content = new VBox(10, typeAndLocation, description, statusText); // Increased spacing
+                    content.setPadding(new Insets(10)); // Added padding
                     setGraphic(content);
                 }
             }
@@ -281,11 +284,12 @@ public class NgoDashboard extends Application {
 
         // Government Alerts Section
         Label govAlertsTitle = new Label("Government Alerts");
-        govAlertsTitle.setFont(getFont(16, FontWeight.BOLD));
-        govAlertsTitle.setPadding(new Insets(15, 0, 0, 0));
+        govAlertsTitle.setFont(getFont(20, FontWeight.BOLD)); // Increased font size
+        govAlertsTitle.setPadding(new Insets(20, 0, 0, 0)); // Increased padding
 
         ListView<Alert> govAlertsList = new ListView<>(liveAlertsList);
         govAlertsList.setPlaceholder(new Label("No new government alerts."));
+        govAlertsList.setPrefHeight(350); // Set a preferred height
         govAlertsList.setCellFactory(param -> new ListCell<Alert>() {
             @Override
             protected void updateItem(Alert item, boolean empty) {
@@ -294,15 +298,17 @@ public class NgoDashboard extends Application {
                     setGraphic(null);
                 } else {
                     Text title = new Text(item.getTitle());
-                    title.setFont(NgoDashboard.getFont(14, FontWeight.BOLD));
+                    title.setFont(NgoDashboard.getFont(18, FontWeight.BOLD)); // Increased font size
 
                     Text message = new Text(item.getMessage());
-                    message.setWrappingWidth(param.getWidth() - 30);
+                    message.setWrappingWidth(param.getWidth() - 50); // Adjusted wrapping width
+                    message.setFont(NgoDashboard.getFont(16, FontWeight.NORMAL)); // Set font size
 
                     String priorityColor = "High".equalsIgnoreCase(item.getPriority()) ? PRIMARY_ACCENT_ORANGE : FONT_COLOR_DARK;
                     title.setFill(Color.web(priorityColor));
 
-                    VBox content = new VBox(5, title, message);
+                    VBox content = new VBox(10, title, message); // Increased spacing
+                    content.setPadding(new Insets(10)); // Added padding
                     setGraphic(content);
                 }
             }
@@ -319,8 +325,8 @@ public class NgoDashboard extends Application {
         VBox card = createDashboardCard("Your Organization's Impact");
         HBox statsBox = new HBox();
         statsBox.setAlignment(Pos.CENTER);
-        statsBox.setSpacing(40);
-        statsBox.setPadding(new Insets(15, 0, 0, 0));
+        statsBox.setSpacing(60); // Increased spacing
+        statsBox.setPadding(new Insets(25, 0, 0, 0)); // Increased padding
         HBox.setHgrow(statsBox, Priority.ALWAYS);
 
         String[][] statsData = {
@@ -341,15 +347,15 @@ public class NgoDashboard extends Application {
     }
 
     private Node createStatItem(String number, String label) {
-        VBox item = new VBox(-5);
+        VBox item = new VBox(-8); // Adjusted spacing
         item.setAlignment(Pos.CENTER);
 
         Label numberLabel = new Label(number);
-        numberLabel.setFont(getFont(48, FontWeight.BOLD));
+        numberLabel.setFont(getFont(60, FontWeight.BOLD)); // Increased font size
         numberLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
         Label textLabel = new Label(label);
-        textLabel.setFont(getFont(16, FontWeight.NORMAL));
+        textLabel.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size
         textLabel.setTextFill(Color.web(FONT_COLOR_MEDIUM));
 
         item.getChildren().addAll(numberLabel, textLabel);
@@ -357,17 +363,17 @@ public class NgoDashboard extends Application {
     }
 
     private VBox createDashboardCard(String title) {
-        VBox card = new VBox(10);
-        card.setPadding(new Insets(25));
+        VBox card = new VBox(25); // Increased spacing
+        card.setPadding(new Insets(35)); // Increased padding
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
+                      "-fx-background-radius: 20; " + // Increased radius
                       "-fx-border-color: " + BORDER_COLOR + "; " +
                       "-fx-border-width: 1;");
         GridPane.setHgrow(card, Priority.ALWAYS);
         GridPane.setVgrow(card, Priority.ALWAYS);
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(22, FontWeight.BOLD));
+        titleLabel.setFont(getFont(32, FontWeight.BOLD)); // Increased font size
         titleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
 
         card.getChildren().add(titleLabel);

@@ -68,33 +68,36 @@ public class ManageNgosView extends Application {
             if (empty || item == null) {
                 setGraphic(null);
             } else {
-                HBox content = new HBox(20);
+                HBox content = new HBox(25); // Increased spacing
                 content.setAlignment(Pos.CENTER);
-                content.setPadding(new Insets(15));
+                content.setPadding(new Insets(25)); // Increased padding
                 content.setStyle("-fx-border-color: transparent transparent " + BORDER_COLOR + " transparent; -fx-border-width: 1;");
 
                 Label nameLabel = new Label(item.getName());
-                nameLabel.setFont(ManageNgosView.getFont(16, FontWeight.BOLD));
+                nameLabel.setFont(ManageNgosView.getFont(20, FontWeight.BOLD)); // Increased font size
                 Label contactLabel = new Label("Contact: " + item.getContact());
+                contactLabel.setFont(ManageNgosView.getFont(18, FontWeight.NORMAL)); // Increased font size
                 contactLabel.setOpacity(0.8);
-                VBox details = new VBox(5, nameLabel, contactLabel);
+                VBox details = new VBox(10, nameLabel, contactLabel); // Increased spacing
 
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
                 Label statusLabel = new Label(item.getStatus().toUpperCase());
-                statusLabel.setFont(ManageNgosView.getFont(12, FontWeight.BOLD));
+                statusLabel.setFont(ManageNgosView.getFont(16, FontWeight.BOLD)); // Increased font size
                 statusLabel.setTextFill(Color.WHITE);
-                statusLabel.setPadding(new Insets(4, 8, 4, 8));
+                statusLabel.setPadding(new Insets(8, 12, 8, 12)); // Increased padding
                 String statusColor = "Verified".equalsIgnoreCase(item.getStatus()) ? STATUS_VERIFIED_COLOR : STATUS_PENDING_COLOR;
-                statusLabel.setStyle("-fx-background-color: " + statusColor + "; -fx-background-radius: 6;");
+                statusLabel.setStyle("-fx-background-color: " + statusColor + "; -fx-background-radius: 10;"); // Increased radius
 
                 content.getChildren().addAll(details, spacer, statusLabel);
 
                 if ("Pending Verification".equalsIgnoreCase(item.getStatus())) {
                     Button verifyButton = new Button("Verify NGO");
+                    verifyButton.setFont(ManageNgosView.getFont(16, FontWeight.BOLD)); // Increased font size
                     verifyButton.setTextFill(Color.WHITE);
-                    verifyButton.setStyle("-fx-background-color: " + ACTION_BUTTON_COLOR + "; -fx-background-radius: 6; -fx-cursor: hand;");
+                    verifyButton.setStyle("-fx-background-color: " + ACTION_BUTTON_COLOR + "; -fx-background-radius: 10; -fx-cursor: hand;"); // Increased radius
+                    verifyButton.setPadding(new Insets(10, 20, 10, 20)); // Increased padding
                     verifyButton.setOnAction(e -> {
                         item.setStatus("Verified");
                         getListView().refresh();
@@ -114,8 +117,8 @@ public class ManageNgosView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(30);
-        rootLayout.setPadding(new Insets(40));
+        VBox rootLayout = new VBox(40); // Increased spacing
+        rootLayout.setPadding(new Insets(60, 80, 80, 80)); // Increased padding
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -134,19 +137,19 @@ public class ManageNgosView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 20, 0));
+        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding
 
         Label title = new Label("Manage Partner NGOs");
-        title.setFont(getFont(32, FontWeight.BOLD));
+        title.setFont(getFont(42, FontWeight.BOLD)); // Increased font size
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
-        backButton.setPadding(new Insets(8, 16, 8, 16));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12;"); // Increased radius
+        backButton.setPadding(new Insets(15, 28, 15, 28)); // Increased padding
         backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
@@ -154,11 +157,11 @@ public class ManageNgosView extends Application {
     }
 
     private Node createNgosList() {
-        VBox card = new VBox(0);
-        card.setPadding(new Insets(10));
+        VBox card = new VBox(15); // Increased spacing
+        card.setPadding(new Insets(40)); // Increased padding
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
+                      "-fx-background-radius: 20; " + // Increased radius
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); // Increased shadow
 
         ngosList = FXCollections.observableArrayList();
 
@@ -166,6 +169,7 @@ public class ManageNgosView extends Application {
         listView.setCellFactory(param -> new NgoCell());
         listView.setStyle("-fx-background-color: transparent;");
         listView.setPlaceholder(new Label("No NGOs to display."));
+        listView.setPrefHeight(600); // Increased preferred height
 
         card.getChildren().add(listView);
         

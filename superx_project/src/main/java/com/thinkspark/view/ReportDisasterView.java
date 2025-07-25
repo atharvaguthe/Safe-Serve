@@ -52,8 +52,8 @@ public class ReportDisasterView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(30);
-        rootLayout.setPadding(new Insets(40));
+        VBox rootLayout = new VBox(40); // Increased spacing
+        rootLayout.setPadding(new Insets(60, 80, 80, 80)); // Increased padding
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -71,20 +71,20 @@ public class ReportDisasterView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 20, 0));
+        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding
 
         Label title = new Label("🚨 Report a New Disaster");
-        title.setFont(getFont(32, FontWeight.BOLD));
+        title.setFont(getFont(42, FontWeight.BOLD)); // Increased font size
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
-        backButton.setPadding(new Insets(8, 16, 8, 16));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12;"); // Increased radius
+        backButton.setPadding(new Insets(15, 28, 15, 28)); // Increased padding
         backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
@@ -92,34 +92,42 @@ public class ReportDisasterView extends Application {
     }
 
     private Node createDisasterReportForm() {
-        VBox card = new VBox(25);
-        card.setPadding(new Insets(30));
+        VBox card = new VBox(35); // Increased spacing
+        card.setPadding(new Insets(50)); // Increased padding
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
-        card.setMaxWidth(800);
+                      "-fx-background-radius: 20; " + // Increased radius
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); // Increased shadow
+        card.setMaxWidth(1000); // Increased max width
 
         GridPane formGrid = new GridPane();
-        formGrid.setHgap(20);
-        formGrid.setVgap(15);
+        formGrid.setHgap(30); // Increased gap
+        formGrid.setVgap(25); // Increased gap
 
         ComboBox<String> disasterType = new ComboBox<>();
         disasterType.getItems().addAll("Flood", "Earthquake", "Wildfire", "Hurricane", "Power Outage", "Medical Emergency", "Other");
         disasterType.setPromptText("Select a type");
         styleFormControl(disasterType);
+        disasterType.setPrefHeight(60); // Ensured height consistency
 
         TextField locationField = createTextField("e.g., City Hall, 123 Main St, Nashik");
+        locationField.setPrefHeight(60); // Ensured height consistency
+
         TextArea descriptionArea = new TextArea();
         descriptionArea.setPromptText("Provide a brief description of the situation...");
         descriptionArea.setWrapText(true);
-        descriptionArea.setPrefRowCount(4);
+        descriptionArea.setPrefRowCount(5); // Increased row count
         styleFormControl(descriptionArea);
+        descriptionArea.setPrefHeight(120); // Ensured height consistency
 
         TextField contactField = createTextField("Your phone number (Optional)");
+        contactField.setPrefHeight(60); // Ensured height consistency
 
         Label fileNameLabel = new Label("No file selected.");
-        fileNameLabel.setFont(getFont(14, FontWeight.NORMAL));
+        fileNameLabel.setFont(getFont(16, FontWeight.NORMAL)); // Increased font size
+        
         Button chooseFileButton = new Button("Choose File...");
+        chooseFileButton.setFont(getFont(16, FontWeight.MEDIUM)); // Increased font size
+        chooseFileButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-text-fill: " + FONT_COLOR_LIGHT + "; -fx-background-radius: 8; -fx-padding: 10 20; -fx-cursor: hand;"); // Styled button
         chooseFileButton.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Select a Photo");
@@ -127,7 +135,7 @@ public class ReportDisasterView extends Application {
             selectedFile = fileChooser.showOpenDialog(primaryStage);
             fileNameLabel.setText(selectedFile != null ? selectedFile.getName() : "No file selected.");
         });
-        HBox fileUploadBox = new HBox(10, chooseFileButton, fileNameLabel);
+        HBox fileUploadBox = new HBox(15, chooseFileButton, fileNameLabel); // Increased spacing
         fileUploadBox.setAlignment(Pos.CENTER_LEFT);
 
         formGrid.add(createLabel("Type of Disaster"), 0, 0);
@@ -142,14 +150,14 @@ public class ReportDisasterView extends Application {
         formGrid.add(fileUploadBox, 1, 4);
 
         Button submitButton = new Button("Submit Report");
-        submitButton.setFont(getFont(18, FontWeight.BOLD));
+        submitButton.setFont(getFont(22, FontWeight.BOLD)); // Increased font size
         submitButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
-        submitButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-background-radius: 8; -fx-cursor: hand;");
-        submitButton.setPadding(new Insets(12, 25, 12, 25));
+        submitButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-background-radius: 12; -fx-cursor: hand;"); // Increased radius
+        submitButton.setPadding(new Insets(18, 35, 18, 35)); // Increased padding
 
         HBox actionBox = new HBox(submitButton);
         actionBox.setAlignment(Pos.CENTER_RIGHT);
-        actionBox.setPadding(new Insets(20, 0, 0, 0));
+        actionBox.setPadding(new Insets(30, 0, 0, 0)); // Increased padding
 
         VBox container = new VBox(card);
         container.setAlignment(Pos.CENTER);
@@ -175,15 +183,15 @@ public class ReportDisasterView extends Application {
             DisasterDao disasterDao = new DisasterDao();
             disasterDao.saveDisasterReport(newDisaster);
 
-            VBox confirmationVBox = new VBox(20);
+            VBox confirmationVBox = new VBox(30); // Increased spacing
             confirmationVBox.setAlignment(Pos.CENTER);
-            confirmationVBox.setPadding(new Insets(40));
+            confirmationVBox.setPadding(new Insets(60)); // Increased padding
 
             Label confirmationTitle = new Label("✅ Submission Received!");
-            confirmationTitle.setFont(getFont(24, FontWeight.BOLD));
+            confirmationTitle.setFont(getFont(32, FontWeight.BOLD)); // Increased font size
 
             Label confirmationText = new Label("Thank you! Your report has been sent to response teams.");
-            confirmationText.setFont(getFont(16, FontWeight.NORMAL));
+            confirmationText.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size
             confirmationText.setWrapText(true);
             confirmationText.setTextAlignment(TextAlignment.CENTER);
 
@@ -203,7 +211,7 @@ public class ReportDisasterView extends Application {
 
     private Label createLabel(String text) {
         Label label = new Label(text);
-        label.setFont(getFont(16, FontWeight.MEDIUM));
+        label.setFont(getFont(18, FontWeight.MEDIUM)); // Increased font size
         label.setTextFill(Color.web(FONT_COLOR_DARK));
         return label;
     }
@@ -216,7 +224,7 @@ public class ReportDisasterView extends Application {
     }
 
     private void styleFormControl(Control control) {
-        control.setStyle("-fx-font-size: 14px; -fx-background-color: #FFFFFF; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 8; -fx-padding: 8;");
+        control.setStyle("-fx-font-size: 16px; -fx-background-color: #FFFFFF; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-padding: 10;"); // Increased font size, padding, radius
         GridPane.setHgrow(control, Priority.ALWAYS);
     }
 }

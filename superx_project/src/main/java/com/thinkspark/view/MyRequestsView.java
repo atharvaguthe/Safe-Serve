@@ -51,8 +51,8 @@ public class MyRequestsView extends Application {
         myRequestsList = FXCollections.observableArrayList();
         disasterDao.listenForDisastersByCitizen(myRequestsList, this.userName);
 
-        VBox rootLayout = new VBox(30);
-        rootLayout.setPadding(new Insets(40));
+        VBox rootLayout = new VBox(40); // Increased spacing
+        rootLayout.setPadding(new Insets(60)); // Increased padding
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -69,20 +69,20 @@ public class MyRequestsView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 20, 0));
+        header.setPadding(new Insets(0, 0, 30, 0)); // Increased padding
 
         Label title = new Label("📋 My Submitted Requests");
-        title.setFont(getFont(32, FontWeight.BOLD));
+        title.setFont(getFont(40, FontWeight.BOLD)); // Increased font size
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
-        backButton.setPadding(new Insets(8, 16, 8, 16));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 10;"); // Increased radius
+        backButton.setPadding(new Insets(10, 20, 10, 20)); // Increased padding
         backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
@@ -90,14 +90,15 @@ public class MyRequestsView extends Application {
     }
 
     private Node createMyRequestsList() {
-        VBox card = new VBox(0);
-        card.setPadding(new Insets(20));
+        VBox card = new VBox(15); // Added spacing for potential future elements within the card
+        card.setPadding(new Insets(40)); // Increased padding significantly
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
+                      "-fx-background-radius: 20; " + // Increased radius
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); // Increased shadow
 
         ListView<Disaster> listView = new ListView<>(myRequestsList);
         listView.setPlaceholder(new Label("You have not submitted any requests."));
+        listView.setPrefHeight(600); // Set a preferred height to make the list box big
         listView.setCellFactory(param -> new ListCell<Disaster>() {
             @Override
             protected void updateItem(Disaster item, boolean empty) {
@@ -105,14 +106,15 @@ public class MyRequestsView extends Application {
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
-                    HBox content = new HBox(20);
+                    HBox content = new HBox(30); // Increased spacing
                     content.setAlignment(Pos.CENTER_LEFT);
-                    content.setPadding(new Insets(15));
+                    content.setPadding(new Insets(25)); // Increased padding for each item
                     
-                    VBox details = new VBox(5);
+                    VBox details = new VBox(10); // Increased spacing
                     Label typeLabel = new Label(item.getType());
-                    typeLabel.setFont(MyRequestsView.getFont(16, FontWeight.BOLD));
+                    typeLabel.setFont(MyRequestsView.getFont(22, FontWeight.BOLD)); // Increased font size
                     Label locationLabel = new Label(item.getLocation());
+                    locationLabel.setFont(MyRequestsView.getFont(20, FontWeight.NORMAL)); // Increased font size
                     details.getChildren().addAll(typeLabel, locationLabel);
 
                     // For now, we just show the details. Status tracking could be added later.

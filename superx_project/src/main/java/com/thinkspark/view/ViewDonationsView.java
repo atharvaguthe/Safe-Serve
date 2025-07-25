@@ -56,18 +56,19 @@ public class ViewDonationsView extends Application {
 
         public DonationCell() {
             super();
-            donorLabel.setFont(ViewDonationsView.getFont(16, FontWeight.BOLD));
-            dateLabel.setFont(ViewDonationsView.getFont(14, FontWeight.NORMAL));
+            donorLabel.setFont(ViewDonationsView.getFont(20, FontWeight.BOLD));
+            dateLabel.setFont(ViewDonationsView.getFont(18, FontWeight.NORMAL));
             dateLabel.setOpacity(0.8);
-            amountLabel.setFont(ViewDonationsView.getFont(18, FontWeight.BOLD));
+            amountLabel.setFont(ViewDonationsView.getFont(22, FontWeight.BOLD));
             amountLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
-            VBox details = new VBox(5, donorLabel, dateLabel);
+            // FIX: Added donorLabel and dateLabel to the details VBox
+            VBox details = new VBox(10, donorLabel, dateLabel);
             HBox.setHgrow(spacer, Priority.ALWAYS);
             content.setAlignment(Pos.CENTER);
-            content.setSpacing(20);
+            content.setSpacing(25);
             content.getChildren().addAll(details, spacer, amountLabel);
-            content.setPadding(new Insets(15));
+            content.setPadding(new Insets(25));
             content.setStyle("-fx-border-color: transparent transparent " + BORDER_COLOR + " transparent; -fx-border-width: 1;");
         }
 
@@ -92,8 +93,8 @@ public class ViewDonationsView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(30);
-        rootLayout.setPadding(new Insets(40));
+        VBox rootLayout = new VBox(40); // Increased spacing
+        rootLayout.setPadding(new Insets(60, 80, 80, 80)); // Increased padding
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -114,20 +115,20 @@ public class ViewDonationsView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 20, 0));
+        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding
 
         Label title = new Label("Received Donations");
-        title.setFont(getFont(32, FontWeight.BOLD));
+        title.setFont(getFont(42, FontWeight.BOLD)); // Increased font size
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
-        backButton.setPadding(new Insets(8, 16, 8, 16));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12;"); // Increased radius
+        backButton.setPadding(new Insets(15, 28, 15, 28)); // Increased padding
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
             primaryStage.setTitle("NGO Dashboard | Disaster Relief Operations");
@@ -138,19 +139,20 @@ public class ViewDonationsView extends Application {
     }
 
     private Node createDonationsList() {
-        VBox card = new VBox(0);
-        card.setPadding(new Insets(10));
+        VBox card = new VBox(15); // Increased spacing
+        card.setPadding(new Insets(40)); // Increased padding
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
+                      "-fx-background-radius: 20; " + // Increased radius
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); // Increased shadow
 
         ObservableList<DonationItem> donations = FXCollections.observableArrayList(
             new DonationItem("Anonymous", "$100.00", "2024-07-19"),
-            new DonationItem("Alice Johnson", "$50.00", "2024-07-19"),
-            new DonationItem("Bob Williams", "$250.00", "2024-07-18")
+            new DonationItem("Atharva Guthe", "$50.00", "2024-07-19"),
+            new DonationItem("Rajesh Malhotra", "$250.00", "2024-07-18")
         );
 
         ListView<DonationItem> listView = new ListView<>(donations);
+        listView.setPrefHeight(600); // Increased preferred height
         listView.setCellFactory(param -> new DonationCell());
         listView.setStyle("-fx-background-color: transparent;");
 
