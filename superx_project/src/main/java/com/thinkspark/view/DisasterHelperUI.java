@@ -48,8 +48,8 @@ public class DisasterHelperUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         // --- Root Layout (existing content) ---
-        VBox rootLayout = new VBox(40);
-        rootLayout.setPadding(new Insets(20, 50, 50, 50));
+        VBox rootLayout = new VBox(70); // Increased spacing between sections
+        rootLayout.setPadding(new Insets(50, 80, 80, 80)); // Increased padding
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -65,16 +65,16 @@ public class DisasterHelperUI extends Application {
         floatingButton.setStyle(
             "-fx-background-color: " + SECONDARY_BLUE + "; " +
             "-fx-background-radius: 50%; " + // Makes it circular
-            "-fx-min-width: 60px; -fx-min-height: 60px; " +
-            "-fx-max-width: 60px; -fx-max-height: 60px; " +
-            "-fx-font-size: 24px; " +
+            "-fx-min-width: 90px; -fx-min-height: 90px; " + // Increased size
+            "-fx-max-width: 90px; -fx-max-height: 90px; " + // Increased size
+            "-fx-font-size: 36px; " + // Increased font size
             "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 5); " +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 20, 0, 0, 10); " + // Increased shadow
             "-fx-cursor: hand;"
         );
         // Position the button at bottom-right with padding
         StackPane.setAlignment(floatingButton, Pos.BOTTOM_RIGHT);
-        StackPane.setMargin(floatingButton, new Insets(0, 30, 100, 0)); // Changed bottom padding from 30 to 80 (30 + 50)
+        StackPane.setMargin(floatingButton, new Insets(0, 60, 180, 0)); // Increased padding
 
         // --- Create a new StackPane as the overall root for the Scene ---
         StackPane overallRoot = new StackPane();
@@ -99,8 +99,8 @@ public class DisasterHelperUI extends Application {
 
         // --- Main Content Grid ---
         GridPane mainGrid = new GridPane();
-        mainGrid.setHgap(40);
-        mainGrid.setVgap(40);
+        mainGrid.setHgap(70); // Increased gap
+        mainGrid.setVgap(70); // Increased gap
         mainGrid.setAlignment(Pos.CENTER);
 
         // Configure column constraints for a balanced layout
@@ -111,14 +111,14 @@ public class DisasterHelperUI extends Application {
         mainGrid.getColumnConstraints().addAll(col1, col2);
 
         // --- Left Column Content ---
-        VBox leftColumn = new VBox(40);
+        VBox leftColumn = new VBox(70); // Increased spacing
         leftColumn.getChildren().addAll(
             createQuickAccessModule(primaryStage, finalScene), 
             createNewsFeedModule()
         );
 
         // --- Right Column Content ---
-        VBox rightColumn = new VBox(40);
+        VBox rightColumn = new VBox(70); // Increased spacing
         rightColumn.getChildren().addAll(
             createLiveAlertsModule(),
             createStatisticsModule()
@@ -143,27 +143,27 @@ public class DisasterHelperUI extends Application {
     private Node createHeader(Stage stage, Scene scene) {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(10, 0, 20, 0));
+        header.setPadding(new Insets(25, 0, 35, 0)); // Increased padding
 
         // Create an ImageView for the logo
         ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
-        logoView.setFitHeight(40); // Adjust size as needed
+        logoView.setFitHeight(70); // Increased size
         logoView.setPreserveRatio(true);
 
         // Create the text label
         Label logoLabel = new Label("Safe Serve");
-        logoLabel.setFont(getFont(32, FontWeight.BOLD));
+        logoLabel.setFont(getFont(44, FontWeight.BOLD)); // Increased font size
         logoLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
         // Combine image and text into an HBox
-        HBox logoBox = new HBox(10, logoView, logoLabel);
+        HBox logoBox = new HBox(25, logoView, logoLabel); // Increased spacing
         logoBox.setAlignment(Pos.CENTER_LEFT);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         // Navigation Links
-        HBox navLinks = new HBox(40);
+        HBox navLinks = new HBox(70); // Increased spacing
         navLinks.setAlignment(Pos.CENTER);
         
         Button homeLink = createNavLink("Home");
@@ -181,18 +181,18 @@ public class DisasterHelperUI extends Application {
         navLinks.getChildren().addAll(homeLink, assistanceLink, resourcesLink, aboutUsLink);
 
         // Auth Buttons
-        HBox authButtons = new HBox(15);
+        HBox authButtons = new HBox(30); // Increased spacing
         authButtons.setAlignment(Pos.CENTER);
 
         Button loginBtn = new Button("Log In");
-        loginBtn.setFont(getFont(15, FontWeight.BOLD));
+        loginBtn.setFont(getFont(20, FontWeight.BOLD)); // Increased font size
         loginBtn.setTextFill(Color.web(PRIMARY_BLUE));
-        loginBtn.setStyle("-fx-background-color: transparent; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 2; -fx-background-radius: 20; -fx-border-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;");
+        loginBtn.setStyle("-fx-background-color: transparent; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 3; -fx-background-radius: 35; -fx-border-radius: 35; -fx-padding: 15 35; -fx-cursor: hand;"); // Increased padding, border width and radius
 
         Button signupBtn = new Button("Sign Up");
-        signupBtn.setFont(getFont(15, FontWeight.BOLD));
+        signupBtn.setFont(getFont(20, FontWeight.BOLD)); // Increased font size
         signupBtn.setTextFill(Color.web(FONT_COLOR_LIGHT));
-        signupBtn.setStyle("-fx-background-color: " + SECONDARY_BLUE + "; -fx-background-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;");
+        signupBtn.setStyle("-fx-background-color: " + SECONDARY_BLUE + "; -fx-background-radius: 35; -fx-padding: 15 35; -fx-cursor: hand;"); // Increased padding and radius
         
         loginBtn.setOnAction(e -> {
             // Reuse the existing stage
@@ -205,7 +205,7 @@ public class DisasterHelperUI extends Application {
         });
         
         authButtons.getChildren().addAll(loginBtn, signupBtn);
-        HBox.setMargin(navLinks, new Insets(0, 50, 0, 0));
+        HBox.setMargin(navLinks, new Insets(0, 80, 0, 0)); // Increased margin
 
         header.getChildren().addAll(logoBox, spacer, navLinks, authButtons);
         return header;
@@ -213,7 +213,7 @@ public class DisasterHelperUI extends Application {
     
     private Button createNavLink(String text) {
         Button link = new Button(text);
-        link.setFont(getFont(16, FontWeight.MEDIUM));
+        link.setFont(getFont(22, FontWeight.MEDIUM)); // Increased font size
         link.setTextFill(Color.web(FONT_COLOR_DARK));
         link.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-cursor: hand;");
         link.setOnMouseEntered(e -> link.setUnderline(true));
@@ -222,21 +222,21 @@ public class DisasterHelperUI extends Application {
     }
 
     private Node createHeroSection() {
-        VBox heroBox = new VBox(20);
+        VBox heroBox = new VBox(35); // Increased spacing
         heroBox.setAlignment(Pos.CENTER);
-        heroBox.setPadding(new Insets(60, 40, 60, 40));
-        heroBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 16;");
+        heroBox.setPadding(new Insets(90, 70, 90, 70)); // Increased padding
+        heroBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 30;"); // Increased radius
 
         Label title = new Label("We Are Here To Help");
-        title.setFont(getFont(48, FontWeight.BOLD));
+        title.setFont(getFont(66, FontWeight.BOLD)); // Increased font size
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Label subtitle = new Label("Your trusted partner in navigating emergencies. Get access to critical information, resources, and support when you need it most.");
-        subtitle.setFont(getFont(18, FontWeight.NORMAL));
+        subtitle.setFont(getFont(24, FontWeight.NORMAL)); // Increased font size
         subtitle.setTextFill(Color.web(FONT_COLOR_DARK));
         subtitle.setOpacity(0.8);
         subtitle.setWrapText(true);
-        subtitle.setMaxWidth(800);
+        subtitle.setMaxWidth(1100); // Increased max width
         subtitle.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
 
         heroBox.getChildren().addAll(title, subtitle);
@@ -246,9 +246,9 @@ public class DisasterHelperUI extends Application {
     private Node createQuickAccessModule(Stage stage, Scene scene) {
         VBox card = createDashboardCard("Quick Access");
         GridPane buttonGrid = new GridPane();
-        buttonGrid.setHgap(20);
-        buttonGrid.setVgap(20);
-        buttonGrid.setPadding(new Insets(15, 0, 0, 0));
+        buttonGrid.setHgap(35); // Increased gap
+        buttonGrid.setVgap(35); // Increased gap
+        buttonGrid.setPadding(new Insets(30, 0, 0, 0)); // Increased padding
         
         Button disasterInfoBtn = createQuickAccessButton("Disaster Info Type");
         disasterInfoBtn.setOnAction(e -> new DisasterInfoTypeView(stage, scene).start(stage));
@@ -273,10 +273,10 @@ public class DisasterHelperUI extends Application {
     
     private Button createQuickAccessButton(String text) {
         Button button = new Button(text);
-        button.setFont(getFont(16, FontWeight.BOLD));
+        button.setFont(getFont(22, FontWeight.BOLD)); // Increased font size
         button.setTextFill(Color.web(FONT_COLOR_DARK));
-        button.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 10; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-cursor: hand;");
-        button.setPrefSize(300, 80);
+        button.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 18; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 18; -fx-cursor: hand;"); // Increased radius
+        button.setPrefSize(400, 110); // Increased size
         GridPane.setHgrow(button, Priority.ALWAYS);
         GridPane.setVgrow(button, Priority.ALWAYS);
         return button;
@@ -284,13 +284,13 @@ public class DisasterHelperUI extends Application {
 
     private Node createLiveAlertsModule() {
         VBox card = createDashboardCard("Live Alerts");
-        card.setStyle("-fx-background-color: " + ALERT_BACKGROUND_COLOR + "; -fx-background-radius: 12; -fx-padding: 20;");
+        card.setStyle("-fx-background-color: " + ALERT_BACKGROUND_COLOR + "; -fx-background-radius: 25; -fx-padding: 40;"); // Increased padding and radius
         
         Label title = (Label) card.getChildren().get(0);
         title.setTextFill(Color.web(ALERT_TEXT_COLOR));
         
-        VBox alertsContainer = new VBox(15);
-        alertsContainer.setPadding(new Insets(10, 0, 0, 0));
+        VBox alertsContainer = new VBox(30); // Increased spacing
+        alertsContainer.setPadding(new Insets(25, 0, 0, 0)); // Increased padding
         
         alertsContainer.getChildren().add(createAlertItem("High wind advisory in effect until 8 PM."));
         alertsContainer.getChildren().add(createAlertItem("Road closure on Main St due to flooding."));
@@ -302,7 +302,7 @@ public class DisasterHelperUI extends Application {
     
     private Node createAlertItem(String text) {
         Label alertLabel = new Label("• " + text);
-        alertLabel.setFont(getFont(15, FontWeight.MEDIUM));
+        alertLabel.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
         alertLabel.setTextFill(Color.web(ALERT_TEXT_COLOR));
         alertLabel.setWrapText(true);
         return alertLabel;
@@ -311,9 +311,9 @@ public class DisasterHelperUI extends Application {
     private Node createStatisticsModule() {
         VBox card = createDashboardCard("Statistics");
         GridPane grid = new GridPane();
-        grid.setHgap(20);
-        grid.setVgap(20);
-        grid.setPadding(new Insets(15, 0, 0, 0));
+        grid.setHgap(35); // Increased gap
+        grid.setVgap(35); // Increased gap
+        grid.setPadding(new Insets(30, 0, 0, 0)); // Increased padding
         
         grid.add(createStatItem("12K", "People Rescued"), 0, 0);
         grid.add(createStatItem("56K", "Requests Handled"), 1, 0);
@@ -325,15 +325,15 @@ public class DisasterHelperUI extends Application {
     }
 
     private Node createStatItem(String number, String label) {
-        VBox item = new VBox(-2);
+        VBox item = new VBox(-7); // Adjusted spacing
         item.setAlignment(Pos.CENTER_LEFT);
         
         Label numberLabel = new Label(number);
-        numberLabel.setFont(getFont(34, FontWeight.BOLD));
+        numberLabel.setFont(getFont(48, FontWeight.BOLD)); // Increased font size
         numberLabel.setTextFill(Color.web(PRIMARY_BLUE));
         
         Label textLabel = new Label(label);
-        textLabel.setFont(getFont(14, FontWeight.NORMAL));
+        textLabel.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size
         textLabel.setTextFill(Color.web(FONT_COLOR_DARK));
         
         item.getChildren().addAll(numberLabel, textLabel);
@@ -342,6 +342,11 @@ public class DisasterHelperUI extends Application {
 
     private Node createNewsFeedModule() {
         VBox card = createDashboardCard("Latest News");
+        card.setPadding(new Insets(40)); // Consistent with other cards
+        card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
+                      "-fx-background-radius: 25; " + // Consistent with other cards
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 15, 0, 0, 6);"); // Consistent with other cards
+
         NewsDao newsDao = new NewsDao();
         ObservableList<NewsArticle> newsList = newsDao.getNews();
 
@@ -353,35 +358,50 @@ public class DisasterHelperUI extends Application {
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
-                    VBox vbox = new VBox(5);
+                    VBox vbox = new VBox(15); // Increased spacing between title and description
+                    vbox.setPadding(new Insets(15)); // Added padding to each news item
+                    vbox.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1; -fx-padding: 15;"); // Attractive styling for each item
+
                     Label title = new Label(item.getTitle());
                     title.setWrapText(true);
-                    title.setStyle("-fx-font-weight: bold;");
+                    title.setFont(DisasterHelperUI.getFont(24, FontWeight.BOLD)); // Further increased title font size
+                    title.setTextFill(Color.web(PRIMARY_BLUE)); // Changed title color to primary blue
+
                     Label description = new Label(item.getDescription());
                     description.setWrapText(true);
+                    description.setFont(DisasterHelperUI.getFont(18, FontWeight.NORMAL)); // Consistent description font size
+                    description.setTextFill(Color.web(FONT_COLOR_DARK)); // Consistent description color
+
                     vbox.getChildren().addAll(title, description);
                     setGraphic(vbox);
                 }
             }
         });
 
+        // Apply styles to ListView itself to remove default background and borders
+        listView.setStyle("-fx-background-color: transparent; -fx-control-inner-background: transparent;");
+        listView.setFixedCellSize(200); // Set a fixed cell size for better appearance
+        listView.setPrefHeight(600); // Increased preferred height for more visible items
+
         ScrollPane scrollPane = new ScrollPane(listView);
         scrollPane.setFitToWidth(true);
-        scrollPane.setPrefHeight(300); // Set a preferred height for independent scrolling
+        scrollPane.setPrefHeight(600); // Sync preferred height with ListView
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;"); // Ensure scroll pane is transparent
 
         card.getChildren().add(scrollPane);
         return card;
     }
     
     private VBox createDashboardCard(String title) {
-        VBox card = new VBox(10);
-        card.setPadding(new Insets(25));
+        VBox card = new VBox(25); // Increased spacing
+        card.setPadding(new Insets(40)); // Increased padding
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12;");
+                      "-fx-background-radius: 25;"); // Increased radius
         VBox.setVgrow(card, Priority.ALWAYS);
         
         Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(24, FontWeight.BOLD));
+        titleLabel.setFont(getFont(32, FontWeight.BOLD)); // Increased font size
         titleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
         
         card.getChildren().add(titleLabel);

@@ -39,8 +39,8 @@ public class AboutUsView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(30);
-        rootLayout.setPadding(new Insets(40));
+        VBox rootLayout = new VBox(45); // Increased spacing
+        rootLayout.setPadding(new Insets(60)); // Increased padding
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -53,28 +53,28 @@ public class AboutUsView extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        Scene scene = new Scene(scrollPane, 1920,1080);
+        Scene scene = new Scene(scrollPane, 1920, 1080); // Scene size remains
         primaryStage.setScene(scene);
         primaryStage.setTitle("About Us | Disaster Relief Helper");
     }
 
     private Node createHeader() {
-        HBox header = new HBox();
+        HBox header = new HBox(20); // Increased spacing
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 20, 0));
+        header.setPadding(new Insets(0, 0, 30, 0)); // Increased bottom padding
 
         Label title = new Label("💡 About Safe Serve");
-        title.setFont(getFont(36, FontWeight.BOLD));
+        title.setFont(getFont(48, FontWeight.BOLD)); // Increased font size
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅ Back to Dashboard");
-        backButton.setFont(getFont(18, FontWeight.MEDIUM));
+        backButton.setFont(getFont(24, FontWeight.MEDIUM)); // Increased font size
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
-        backButton.setPadding(new Insets(8, 16, 8, 16));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 10; -fx-border-width: 2;"); // Increased border radius and width
+        backButton.setPadding(new Insets(12, 24, 12, 24)); // Increased padding
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
             primaryStage.setTitle("Citizen Dashboard | Disaster Relief Helper");
@@ -85,55 +85,55 @@ public class AboutUsView extends Application {
     }
 
     private Node createAboutContent() {
-        VBox card = new VBox(30);
-        card.setPadding(new Insets(40));
+        VBox card = new VBox(45); // Increased spacing
+        card.setPadding(new Insets(60)); // Increased padding
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                "-fx-background-radius: 12; " +
-                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
-        card.setMaxWidth(1100);
+                "-fx-background-radius: 18; " + // Increased radius
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 15, 0, 0, 6);"); // Increased shadow
+        card.setMaxWidth(1400); // Increased max width
 
         // Safe Serve Project Section (Text Left, Logo Right)
-        HBox projectSection = new HBox(30);
+        HBox projectSection = new HBox(45); // Increased spacing
         projectSection.setAlignment(Pos.CENTER_LEFT);
-        projectSection.setPadding(new Insets(10, 0, 30, 0));
+        projectSection.setPadding(new Insets(15, 0, 45, 0)); // Increased padding
 
-        VBox projectTextBox = new VBox(10);
+        VBox projectTextBox = new VBox(15); // Increased spacing
         Label projectTitle = new Label("📌 Our Project : Safe Serve");
-        projectTitle.setFont(getFont(24, FontWeight.BOLD));
+        projectTitle.setFont(getFont(32, FontWeight.BOLD)); // Increased font size
         projectTitle.setTextFill(Color.web(PRIMARY_BLUE));
 
         Text projectText = new Text(
                 "Safe Serve is a comprehensive disaster relief platform designed to connect citizens, volunteers, and authorities during emergencies. "
                         + "Our mission is to streamline the process of reporting incidents, requesting aid, and distributing resources efficiently to save lives and support communities in times of crisis."
         );
-        projectText.setFont(getFont(18, FontWeight.NORMAL));
-        projectText.setWrappingWidth(700);
+        projectText.setFont(getFont(22, FontWeight.NORMAL)); // Increased font size
+        projectText.setWrappingWidth(900); // Increased wrapping width
         projectText.setFill(Color.web(FONT_COLOR_DARK));
         projectText.setTextAlignment(TextAlignment.JUSTIFY);
         projectTextBox.getChildren().addAll(projectTitle, projectText);
 
-        ImageView logoImage = loadImage("/logo.png", 250, 250); // Corrected path
+        ImageView logoImage = loadImage("/logo.png", 350, 350); // Increased image size
         projectSection.getChildren().addAll(projectTextBox, logoImage);
 
         // Core2web Section
         VBox coreTitleBox = new VBox();
         Label coreTitle = new Label("🏫 About Core2web – Pune");
-        coreTitle.setFont(getFont(24, FontWeight.BOLD));
+        coreTitle.setFont(getFont(32, FontWeight.BOLD)); // Increased font size
         coreTitle.setTextFill(Color.web(PRIMARY_BLUE));
         coreTitleBox.getChildren().add(coreTitle);
 
-        HBox core2webBox = new HBox(20);
+        HBox core2webBox = new HBox(30); // Increased spacing
         core2webBox.setAlignment(Pos.CENTER_LEFT);
-        core2webBox.setPadding(new Insets(10, 0, 30, 0));
+        core2webBox.setPadding(new Insets(15, 0, 45, 0)); // Increased padding
 
-        ImageView core2webImage = loadImage("/Assets/Images/core2web.jpg", 300, 300);
+        ImageView core2webImage = loadImage("/Assets/Images/core2web.jpg", 400, 400); // Increased image size
         Text core2webText = new Text(
                 "Core2web is a top-tier IT training institute founded in 2017 in Pune, Maharashtra. Known for its hands-on approach to programming education, Core2web offers industry-focused training in Java, Python, C++, Data Structures, Operating Systems, and more. "
                         + "The institute has empowered over 10,000 students by equipping them with strong technical skills and preparing them for real-world challenges. Its mission is to make every learner industry-ready by teaching them to 'Know the Code Till the Core.' "
                         + "Core2web is a trusted choice for anyone looking to build a career in the software industry."
         );
-        core2webText.setFont(getFont(18, FontWeight.NORMAL));
-        core2webText.setWrappingWidth(700);
+        core2webText.setFont(getFont(22, FontWeight.NORMAL)); // Increased font size
+        core2webText.setWrappingWidth(900); // Increased wrapping width
         core2webText.setFill(Color.web(FONT_COLOR_DARK));
         core2webText.setTextAlignment(TextAlignment.JUSTIFY);
         core2webBox.getChildren().addAll(core2webImage, core2webText);
@@ -141,25 +141,25 @@ public class AboutUsView extends Application {
         // Shashi Sir Section
         VBox teacherTitleBox = new VBox();
         Label teacherTitle = new Label("📘 Our Teacher: Shashi Bagal");
-        teacherTitle.setFont(getFont(24, FontWeight.BOLD));
+        teacherTitle.setFont(getFont(32, FontWeight.BOLD)); // Increased font size
         teacherTitle.setTextFill(Color.web(PRIMARY_BLUE));
         teacherTitleBox.getChildren().add(teacherTitle);
 
-        HBox shashiBox = new HBox(20);
+        HBox shashiBox = new HBox(30); // Increased spacing
         shashiBox.setAlignment(Pos.CENTER_RIGHT);
-        shashiBox.setPadding(new Insets(10, 0, 30, 0));
+        shashiBox.setPadding(new Insets(15, 0, 45, 0)); // Increased padding
 
         Text shashiText = new Text(
                 "Mr. Shashi Bagal is the founder and chief mentor at Core2web, a premier software training institute in Pune. With over 9 years of experience in software development and education, he is widely respected for his deep knowledge and clarity in teaching core programming concepts. "
                         + "His areas of expertise include Java, Data Structures, and Object-Oriented Programming. Shashi Sir's passion for teaching and his practical approach have helped thousands of students start successful careers in tech. "
                         + "He continues to mentor learners across India through online and offline platforms."
         );
-        shashiText.setFont(getFont(18, FontWeight.NORMAL));
-        shashiText.setWrappingWidth(700);
+        shashiText.setFont(getFont(22, FontWeight.NORMAL)); // Increased font size
+        shashiText.setWrappingWidth(900); // Increased wrapping width
         shashiText.setFill(Color.web(FONT_COLOR_DARK));
         shashiText.setTextAlignment(TextAlignment.JUSTIFY);
 
-        ImageView shashiImage = loadImage("/Assets/Images/shashisir.jpg", 300, 300);
+        ImageView shashiImage = loadImage("/Assets/Images/shashisir.jpg", 400, 400); // Increased image size
         shashiBox.getChildren().addAll(shashiText, shashiImage);
 
         // Team Section
@@ -168,12 +168,12 @@ public class AboutUsView extends Application {
                 "ThinkSpark is a team of passionate developers, designers, and problem-solvers dedicated to using technology for social good. We believe in the power of innovation to create practical solutions for real-world challenges. The Safe Serve project is our commitment to building a more resilient and connected society."
         );
 
-        HBox teamRow = new HBox(30);
+        HBox teamRow = new HBox(45); // Increased spacing
         teamRow.setAlignment(Pos.CENTER);
         teamRow.getChildren().addAll(
                 createPersonCard("Shivkumar Kapse (Team Lead)", "/Assets/Images/shiv.jpg"),
-                createPersonCard("Atharva Guthe", "/Assets/Images/atharva.jpg"), // Corrected typo in image file name
-                createPersonCard("Varad Wani", "/Assets/Images/varad.jpg"), // Corrected image file name
+                createPersonCard("Atharva Guthe", "/Assets/Images/atharva.jpg"),
+                createPersonCard("Varad Wani", "/Assets/Images/varad.jpg"),
                 createPersonCard("Harish Gangurde", "/Assets/Images/harish.jpg")
         );
 
@@ -193,16 +193,16 @@ public class AboutUsView extends Application {
     }
 
     private Node createSection(String title, String content) {
-        VBox section = new VBox(10);
+        VBox section = new VBox(15); // Increased spacing
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(24, FontWeight.BOLD));
+        titleLabel.setFont(getFont(32, FontWeight.BOLD)); // Increased font size
         titleLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
         Text contentText = new Text(content);
-        contentText.setFont(getFont(18, FontWeight.NORMAL));
+        contentText.setFont(getFont(22, FontWeight.NORMAL)); // Increased font size
         contentText.setFill(Color.web(FONT_COLOR_DARK));
-        contentText.setWrappingWidth(1000);
+        contentText.setWrappingWidth(1300); // Increased wrapping width
         contentText.setTextAlignment(TextAlignment.JUSTIFY);
 
         section.getChildren().addAll(titleLabel, contentText);
@@ -224,14 +224,14 @@ public class AboutUsView extends Application {
     }
 
     private Node createPersonCard(String name, String imagePath) {
-        VBox personCard = new VBox(10);
+        VBox personCard = new VBox(15); // Increased spacing
         personCard.setAlignment(Pos.CENTER);
-        personCard.setPadding(new Insets(10));
+        personCard.setPadding(new Insets(15)); // Increased padding
 
-        ImageView imageView = loadImage(imagePath, 200, 200);
+        ImageView imageView = loadImage(imagePath, 250, 250); // Increased image size
 
         Label nameLabel = new Label(name);
-        nameLabel.setFont(getFont(18, FontWeight.BOLD));
+        nameLabel.setFont(getFont(22, FontWeight.BOLD)); // Increased font size
         nameLabel.setTextFill(Color.web(FONT_COLOR_DARK));
         nameLabel.setTextAlignment(TextAlignment.CENTER);
         nameLabel.setWrapText(true);

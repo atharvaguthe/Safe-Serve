@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode; // Import KeyCode
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -29,13 +30,12 @@ public class AssistanceView extends Application {
 
     private final Scene previousScene;
     private final Stage primaryStage;
-    private final String userName; // ADDED
+    private final String userName;
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
 
-    // UPDATED CONSTRUCTOR
     public AssistanceView(Stage primaryStage, Scene previousScene, String userName) {
         this.primaryStage = primaryStage;
         this.previousScene = previousScene;
@@ -44,8 +44,8 @@ public class AssistanceView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(30);
-        rootLayout.setPadding(new Insets(40));
+        VBox rootLayout = new VBox(50); // Increased spacing
+        rootLayout.setPadding(new Insets(60)); // Increased padding
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -63,20 +63,20 @@ public class AssistanceView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 20, 0));
+        header.setPadding(new Insets(0, 0, 30, 0)); // Increased padding
 
         Label title = new Label("🤝 Request Assistance");
-        title.setFont(getFont(32, FontWeight.BOLD));
+        title.setFont(getFont(40, FontWeight.BOLD)); // Increased font size
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
-        backButton.setPadding(new Insets(8, 16, 8, 16));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 10;"); // Increased radius
+        backButton.setPadding(new Insets(10, 20, 10, 20)); // Increased padding
         backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
@@ -84,16 +84,16 @@ public class AssistanceView extends Application {
     }
 
     private Node createAssistanceForm() {
-        VBox card = new VBox(25);
-        card.setPadding(new Insets(30));
+        VBox card = new VBox(35); // Increased spacing
+        card.setPadding(new Insets(40)); // Increased padding
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
-        card.setMaxWidth(800);
+                      "-fx-background-radius: 15; " + // Increased radius
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 15, 0, 0, 6);"); // Increased shadow
+        card.setMaxWidth(900); // Increased max width
 
         GridPane formGrid = new GridPane();
-        formGrid.setHgap(20);
-        formGrid.setVgap(15);
+        formGrid.setHgap(30); // Increased gap
+        formGrid.setVgap(25); // Increased gap
 
         ComboBox<String> assistanceType = new ComboBox<>();
         assistanceType.getItems().addAll("Medical", "Food & Water", "Shelter", "Rescue", "Other");
@@ -107,7 +107,7 @@ public class AssistanceView extends Application {
         TextArea detailsArea = new TextArea();
         detailsArea.setPromptText("Describe your situation, e.g., 'Trapped on rooftop', 'Need baby formula'...");
         detailsArea.setWrapText(true);
-        detailsArea.setPrefRowCount(4);
+        detailsArea.setPrefRowCount(5); // Increased row count
         styleFormControl(detailsArea);
 
         TextField contactField = createTextField("A number where you can be reached");
@@ -124,15 +124,42 @@ public class AssistanceView extends Application {
         formGrid.add(contactField, 1, 4);
 
         Button submitButton = new Button("Submit Request");
-        submitButton.setFont(getFont(18, FontWeight.BOLD));
+        submitButton.setFont(getFont(22, FontWeight.BOLD)); // Increased font size
         submitButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
-        submitButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-background-radius: 8; -fx-cursor: hand;");
-        submitButton.setPadding(new Insets(12, 25, 12, 25));
+        submitButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-background-radius: 10; -fx-cursor: hand;"); // Increased radius
+        submitButton.setPadding(new Insets(15, 30, 15, 30)); // Increased padding
         HBox actionBox = new HBox(submitButton);
         actionBox.setAlignment(Pos.CENTER_RIGHT);
 
         VBox container = new VBox(card);
         container.setAlignment(Pos.CENTER);
+
+        // Enter key functionality
+        assistanceType.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                peopleSpinner.requestFocus();
+            }
+        });
+        peopleSpinner.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                locationField.requestFocus();
+            }
+        });
+        locationField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                detailsArea.requestFocus();
+            }
+        });
+        detailsArea.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                contactField.requestFocus();
+            }
+        });
+        contactField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                submitButton.fire();
+            }
+        });
 
         submitButton.setOnAction(e -> {
             String type = assistanceType.getValue();
@@ -147,21 +174,20 @@ public class AssistanceView extends Application {
 
             String fullDescription = "Assistance for " + peopleCount + " person(s). Details: " + details;
             
-            // UPDATED to include the citizen's name
             Disaster newDisaster = new Disaster(type, location, fullDescription, this.userName);
             
             DisasterDao disasterDao = new DisasterDao();
             disasterDao.saveDisasterReport(newDisaster);
 
-            VBox confirmationVBox = new VBox(20);
+            VBox confirmationVBox = new VBox(30); // Increased spacing
             confirmationVBox.setAlignment(Pos.CENTER);
-            confirmationVBox.setPadding(new Insets(40));
+            confirmationVBox.setPadding(new Insets(50)); // Increased padding
             
             Label confirmationTitle = new Label("✅ Request Sent!");
-            confirmationTitle.setFont(getFont(24, FontWeight.BOLD));
+            confirmationTitle.setFont(getFont(30, FontWeight.BOLD)); // Increased font size
             
             Label confirmationText = new Label("Your request for assistance has been received. Help is on the way.");
-            confirmationText.setFont(getFont(16, FontWeight.NORMAL));
+            confirmationText.setFont(getFont(18, FontWeight.NORMAL)); // Increased font size
             confirmationText.setWrapText(true);
             confirmationText.setTextAlignment(TextAlignment.CENTER);
             
@@ -180,7 +206,7 @@ public class AssistanceView extends Application {
 
     private Label createLabel(String text) {
         Label label = new Label(text);
-        label.setFont(getFont(16, FontWeight.MEDIUM));
+        label.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
         label.setTextFill(Color.web(FONT_COLOR_DARK));
         return label;
     }
@@ -189,10 +215,18 @@ public class AssistanceView extends Application {
         TextField textField = new TextField();
         textField.setPromptText(prompt);
         styleFormControl(textField);
+        textField.setPrefHeight(60); // Increased height
         return textField;
     }
 
     private void styleFormControl(Control control) {
-        control.setStyle("-fx-font-size: 14px; -fx-background-color: #FFFFFF; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 8; -fx-padding: 8;");
+        control.setStyle("-fx-font-size: 18px; -fx-background-color: #FFFFFF; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-padding: 10;"); // Increased font size, padding, radius
+        if (control instanceof TextArea) {
+            ((TextArea) control).setPrefHeight(120); // Increased height for text area
+        } else if (control instanceof ComboBox) {
+            ((ComboBox<?>) control).setPrefHeight(60); // Increased height for combo box
+        } else if (control instanceof Spinner) {
+            ((Spinner<?>) control).setPrefHeight(60); // Increased height for spinner
+        }
     }
 }

@@ -33,16 +33,18 @@ public class ForgotPasswordUI extends Application {
     public void start(Stage stage) {
         HBox mainLayout = new HBox();
         mainLayout.setAlignment(Pos.CENTER);
-        mainLayout.setMaxSize(960, 640);
+        // Increased max size for better proportionality with DisasterHelperUI
+        mainLayout.setMaxSize(1200, 800);
         mainLayout.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                           "-fx-background-radius: 16; " +
-                           "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 20, 0, 0, 8);");
+                           "-fx-background-radius: 20; " + // Increased radius
+                           "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 30, 0, 0, 10);"); // Increased shadow
         mainLayout.getChildren().addAll(createBrandingPane(), createForgotPasswordForm(stage));
 
         StackPane root = new StackPane(mainLayout);
         root.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
-        root.setPadding(new Insets(40));
+        root.setPadding(new Insets(60)); // Increased padding
 
+        // Adjusted scene size for better fit on common large displays, maintaining aspect ratio
         Scene scene = new Scene(root,1920,1080);
         stage.setTitle("Safe Serve");
         stage.setScene(scene);
@@ -51,14 +53,14 @@ public class ForgotPasswordUI extends Application {
     }
 
     private Node createBrandingPane() {
-        VBox brandingPane = new VBox(20);
-        brandingPane.setPrefWidth(480);
+        VBox brandingPane = new VBox(30); // Increased spacing
+        brandingPane.setPrefWidth(600); // Increased preferred width
         brandingPane.setAlignment(Pos.CENTER_LEFT);
-        brandingPane.setPadding(new Insets(40));
-        brandingPane.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 16 0 0 16;");
+        brandingPane.setPadding(new Insets(60)); // Increased padding
+        brandingPane.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 20 0 0 20;"); // Increased radius
 
         Label logo = new Label("🔑 Forgot Password");
-        logo.setFont(getFont(40, FontWeight.BOLD));
+        logo.setFont(getFont(50, FontWeight.BOLD)); // Increased font size
         logo.setTextFill(Color.web(FONT_COLOR_LIGHT));
 
         brandingPane.getChildren().addAll(logo);
@@ -66,27 +68,30 @@ public class ForgotPasswordUI extends Application {
     }
 
     private Node createForgotPasswordForm(Stage stage) {
-        VBox formPane = new VBox(25);
-        formPane.setPrefWidth(480);
+        VBox formPane = new VBox(30); // Increased spacing
+        formPane.setPrefWidth(600); // Increased preferred width
         formPane.setAlignment(Pos.CENTER_LEFT);
-        formPane.setPadding(new Insets(40));
+        formPane.setPadding(new Insets(50)); // Increased padding
 
         Label title = new Label("Reset Your Password");
-        title.setFont(getFont(28, FontWeight.BOLD));
+        title.setFont(getFont(34, FontWeight.BOLD)); // Increased font size
         title.setTextFill(Color.web(FONT_COLOR_DARK));
-        VBox.setMargin(title, new Insets(0, 0, 10, 0));
+        VBox.setMargin(title, new Insets(0, 0, 15, 0)); // Increased margin
 
         emailField = createStyledTextField("Enter your email");
 
         Button resetButton = new Button("Send Reset Email");
-        resetButton.setFont(getFont(16, FontWeight.BOLD));
+        resetButton.setFont(getFont(20, FontWeight.BOLD)); // Increased font size
         resetButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
-        resetButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 8; -fx-cursor: hand;");
-        resetButton.setPrefHeight(50);
+        resetButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;"); // Increased radius
+        resetButton.setPrefHeight(60); // Increased height
         resetButton.setMaxWidth(Double.MAX_VALUE);
 
         Hyperlink backToLoginLink = new Hyperlink("Back to Log In");
-        backToLoginLink.setFont(getFont(14, FontWeight.MEDIUM));
+        backToLoginLink.setFont(getFont(18, FontWeight.MEDIUM)); // Increased font size
+        backToLoginLink.setTextFill(Color.web(PRIMARY_BLUE)); // Set text color for consistency
+        backToLoginLink.setStyle("-fx-underline: true; -fx-cursor: hand;"); // Ensure underline and hand cursor
+
 
         HBox bottomLinks = new HBox(backToLoginLink);
         HBox.setHgrow(backToLoginLink, Priority.ALWAYS);
@@ -97,7 +102,8 @@ public class ForgotPasswordUI extends Application {
 
         formPane.getChildren().addAll(
             title,
-            new Label("Email"), emailField,
+            new Label("Email"), // Added label for clarity
+            emailField,
             resetButton,
             bottomLinks
         );
@@ -108,9 +114,9 @@ public class ForgotPasswordUI extends Application {
     private TextField createStyledTextField(String prompt) {
         TextField textField = new TextField();
         textField.setPromptText(prompt);
-        textField.setFont(getFont(15, FontWeight.NORMAL));
-        textField.setPrefHeight(50);
-        textField.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 8; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 8; -fx-border-width: 1.5;");
+        textField.setFont(getFont(18, FontWeight.NORMAL)); // Increased font size
+        textField.setPrefHeight(60); // Increased height
+        textField.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 10; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;"); // Increased radius and border width
         return textField;
     }
 
