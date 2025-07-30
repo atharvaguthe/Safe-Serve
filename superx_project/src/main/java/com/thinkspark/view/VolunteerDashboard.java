@@ -37,6 +37,8 @@ public class VolunteerDashboard extends Application {
     private static final String ALERT_COLOR = "#E53E3E";
     private static final String STATUS_COMPLETED_COLOR = "#38A169"; 
     private static final String STATUS_ASSIGNED_COLOR = "#3182CE"; 
+    // Added from DisasterHelperUI for the floating button
+    private static final String SECONDARY_BLUE = "#007BFF";
 
     private Stage primaryStage;
     private Scene dashboardScene;
@@ -90,7 +92,26 @@ public class VolunteerDashboard extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        dashboardScene = new Scene(scrollPane,1920,1080);
+        // --- Floating Circular Button (Copied from DisasterHelperUI) ---
+        Button floatingButton = new Button("🤖"); 
+        floatingButton.setStyle(
+            "-fx-background-color: " + SECONDARY_BLUE + "; " + // Using SECONDARY_BLUE defined above
+            "-fx-background-radius: 50%; " + 
+            "-fx-min-width: 90px; -fx-min-height: 90px; " + 
+            "-fx-max-width: 90px; -fx-max-height: 90px; " + 
+            "-fx-font-size: 36px; " + 
+            "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " + 
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 20, 0, 0, 10); " + 
+            "-fx-cursor: hand;"
+        );
+        StackPane.setAlignment(floatingButton, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(floatingButton, new Insets(0, 60, 180, 0));
+
+        // --- Create a new StackPane as the overall root for the Scene ---
+        StackPane overallRoot = new StackPane();
+        overallRoot.getChildren().addAll(scrollPane, floatingButton);
+
+        dashboardScene = new Scene(overallRoot,1920,1080); // Set scene to overallRoot
         primaryStage.setTitle("Safe Serve");
         primaryStage.setMaximized(true);
         primaryStage.setResizable(true);
@@ -102,6 +123,12 @@ public class VolunteerDashboard extends Application {
 
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
         primaryStage.show();
+
+        // Set action for the floating button
+        final Scene finalDashboardScene = dashboardScene; // Need a final variable for the lambda
+        floatingButton.setOnAction(e -> {
+            new FloatingButtonPage(primaryStage, finalDashboardScene).start(primaryStage);
+        });
     }
 
     private GridPane createMainGrid(){
@@ -112,7 +139,7 @@ public class VolunteerDashboard extends Application {
 
         mainGrid.add(createQuickAccessModule(), 0, 0);
         mainGrid.add(createAssignedTasksModule(), 1, 0);
-        mainGrid.add(createTeamStatsModule(), 0, 1);
+        mainGrid.add(createTeamStatsModule(primaryStage, dashboardScene), 0, 1); // Pass stage and scene here
         mainGrid.add(createLiveAlertsModule(), 1, 1);
 
         return mainGrid;
@@ -293,7 +320,7 @@ public class VolunteerDashboard extends Application {
     }
     // Removed updateAssignedTasks() as it's no longer needed, replaced by tasksListView.setItems()
 
-    private Node createTeamStatsModule() {
+    private Node createTeamStatsModule(Stage stage, Scene scene) { // Pass stage and scene
         VBox card = createDashboardCard("Your Team's Contribution");
         HBox statsBox = new HBox();
         statsBox.setAlignment(Pos.CENTER);
@@ -315,6 +342,21 @@ public class VolunteerDashboard extends Application {
         }
 
         card.getChildren().add(statsBox);
+
+        // New button to open AnalyticsView
+        Button viewAnalyticsButton = new Button("View Analytics");
+        viewAnalyticsButton.setFont(getFont(20, FontWeight.BOLD));
+        viewAnalyticsButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
+        viewAnalyticsButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;");
+        viewAnalyticsButton.setPrefHeight(60);
+        viewAnalyticsButton.setMaxWidth(Double.MAX_VALUE);
+        VBox.setMargin(viewAnalyticsButton, new Insets(30, 0, 0, 0)); // Add top margin
+
+        // Action to open AnalyticsView
+        viewAnalyticsButton.setOnAction(e -> new AnalyticsView(stage, scene).start(stage));
+
+        card.getChildren().add(viewAnalyticsButton); // Add the new button to the card
+
         return card;
     }
 

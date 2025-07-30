@@ -6,6 +6,8 @@ import com.thinkspark.model.Disaster;
 import com.thinkspark.model.FirebaseConfig;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+// Import DocumentChange
+import com.google.cloud.firestore.DocumentChange;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -53,7 +55,7 @@ public class DisasterDao {
                 System.err.println("DAO Error: Failed to save disaster report to Firebase. " + e.getMessage());
                 e.printStackTrace();
             }
-        }, Executors.newSingleThreadExecutor()); 
+        }, Executors.newSingleThreadExecutor());
     }
 
     // NEW METHOD: Update the status of a disaster report
@@ -83,17 +85,27 @@ public class DisasterDao {
                 }
 
                 Platform.runLater(() -> {
-                    targetList.clear();
-                    for (QueryDocumentSnapshot doc : snapshots) {
-                        if (doc.exists()) {
-                            Disaster disaster = doc.toObject(Disaster.class);
-                            disaster.setFirebaseDocId(doc.getId()); // NEW: Set the Firebase document ID
-                            // Ensure status is correctly retrieved. If not set, it will be null.
-                            // Firestore's toObject() will set properties that exist in the document.
-                            // If 'status' is missing in some documents, it will remain null.
-                            // We should explicitly retrieve it as a String if it might be null from Firestore's toObject.
-                            disaster.setStatus(doc.getString("status")); 
-                            targetList.add(disaster);
+                    // Process only the changes
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        Disaster disaster = dc.getDocument().toObject(Disaster.class);
+                        disaster.setFirebaseDocId(dc.getDocument().getId()); // Set the Firebase document ID
+                        disaster.setStatus(dc.getDocument().getString("status"));
+
+                        switch (dc.getType()) {
+                            case ADDED:
+                                targetList.add(disaster);
+                                break;
+                            case MODIFIED:
+                                for (int i = 0; i < targetList.size(); i++) {
+                                    if (targetList.get(i).getFirebaseDocId().equals(disaster.getFirebaseDocId())) {
+                                        targetList.set(i, disaster);
+                                        break;
+                                    }
+                                }
+                                break;
+                            case REMOVED:
+                                targetList.removeIf(d -> d.getFirebaseDocId().equals(disaster.getFirebaseDocId()));
+                                break;
                         }
                     }
                 });
@@ -116,13 +128,27 @@ public class DisasterDao {
                 }
 
                 Platform.runLater(() -> {
-                    targetList.clear();
-                    for (QueryDocumentSnapshot doc : snapshots) {
-                        if (doc.exists()) {
-                            Disaster disaster = doc.toObject(Disaster.class);
-                            disaster.setFirebaseDocId(doc.getId()); // NEW: Set the Firebase document ID
-                            disaster.setStatus(doc.getString("status")); // NEW: Set the status from Firestore
-                            targetList.add(disaster);
+                    // Process only the changes
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        Disaster disaster = dc.getDocument().toObject(Disaster.class);
+                        disaster.setFirebaseDocId(dc.getDocument().getId()); // NEW: Set the Firebase document ID
+                        disaster.setStatus(dc.getDocument().getString("status")); // NEW: Set the status from Firestore
+
+                        switch (dc.getType()) {
+                            case ADDED:
+                                targetList.add(disaster);
+                                break;
+                            case MODIFIED:
+                                for (int i = 0; i < targetList.size(); i++) {
+                                    if (targetList.get(i).getFirebaseDocId().equals(disaster.getFirebaseDocId())) {
+                                        targetList.set(i, disaster);
+                                        break;
+                                    }
+                                }
+                                break;
+                            case REMOVED:
+                                targetList.removeIf(d -> d.getFirebaseDocId().equals(disaster.getFirebaseDocId()));
+                                break;
                         }
                     }
                 });

@@ -6,6 +6,9 @@ import com.thinkspark.model.FirebaseConfig;
 import com.thinkspark.view.ManageNgosView;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+// Import DocumentChange
+import com.google.cloud.firestore.DocumentChange;
+
 
 import java.io.IOException;
 
@@ -38,14 +41,30 @@ public class NgoDao {
                 }
 
                 Platform.runLater(() -> {
-                    targetList.clear();
-                    for (QueryDocumentSnapshot doc : snapshots) {
-                        if (doc.exists()) {
-                            targetList.add(new ManageNgosView.NgoItem(
-                                doc.getString("name"),
-                                "Pending Verification", 
-                                doc.getString("email")
-                            ));
+                    // Process only the changes
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        // Assuming NgoItem can be uniquely identified by name or email (contact)
+                        ManageNgosView.NgoItem ngoItem = new ManageNgosView.NgoItem(
+                            dc.getDocument().getString("name"),
+                            dc.getDocument().getString("status"), // Assuming 'status' field exists and is updated
+                            dc.getDocument().getString("email")
+                        );
+
+                        switch (dc.getType()) {
+                            case ADDED:
+                                targetList.add(ngoItem);
+                                break;
+                            case MODIFIED:
+                                for (int i = 0; i < targetList.size(); i++) {
+                                    if (targetList.get(i).getContact().equals(ngoItem.getContact())) { // Assuming contact is unique
+                                        targetList.set(i, ngoItem);
+                                        break;
+                                    }
+                                }
+                                break;
+                            case REMOVED:
+                                targetList.removeIf(n -> n.getContact().equals(ngoItem.getContact())); // Assuming contact is unique
+                                break;
                         }
                     }
                 });

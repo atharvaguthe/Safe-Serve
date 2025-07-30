@@ -33,7 +33,9 @@ public class NgoDashboard extends Application {
     private static final String BORDER_COLOR = "#E2E8F0";
     private static final String ALERT_COLOR = "#E53E3E";
     private static final String PRIMARY_ACCENT_ORANGE = "#FCA311";
-    private static final String STATUS_COMPLETED_COLOR = "#38A169"; 
+    private static final String STATUS_COMPLETED_COLOR = "#38A169";
+    // Added from DisasterHelperUI for the floating button
+    private static final String SECONDARY_BLUE = "#007BFF";
 
     private Stage primaryStage;
     private Scene dashboardScene;
@@ -83,13 +85,38 @@ public class NgoDashboard extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        dashboardScene = new Scene(scrollPane,1920,1080);
+        // --- Floating Circular Button (Copied from DisasterHelperUI) ---
+        Button floatingButton = new Button("🤖");
+        floatingButton.setStyle(
+            "-fx-background-color: " + SECONDARY_BLUE + "; " + // Using SECONDARY_BLUE defined above
+            "-fx-background-radius: 50%; " +
+            "-fx-min-width: 90px; -fx-min-height: 90px; " +
+            "-fx-max-width: 90px; -fx-max-height: 90px; " +
+            "-fx-font-size: 36px; " +
+            "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 20, 0, 0, 10); " +
+            "-fx-cursor: hand;"
+        );
+        StackPane.setAlignment(floatingButton, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(floatingButton, new Insets(0, 60, 180, 0));
+
+        // --- Create a new StackPane as the overall root for the Scene ---
+        StackPane overallRoot = new StackPane();
+        overallRoot.getChildren().addAll(scrollPane, floatingButton);
+
+        dashboardScene = new Scene(overallRoot,1920,1080); // Set scene to overallRoot
         primaryStage.setTitle("Safe Serve");
         primaryStage.setScene(dashboardScene);
         primaryStage.setMaximized(true);
         primaryStage.setResizable(true);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
         primaryStage.show();
+
+        // Set action for the floating button
+        final Scene finalDashboardScene = dashboardScene; // Need a final variable for the lambda
+        floatingButton.setOnAction(e -> {
+            new FloatingButtonPage(primaryStage, finalDashboardScene).start(primaryStage);
+        });
     }
 
     private GridPane createMainGrid() {
@@ -100,7 +127,8 @@ public class NgoDashboard extends Application {
 
         mainGrid.add(createQuickAccessModule(), 0, 0);
         mainGrid.add(createLiveFeedsModule(), 1, 0); // Combined feeds
-        mainGrid.add(createStatisticsModule(), 0, 1, 2, 1);
+        // FIX: Pass primaryStage and dashboardScene to createStatisticsModule
+        mainGrid.add(createStatisticsModule(primaryStage, dashboardScene), 0, 1, 2, 1); // Row span for statistics module
         return mainGrid;
     }
 
@@ -155,7 +183,7 @@ public class NgoDashboard extends Application {
         profileButton.getItems().addAll(profileItem, logoutItem);
 
         profileItem.setOnAction(e -> new ProfileView(primaryStage, dashboardScene, this.userName).start(primaryStage));
-        
+
         logoutItem.setOnAction(e -> {
             new DisasterHelperUI().start(primaryStage);
         });
@@ -252,7 +280,7 @@ public class NgoDashboard extends Application {
                 } else {
                     Text typeAndLocation = new Text(item.getType() + " at " + item.getLocation());
                     typeAndLocation.setFont(NgoDashboard.getFont(18, FontWeight.BOLD)); // Increased font size
-                    
+
                     // Safely check item.getStatus() before using it
                     String status = item.getStatus();
                     String statusColor = ALERT_COLOR; // Default for pending/unassigned
@@ -321,7 +349,7 @@ public class NgoDashboard extends Application {
         return card;
     }
 
-    private Node createStatisticsModule() {
+    private Node createStatisticsModule(Stage stage, Scene scene) { // Method now accepts stage and scene
         VBox card = createDashboardCard("Your Organization's Impact");
         HBox statsBox = new HBox();
         statsBox.setAlignment(Pos.CENTER);
@@ -343,6 +371,23 @@ public class NgoDashboard extends Application {
         }
 
         card.getChildren().add(statsBox);
+
+        // New button to open AnalyticsView
+        Button viewAnalyticsButton = new Button("View Analytics");
+        viewAnalyticsButton.setFont(getFont(20, FontWeight.BOLD));
+        viewAnalyticsButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
+        viewAnalyticsButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;");
+        viewAnalyticsButton.setPrefHeight(60);
+        viewAnalyticsButton.setMaxWidth(Double.MAX_VALUE);
+        VBox.setMargin(viewAnalyticsButton, new Insets(30, 0, 0, 0)); // Add top margin
+
+        // Action to open AnalyticsView
+        // This will require passing primary stage and dashboard scene to createStatisticsModule()
+        // I will update the call to createStatisticsModule in createMainGrid()
+        viewAnalyticsButton.setOnAction(e -> new AnalyticsView(stage, scene).start(stage));
+
+        card.getChildren().add(viewAnalyticsButton); // Add the new button to the card
+
         return card;
     }
 

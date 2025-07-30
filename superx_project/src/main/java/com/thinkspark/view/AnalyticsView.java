@@ -11,13 +11,29 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+
+// NEW IMPORTS FOR CHARTS
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 
 public class AnalyticsView extends Application {
     // Style Definitions
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
+    private static final String FONT_COLOR_DARK = "#2D3748";
+    private static final String FONT_COLOR_MEDIUM = "#4A5568";
+    private static final String SUCCESS_COLOR = "#38A169"; // Green for positive stats
+    private static final String WARNING_COLOR = "#FFC107"; // Orange for caution
+    private static final String DANGER_COLOR = "#DC3545"; // Red for critical
 
     private final Scene previousScene;
     private final Stage primaryStage;
@@ -38,11 +54,11 @@ public class AnalyticsView extends Application {
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
-        rootLayout.getChildren().addAll(createHeader(), createPlaceholderContent());
+        rootLayout.getChildren().addAll(createHeader(), createAnalyticsContent()); // Changed method call
 
         Scene scene = new Scene(rootLayout,1920,1080);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Safe Serve");
+        primaryStage.setTitle("Safe Serve | Analytics"); // Updated title
     }
 
     private Node createHeader() {
@@ -52,6 +68,7 @@ public class AnalyticsView extends Application {
 
         Label title = new Label("📊 Analytics & Insights");
         title.setFont(getFont(32, FontWeight.BOLD));
+        title.setTextFill(Color.web(FONT_COLOR_DARK)); // Set font color
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -63,36 +80,147 @@ public class AnalyticsView extends Application {
         backButton.setPadding(new Insets(8, 16, 8, 16));
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
-            primaryStage.setTitle("Government Dashboard | Disaster Command Center");
+            primaryStage.setTitle("Safe Serve | Analytics");
         });
 
         header.getChildren().addAll(title, spacer, backButton);
         return header;
     }
 
-    private Node createPlaceholderContent() {
-        VBox card = new VBox(20);
-        card.setPadding(new Insets(50));
+    // NEW: createAnalyticsContent method
+    private Node createAnalyticsContent() {
+        VBox contentLayout = new VBox(40); // Increased spacing
+        contentLayout.setAlignment(Pos.CENTER);
+
+        // Section 1: Overview Statistics
+        GridPane overviewStatsGrid = new GridPane();
+        overviewStatsGrid.setHgap(50);
+        overviewStatsGrid.setVgap(30);
+        overviewStatsGrid.setPadding(new Insets(20, 0, 20, 0)); // Padding around stats grid
+
+        overviewStatsGrid.add(createStatCard("Total Incidents", "1,250", PRIMARY_BLUE), 0, 0);
+        overviewStatsGrid.add(createStatCard("Resolved Incidents", "980", SUCCESS_COLOR), 1, 0);
+        overviewStatsGrid.add(createStatCard("Active Alerts", "15", DANGER_COLOR), 2, 0);
+        overviewStatsGrid.add(createStatCard("Volunteers Engaged", "343", FONT_COLOR_MEDIUM), 0, 1);
+        overviewStatsGrid.add(createStatCard("Resources Deployed", "8.2K", FONT_COLOR_MEDIUM), 1, 1);
+        overviewStatsGrid.add(createStatCard("NGOs Partnered", "12", FONT_COLOR_MEDIUM), 2, 1);
+        
+        // Wrap overviewStatsGrid in a VBox with styling
+        VBox overviewCard = new VBox(overviewStatsGrid);
+        overviewCard.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
+                              "-fx-background-radius: 12; " +
+                              "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
+        overviewCard.setPadding(new Insets(30));
+        overviewCard.setMaxWidth(1200); // Adjust max width
+        overviewCard.setAlignment(Pos.CENTER);
+
+        // Section 2: Charts
+        HBox chartsRow1 = new HBox(40); // Spacing between charts
+        chartsRow1.setAlignment(Pos.CENTER);
+        chartsRow1.getChildren().addAll(createIncidentTypeBarChart(), createIncidentStatusPieChart());
+        
+        HBox chartsRow2 = new HBox(40); // Spacing between charts
+        chartsRow2.setAlignment(Pos.CENTER);
+        chartsRow2.getChildren().addAll(createVolunteerActivityLineChart());
+
+        contentLayout.getChildren().addAll(overviewCard, chartsRow1, chartsRow2);
+        return contentLayout;
+    }
+
+    // Helper to create individual statistic cards
+    private Node createStatCard(String title, String value, String colorHex) {
+        VBox card = new VBox(5);
+        card.setPadding(new Insets(20));
         card.setAlignment(Pos.CENTER);
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
-        card.setMaxWidth(800);
+                      "-fx-background-radius: 10; " +
+                      "-fx-border-color: " + colorHex + "; -fx-border-width: 2;"); // Border color based on type
+        card.setPrefSize(250, 120); // Fixed size for consistency
 
-        Label placeholderTitle = new Label("Analytics Dashboard Coming Soon");
-        placeholderTitle.setFont(getFont(24, FontWeight.BOLD));
-        
-        Label placeholderText = new Label("This section is under development. Detailed charts and data visualizations will be available here to track response effectiveness, resource allocation, and more.");
-        placeholderText.setFont(getFont(16, FontWeight.NORMAL));
-        placeholderText.setWrapText(true);
-        placeholderText.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        Label titleLabel = new Label(title);
+        titleLabel.setFont(getFont(16, FontWeight.NORMAL));
+        titleLabel.setTextFill(Color.web(FONT_COLOR_MEDIUM));
 
-        card.getChildren().addAll(placeholderTitle, placeholderText);
+        Label valueLabel = new Label(value);
+        valueLabel.setFont(getFont(32, FontWeight.BOLD));
+        valueLabel.setTextFill(Color.web(colorHex));
+
+        card.getChildren().addAll(titleLabel, valueLabel);
+        return card;
+    }
+
+    // NEW: Bar Chart for Incident Types
+    private Node createIncidentTypeBarChart() {
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+        BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+
+        barChart.setTitle("Incidents by Type (Last 30 Days)");
+        xAxis.setLabel("Incident Type");
+        yAxis.setLabel("Number of Incidents");
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Incidents");
+        series.getData().add(new XYChart.Data<>("Flood", 200));
+        series.getData().add(new XYChart.Data<>("Earthquake", 50));
+        series.getData().add(new XYChart.Data<>("Wildfire", 75));
+        series.getData().add(new XYChart.Data<>("Medical", 120));
+        series.getData().add(new XYChart.Data<>("Other", 30));
+
+        barChart.getData().add(series);
+        barChart.setPrefSize(700, 400); // Adjust size
+        barChart.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 12;");
+        barChart.setPadding(new Insets(20));
+
+        return barChart;
+    }
+
+    // NEW: Pie Chart for Incident Status
+    private Node createIncidentStatusPieChart() {
+        ObservableList<PieChart.Data> pieChartData =
+                FXCollections.observableArrayList(
+                        new PieChart.Data("Resolved", 78),
+                        new PieChart.Data("Assigned", 15),
+                        new PieChart.Data("Pending", 7)
+                );
+        final PieChart chart = new PieChart(pieChartData);
+        chart.setTitle("Incident Status Distribution");
+        chart.setLabelsVisible(true);
+        chart.setPrefSize(500, 400); // Adjust size
+        chart.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 12;");
+        chart.setPadding(new Insets(20));
+
+        // Custom colors for pie slices (optional, requires CSS or lookup)
+        // For simplicity, I'll rely on default JavaFX styling or external CSS for this.
         
-        VBox container = new VBox(card);
-        container.setAlignment(Pos.CENTER);
-        
-        return container;
+        return chart;
+    }
+
+    // NEW: Line Chart for Volunteer Activity (example)
+    private Node createVolunteerActivityLineChart() {
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+        javafx.scene.chart.LineChart<String, Number> lineChart = new javafx.scene.chart.LineChart<>(xAxis, yAxis);
+
+        lineChart.setTitle("Volunteer Hours Logged (Last 6 Months)");
+        xAxis.setLabel("Month");
+        yAxis.setLabel("Hours");
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Hours Logged");
+        series.getData().add(new XYChart.Data<>("Jan", 150));
+        series.getData().add(new XYChart.Data<>("Feb", 180));
+        series.getData().add(new XYChart.Data<>("Mar", 220));
+        series.getData().add(new XYChart.Data<>("Apr", 200));
+        series.getData().add(new XYChart.Data<>("May", 250));
+        series.getData().add(new XYChart.Data<>("Jun", 280));
+
+        lineChart.getData().add(series);
+        lineChart.setPrefSize(1200, 400); // Adjust size to span wider
+        lineChart.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 12;");
+        lineChart.setPadding(new Insets(20));
+
+        return lineChart;
     }
 
 }

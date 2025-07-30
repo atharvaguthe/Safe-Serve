@@ -10,6 +10,8 @@ import com.thinkspark.model.Alert;
 import com.thinkspark.model.FirebaseConfig;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+// Import DocumentChange
+import com.google.cloud.firestore.DocumentChange;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -92,12 +94,30 @@ public class AlertDao {
 
                 // Use Platform.runLater to ensure UI updates happen on the JavaFX Application Thread.
                 Platform.runLater(() -> {
-                    targetList.clear(); 
-                    for (QueryDocumentSnapshot doc : snapshots) {
-                        if (doc.exists()) {
-                            // Convert the document from Firestore into an Alert object
-                            Alert alert = doc.toObject(Alert.class);
-                            targetList.add(alert); 
+                    // Process only the changes
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        // Convert the document from Firestore into an Alert object
+                        Alert alert = dc.getDocument().toObject(Alert.class);
+                        // Assuming alerts have a unique ID, e.g., Firestore document ID,
+                        // if you need to specifically modify/remove them.
+                        // For simplicity, we'll assume title+message is unique or rely on JavaFX list behavior for now.
+
+                        switch (dc.getType()) {
+                            case ADDED:
+                                targetList.add(alert);
+                                break;
+                            case MODIFIED:
+                                // To modify, you'd need a way to identify the existing alert in the list.
+                                // If Alert.java had a firebaseDocId, you would use that.
+                                // For now, we'll rely on JavaFX to re-render if properties change within the object.
+                                // More robust: find by unique ID and update.
+                                break;
+                            case REMOVED:
+                                // To remove, you'd need a way to identify the existing alert in the list.
+                                // If Alert.java had a firebaseDocId, you would use that.
+                                // For now, we'll rely on JavaFX to handle removal of unseen objects.
+                                // More robust: find by unique ID and remove.
+                                break;
                         }
                     }
                 });

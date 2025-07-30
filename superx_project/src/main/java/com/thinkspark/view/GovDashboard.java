@@ -23,6 +23,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane; // Import StackPane
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -40,6 +41,8 @@ public class GovDashboard extends Application {
     private static final String FONT_COLOR_LIGHT = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
     private static final String ALERT_COLOR = "#E53E3E";
+    // Added from DisasterHelperUI for the floating button
+    private static final String SECONDARY_BLUE = "#007BFF";
 
     private Stage primaryStage;
     private Scene dashboardScene;
@@ -73,19 +76,45 @@ public class GovDashboard extends Application {
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
+        // Passed primaryStage and dashboardScene to createMainGrid
         rootLayout.getChildren().addAll(createHeader(), createOverviewSection(), createMainGrid());
 
         ScrollPane scrollPane = new ScrollPane(rootLayout);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        dashboardScene = new Scene(scrollPane,1920,1080);
+        // --- Floating Circular Button (Copied from DisasterHelperUI) ---
+        Button floatingButton = new Button("🤖"); 
+        floatingButton.setStyle(
+            "-fx-background-color: " + SECONDARY_BLUE + "; " + // Using SECONDARY_BLUE defined above
+            "-fx-background-radius: 50%; " + 
+            "-fx-min-width: 90px; -fx-min-height: 90px; " + 
+            "-fx-max-width: 90px; -fx-max-height: 90px; " + 
+            "-fx-font-size: 36px; " + 
+            "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " + 
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 20, 0, 0, 10); " + 
+            "-fx-cursor: hand;"
+        );
+        StackPane.setAlignment(floatingButton, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(floatingButton, new Insets(0, 60, 180, 0));
+
+        // --- Create a new StackPane as the overall root for the Scene ---
+        StackPane overallRoot = new StackPane();
+        overallRoot.getChildren().addAll(scrollPane, floatingButton);
+
+        dashboardScene = new Scene(overallRoot,1920,1080); // Set scene to overallRoot
         primaryStage.setTitle("Safe Serve");
         primaryStage.setScene(dashboardScene);
         primaryStage.setMaximized(true);
         primaryStage.setResizable(true);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
         primaryStage.show();
+
+        // Set action for the floating button
+        final Scene finalDashboardScene = dashboardScene; // Need a final variable for the lambda
+        floatingButton.setOnAction(e -> {
+            new FloatingButtonPage(primaryStage, finalDashboardScene).start(primaryStage);
+        });
     }
 
     private GridPane createMainGrid() {
@@ -96,7 +125,7 @@ public class GovDashboard extends Application {
 
         mainGrid.add(createKeyActionsModule(), 0, 0);
         mainGrid.add(createDisasterReportsModule(), 1, 0);
-        mainGrid.add(createStatisticsModule(), 0, 1, 2, 1);
+        mainGrid.add(createStatisticsModule(primaryStage, dashboardScene), 0, 1, 2, 1); // Pass stage and scene here
         return mainGrid;
     }
 
@@ -219,10 +248,11 @@ public class GovDashboard extends Application {
         return card;
     }
 
-    private Node createStatisticsModule() {
+    private Node createStatisticsModule(Stage stage, Scene scene) { // Method now accepts stage and scene
         VBox card = createDashboardCard("Key Performance Indicators");
-        HBox statsBox = new HBox(60); // Increased spacing
+        HBox statsBox = new HBox();
         statsBox.setAlignment(Pos.CENTER);
+        statsBox.setSpacing(60); // Increased spacing
         statsBox.setPadding(new Insets(25, 0, 0, 0)); // Increased padding
         HBox.setHgrow(statsBox, Priority.ALWAYS);
 
@@ -234,18 +264,36 @@ public class GovDashboard extends Application {
         );
 
         card.getChildren().add(statsBox);
+
+        // New button to open AnalyticsView
+        Button viewAnalyticsButton = new Button("View Analytics");
+        viewAnalyticsButton.setFont(getFont(20, FontWeight.BOLD));
+        viewAnalyticsButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
+        viewAnalyticsButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;");
+        viewAnalyticsButton.setPrefHeight(60);
+        viewAnalyticsButton.setMaxWidth(Double.MAX_VALUE);
+        VBox.setMargin(viewAnalyticsButton, new Insets(30, 0, 0, 0)); // Add top margin
+
+        // Action to open AnalyticsView
+        viewAnalyticsButton.setOnAction(e -> new AnalyticsView(stage, scene).start(stage));
+
+        card.getChildren().add(viewAnalyticsButton); // Add the new button to the card
+
         return card;
     }
 
     private Node createStatItem(String number, String label) {
         VBox item = new VBox(-8); // Adjusted spacing
         item.setAlignment(Pos.CENTER);
+
         Label numberLabel = new Label(number);
         numberLabel.setFont(getFont(60, FontWeight.BOLD)); // Increased font size
         numberLabel.setTextFill(Color.web(PRIMARY_BLUE));
+
         Label textLabel = new Label(label);
         textLabel.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size
         textLabel.setTextFill(Color.web(FONT_COLOR_MEDIUM));
+
         item.getChildren().addAll(numberLabel, textLabel);
         return item;
     }
@@ -259,9 +307,11 @@ public class GovDashboard extends Application {
                       "-fx-border-width: 1;");
         GridPane.setHgrow(card, Priority.ALWAYS);
         GridPane.setVgrow(card, Priority.ALWAYS);
+
         Label titleLabel = new Label(title);
         titleLabel.setFont(getFont(32, FontWeight.BOLD)); // Increased font size
         titleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
+
         card.getChildren().add(titleLabel);
         return card;
     }

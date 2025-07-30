@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "FloatingButtonPage",
+            "request": "launch",
+            "mainClass": "com.thinkspark.view.FloatingButtonPage",
+            "projectName": "superx_project"
+        },
+        {
+            "type": "java",
             "name": "AllRequestsView",
             "request": "launch",
             "mainClass": "com.thinkspark.view.AllRequestsView",

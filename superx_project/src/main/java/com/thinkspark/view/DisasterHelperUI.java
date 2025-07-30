@@ -65,11 +65,11 @@ public class DisasterHelperUI extends Application {
         floatingButton.setStyle(
             "-fx-background-color: " + SECONDARY_BLUE + "; " +
             "-fx-background-radius: 50%; " + // Makes it circular
-            "-fx-min-width: 90px; -fx-min-height: 90px; " + // Increased size
-            "-fx-max-width: 90px; -fx-max-height: 90px; " + // Increased size
-            "-fx-font-size: 36px; " + // Increased font size
+            "-fx-min-width: 90px; -fx-min-height: 90px; " + 
+            "-fx-max-width: 90px; -fx-max-height: 90px; " + 
+            "-fx-font-size: 36px; " + 
             "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 20, 0, 0, 10); " + // Increased shadow
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 20, 0, 0, 10); " + 
             "-fx-cursor: hand;"
         );
         // Position the button at bottom-right with padding
@@ -121,7 +121,7 @@ public class DisasterHelperUI extends Application {
         VBox rightColumn = new VBox(70); // Increased spacing
         rightColumn.getChildren().addAll(
             createLiveAlertsModule(),
-            createStatisticsModule()
+            createStatisticsModule(primaryStage, finalScene) // Pass stage and scene here
         );
 
         mainGrid.add(leftColumn, 0, 0);
@@ -308,7 +308,7 @@ public class DisasterHelperUI extends Application {
         return alertLabel;
     }
 
-    private Node createStatisticsModule() {
+    private Node createStatisticsModule(Stage stage, Scene scene) {
         VBox card = createDashboardCard("Statistics");
         GridPane grid = new GridPane();
         grid.setHgap(35); // Increased gap
@@ -321,6 +321,20 @@ public class DisasterHelperUI extends Application {
         grid.add(createStatItem("39K", "Resources Delivered"), 1, 1);
 
         card.getChildren().add(grid);
+
+        // New button to open AnalyticsView
+        Button viewAnalyticsButton = new Button("View Analytics");
+        viewAnalyticsButton.setFont(getFont(20, FontWeight.BOLD));
+        viewAnalyticsButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
+        viewAnalyticsButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;");
+        viewAnalyticsButton.setPrefHeight(60);
+        viewAnalyticsButton.setMaxWidth(Double.MAX_VALUE);
+        VBox.setMargin(viewAnalyticsButton, new Insets(30, 0, 0, 0)); // Add top margin
+
+        viewAnalyticsButton.setOnAction(e -> new AnalyticsView(stage, scene).start(stage));
+
+        card.getChildren().add(viewAnalyticsButton); // Add the new button to the card
+
         return card;
     }
 

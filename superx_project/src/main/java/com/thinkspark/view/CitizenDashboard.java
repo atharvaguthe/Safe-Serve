@@ -21,6 +21,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+
 public class CitizenDashboard extends Application {
 
     private static final String BACKGROUND_COLOR = "#F4F7FC";
@@ -31,6 +32,11 @@ public class CitizenDashboard extends Application {
     private static final String FONT_COLOR_LIGHT = "#FFFFFF";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
+    private static final String SECONDARY_BLUE = "#007BFF"; // For floating button
+    // Reverted color definitions as they are no longer directly used in basic stats
+    // private static final String WARNING_COLOR = "#FFC107"; // Orange for caution
+    // private static final String DANGER_COLOR = "#DC3545"; // Red for critical
+
 
     private Stage primaryStage;
     private Scene dashboardScene;
@@ -59,8 +65,8 @@ public class CitizenDashboard extends Application {
         liveAlertsList = FXCollections.observableArrayList();
         alertDao.listenForAlerts(liveAlertsList);
 
-        VBox rootLayout = new VBox(70); // Increased spacing even more
-        rootLayout.setPadding(new Insets(50, 100, 100, 100)); // Increased padding even more
+        VBox rootLayout = new VBox(70);
+        rootLayout.setPadding(new Insets(50, 100, 100, 100));
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -70,19 +76,42 @@ public class CitizenDashboard extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        dashboardScene = new Scene(scrollPane,1920,1080);
+        // --- Floating Circular Button ---
+        Button floatingButton = new Button("🤖"); 
+        floatingButton.setStyle(
+            "-fx-background-color: " + SECONDARY_BLUE + "; " + 
+            "-fx-background-radius: 50%; " + 
+            "-fx-min-width: 90px; -fx-min-height: 90px; " + 
+            "-fx-max-width: 90px; -fx-max-height: 90px; " + 
+            "-fx-font-size: 36px; " + 
+            "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " + 
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 20, 0, 0, 10); " + 
+            "-fx-cursor: hand;"
+        );
+        StackPane.setAlignment(floatingButton, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(floatingButton, new Insets(0, 60, 180, 0));
+
+        StackPane overallRoot = new StackPane();
+        overallRoot.getChildren().addAll(scrollPane, floatingButton);
+
+        dashboardScene = new Scene(overallRoot,1920,1080);
         primaryStage.setTitle("Safe Serve");
         primaryStage.setScene(dashboardScene);
         primaryStage.setMaximized(true);
         primaryStage.setResizable(true);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
         primaryStage.show();
+
+        final Scene finalDashboardScene = dashboardScene;
+        floatingButton.setOnAction(e -> {
+            new FloatingButtonPage(primaryStage, finalDashboardScene).start(primaryStage);
+        });
     }
     
     private GridPane createMainGrid() {
         GridPane mainGrid = new GridPane();
-        mainGrid.setHgap(60); // Increased gap even more
-        mainGrid.setVgap(60); // Increased gap even more
+        mainGrid.setHgap(60);
+        mainGrid.setVgap(60);
         mainGrid.setAlignment(Pos.CENTER);
 
         ColumnConstraints col1 = new ColumnConstraints();
@@ -102,31 +131,28 @@ public class CitizenDashboard extends Application {
     private Node createHeader() {
     HBox header = new HBox();
     header.setAlignment(Pos.CENTER_LEFT);
-    header.setPadding(new Insets(30, 0, 40, 0)); // Increased padding even more
+    header.setPadding(new Insets(30, 0, 40, 0));
 
-    // Create an ImageView for the logo
     ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
-    logoView.setFitHeight(70); // Increased size even more
+    logoView.setFitHeight(70);
     logoView.setPreserveRatio(true);
 
-    // Create the text label
     Label logoLabel = new Label("Safe Serve");
-    logoLabel.setFont(getFont(48, FontWeight.BOLD)); // Increased font size even more
+    logoLabel.setFont(getFont(48, FontWeight.BOLD));
     logoLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
-    // Combine image and text into an HBox
-    HBox logoBox = new HBox(25, logoView, logoLabel); // Increased spacing even more
+    HBox logoBox = new HBox(25, logoView, logoLabel);
     logoBox.setAlignment(Pos.CENTER_LEFT);
 
     Region spacer = new Region();
     HBox.setHgrow(spacer, Priority.ALWAYS);
 
-    HBox navLinks = new HBox(60); // Increased spacing even more
+    HBox navLinks = new HBox(60);
     navLinks.setAlignment(Pos.CENTER);
     String[] navItems = { "Home", "Assistance", "Resources", "About Us" };
     for (String item : navItems) {
         Label link = new Label(item);
-        link.setFont(getFont(22, FontWeight.MEDIUM)); // Increased font size even more
+        link.setFont(getFont(22, FontWeight.MEDIUM));
         link.setTextFill(Color.web(FONT_COLOR_DARK));
         link.setStyle("-fx-cursor: hand;");
         link.setOnMouseEntered(e -> link.setUnderline(true));
@@ -151,22 +177,20 @@ public class CitizenDashboard extends Application {
 
     profileItem.setOnAction(e -> new ProfileView(primaryStage, dashboardScene, this.userName).start(primaryStage));
     logoutItem.setOnAction(e -> {
-        // Reuse the existing primary stage to go back to DisasterHelperUI
         new DisasterHelperUI().start(primaryStage);
     });
 
-    profileButton.setFont(getFont(22, FontWeight.BOLD)); // Increased font size even more
+    profileButton.setFont(getFont(22, FontWeight.BOLD));
     profileButton.setStyle(
         "-fx-background-color: " + PRIMARY_BLUE + "; " +
         "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " +
         "-fx-background-radius: 50em; -fx-padding: 0;"
     );
-    profileButton.setMinSize(60, 60); // Increased size even more
-    profileButton.setMaxSize(60, 60); // Increased size even more
+    profileButton.setMinSize(60, 60);
+    profileButton.setMaxSize(60, 60);
     profileButton.setAlignment(Pos.CENTER);
 
-    // Add a margin to create space between navLinks and profileButton
-    HBox.setMargin(navLinks, new Insets(0, 50, 0, 0)); // Increased margin even more
+    HBox.setMargin(navLinks, new Insets(0, 50, 0, 0));
 
     header.getChildren().addAll(logoBox, spacer, navLinks, profileButton);
     return header;
@@ -174,30 +198,29 @@ public class CitizenDashboard extends Application {
 
     private Node createHeroSection() {
         StackPane heroPane = new StackPane();
-        heroPane.setPadding(new Insets(70)); // Increased padding even more
-        heroPane.setStyle("-fx-background-color: linear-gradient(to right, " + PRIMARY_BLUE + ", #007ACC); -fx-background-radius: 20;"); // Increased radius even more
+        heroPane.setPadding(new Insets(70));
+        heroPane.setStyle("-fx-background-color: linear-gradient(to right, " + PRIMARY_BLUE + ", #007ACC); -fx-background-radius: 20;");
 
-        VBox content = new VBox(30); // Increased spacing even more
+        VBox content = new VBox(30);
         content.setAlignment(Pos.CENTER_LEFT);
 
         Label welcome = new Label("Welcome back, " + this.userName + "!");
-        welcome.setFont(getFont(40, FontWeight.BOLD)); // Increased font size even more
+        welcome.setFont(getFont(40, FontWeight.BOLD));
         welcome.setTextFill(Color.web(FONT_COLOR_LIGHT));
 
         Label subtitle = new Label("Your central hub for disaster assistance, resources, and real-time alerts.");
-        subtitle.setFont(getFont(22, FontWeight.NORMAL)); // Increased font size even more
+        subtitle.setFont(getFont(22, FontWeight.NORMAL));
         subtitle.setTextFill(Color.web(FONT_COLOR_LIGHT));
         subtitle.setOpacity(0.9);
         subtitle.setWrapText(true);
 
         Button reportButton = new Button("🚨 Report a Disaster");
-        reportButton.setFont(getFont(24, FontWeight.BOLD)); // Increased font size even more
+        reportButton.setFont(getFont(24, FontWeight.BOLD));
         reportButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
-        reportButton.setStyle("-fx-background-color: " + ALERT_COLOR + "; -fx-background-radius: 15; -fx-cursor: hand;"); // Increased radius even more
-        reportButton.setPadding(new Insets(20, 35, 20, 35)); // Increased padding even more
-        VBox.setMargin(reportButton, new Insets(25, 0, 0, 0)); // Increased margin even more
+        reportButton.setStyle("-fx-background-color: " + ALERT_COLOR + "; -fx-background-radius: 15; -fx-cursor: hand;");
+        reportButton.setPadding(new Insets(20, 35, 20, 35));
+        VBox.setMargin(reportButton, new Insets(25, 0, 0, 0));
 
-        // UPDATED to pass username
         reportButton.setOnAction(e -> new ReportDisasterView(primaryStage, dashboardScene, this.userName).start(primaryStage));
 
         content.getChildren().addAll(welcome, subtitle, reportButton);
@@ -207,9 +230,9 @@ public class CitizenDashboard extends Application {
 
     private Node createQuickAccessModule() {
         VBox card = createDashboardCard("Quick Access");
-        HBox buttonBox = new HBox(25); // Increased spacing even more
+        HBox buttonBox = new HBox(25);
         buttonBox.setAlignment(Pos.CENTER);
-        buttonBox.setPadding(new Insets(20, 0, 0, 0)); // Increased padding even more
+        buttonBox.setPadding(new Insets(20, 0, 0, 0));
 
         Node mapButton = createQuickAccessButton("🗺️ Map", "View disaster map");
         mapButton.setOnMouseClicked(e -> new MapView(primaryStage, dashboardScene).start(primaryStage));
@@ -225,21 +248,21 @@ public class CitizenDashboard extends Application {
     }
 
     private Node createQuickAccessButton(String text, String subtext) {
-        VBox buttonVBox = new VBox(12); // Increased spacing even more
+        VBox buttonVBox = new VBox(12);
         buttonVBox.setAlignment(Pos.CENTER);
-        buttonVBox.setPadding(new Insets(35, 25, 35, 25)); // Increased padding even more
-        buttonVBox.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 15; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 15; -fx-cursor: hand;"); // Increased radius even more
+        buttonVBox.setPadding(new Insets(35, 25, 35, 25));
+        buttonVBox.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 15; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 15; -fx-cursor: hand;");
         HBox.setHgrow(buttonVBox, Priority.ALWAYS);
 
-        buttonVBox.setOnMouseEntered(e -> buttonVBox.setStyle("-fx-background-color: #E2E8F0; -fx-background-radius: 15; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 15; -fx-cursor: hand;")); // Increased radius even more
-        buttonVBox.setOnMouseExited(e -> buttonVBox.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 15; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 15; -fx-cursor: hand;")); // Increased radius even more
+        buttonVBox.setOnMouseEntered(e -> buttonVBox.setStyle("-fx-background-color: #E2E8F0; -fx-background-radius: 15; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 15; -fx-cursor: hand;"));
+        buttonVBox.setOnMouseExited(e -> buttonVBox.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 15; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 15; -fx-cursor: hand;"));
         
         Label textLabel = new Label(text);
-        textLabel.setFont(getFont(22, FontWeight.BOLD)); // Increased font size even more
+        textLabel.setFont(getFont(22, FontWeight.BOLD));
         textLabel.setTextFill(Color.web(FONT_COLOR_DARK));
         
         Label subtextLabel = new Label(subtext);
-        subtextLabel.setFont(getFont(18, FontWeight.NORMAL)); // Increased font size even more
+        subtextLabel.setFont(getFont(18, FontWeight.NORMAL));
         subtextLabel.setTextFill(Color.web(FONT_COLOR_DARK));
         subtextLabel.setOpacity(0.7);
 
@@ -260,11 +283,11 @@ public class CitizenDashboard extends Application {
                     setGraphic(null);
                 } else {
                     Text title = new Text(item.getTitle());
-                    title.setFont(CitizenDashboard.getFont(20, FontWeight.BOLD)); // Increased font size even more
+                    title.setFont(CitizenDashboard.getFont(20, FontWeight.BOLD));
 
                     Text message = new Text(item.getMessage());
-                    message.setFont(CitizenDashboard.getFont(20, FontWeight.NORMAL)); // Increased font size even more
-                    message.setWrappingWidth(param.getWidth() - 60); // Adjusted wrapping width even more
+                    message.setFont(CitizenDashboard.getFont(20, FontWeight.NORMAL));
+                    message.setWrappingWidth(param.getWidth() - 60);
 
                     if ("High".equalsIgnoreCase(item.getPriority())) {
                         title.setFill(Color.web(ALERT_COLOR));
@@ -272,44 +295,61 @@ public class CitizenDashboard extends Application {
                         title.setFill(Color.web(FONT_COLOR_DARK));
                     }
                     
-                    VBox alertContent = new VBox(12, title, message); // Increased spacing even more
-                    alertContent.setPadding(new Insets(12)); // Increased padding even more
+                    VBox alertContent = new VBox(12, title, message);
+                    alertContent.setPadding(new Insets(12));
                     setGraphic(alertContent);
                 }
             }
         });
-        alertsList.setPrefHeight(600); // Increased preferred height
+        alertsList.setPrefHeight(600);
         VBox.setVgrow(alertsList, Priority.ALWAYS);
         card.getChildren().add(alertsList);
         return card;
     }
 
+    // UPDATED: createStatisticsModule to use basic stats and a "View Analytics" button
     private Node createStatisticsModule() {
-        VBox card = createDashboardCard("Key Statistics");
+        VBox card = createDashboardCard("Key Statistics"); // Reverted title
         GridPane grid = new GridPane();
-        grid.setHgap(45); // Increased gap even more
-        grid.setVgap(45); // Increased gap even more
-        grid.setPadding(new Insets(25, 0, 0, 0)); // Increased padding even more
+        grid.setHgap(35); // Reverted gap
+        grid.setVgap(35); // Reverted gap
+        grid.setPadding(new Insets(30, 0, 0, 0)); // Reverted padding
         
-        grid.add(createStatItem("12K", "People Rescued", PRIMARY_BLUE), 0, 0);
-        grid.add(createStatItem("56K", "Requests Handled", PRIMARY_BLUE), 1, 0);
-        grid.add(createStatItem("343", "Active Volunteers", SECONDARY_ACCENT_COLOR), 0, 1);
-        grid.add(createStatItem("39K", "Resources Delivered", SECONDARY_ACCENT_COLOR), 1, 1);
+        grid.add(createStatItem("12K", "People Rescued", PRIMARY_BLUE), 0, 0); // Re-added color parameter
+        grid.add(createStatItem("56K", "Requests Handled", PRIMARY_BLUE), 1, 0); // Re-added color parameter
+        grid.add(createStatItem("343", "Active Volunteers", SECONDARY_ACCENT_COLOR), 0, 1); // Re-added color parameter
+        grid.add(createStatItem("39K", "Resources Delivered", SECONDARY_ACCENT_COLOR), 1, 1); // Re-added color parameter
 
         card.getChildren().add(grid);
+
+        // New button to open AnalyticsView
+        Button viewAnalyticsButton = new Button("View Analytics");
+        viewAnalyticsButton.setFont(getFont(20, FontWeight.BOLD));
+        viewAnalyticsButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
+        viewAnalyticsButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;");
+        viewAnalyticsButton.setPrefHeight(60);
+        viewAnalyticsButton.setMaxWidth(Double.MAX_VALUE);
+        VBox.setMargin(viewAnalyticsButton, new Insets(30, 0, 0, 0)); // Add top margin
+
+        // Action to open AnalyticsView
+        viewAnalyticsButton.setOnAction(e -> new AnalyticsView(primaryStage, dashboardScene).start(primaryStage));
+
+        card.getChildren().add(viewAnalyticsButton); // Add the new button to the card
+
         return card;
     }
 
+    // UPDATED: createStatItem to include color parameter
     private Node createStatItem(String number, String label, String color) {
-        VBox item = new VBox(-5); // Adjusted spacing even more
+        VBox item = new VBox(-7);
         item.setAlignment(Pos.CENTER_LEFT);
         
         Label numberLabel = new Label(number);
-        numberLabel.setFont(getFont(54, FontWeight.BOLD)); // Increased font size even more
-        numberLabel.setTextFill(Color.web(color));
+        numberLabel.setFont(getFont(48, FontWeight.BOLD));
+        numberLabel.setTextFill(Color.web(color)); // Use passed color
         
         Label textLabel = new Label(label);
-        textLabel.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size even more
+        textLabel.setFont(getFont(20, FontWeight.NORMAL));
         textLabel.setTextFill(Color.web(FONT_COLOR_DARK));
         
         item.getChildren().addAll(numberLabel, textLabel);
@@ -329,19 +369,19 @@ public class CitizenDashboard extends Application {
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
-                    VBox vbox = new VBox(15); // Increased spacing between title and description even more
-                    vbox.setPadding(new Insets(15)); // Added padding to each news item even more
-                    vbox.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1; -fx-padding: 15;"); // Attractive styling for each item, increased radius
+                    VBox vbox = new VBox(15);
+                    vbox.setPadding(new Insets(15));
+                    vbox.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: " + BORDER_COLOR + "; -fx-border-width: 1; -fx-padding: 15;");
 
                     Label title = new Label(item.getTitle());
                     title.setWrapText(true);
-                    title.setFont(CitizenDashboard.getFont(24, FontWeight.BOLD)); // Increased title font size even more
-                    title.setTextFill(Color.web(PRIMARY_BLUE)); // Changed title color to primary blue
+                    title.setFont(CitizenDashboard.getFont(24, FontWeight.BOLD));
+                    title.setTextFill(Color.web(PRIMARY_BLUE));
 
                     Label description = new Label(item.getDescription());
                     description.setWrapText(true);
-                    description.setFont(CitizenDashboard.getFont(20, FontWeight.NORMAL)); // Increased description font size even more
-                    description.setTextFill(Color.web(FONT_COLOR_DARK)); // Consistent description color
+                    description.setFont(CitizenDashboard.getFont(20, FontWeight.NORMAL));
+                    description.setTextFill(Color.web(FONT_COLOR_DARK));
 
                     vbox.getChildren().addAll(title, description);
                     setGraphic(vbox);
@@ -349,31 +389,30 @@ public class CitizenDashboard extends Application {
             }
         });
 
-        // Apply styles to ListView itself to remove default background and borders
         listView.setStyle("-fx-background-color: transparent; -fx-control-inner-background: transparent;");
-        listView.setFixedCellSize(220); // Increased fixed cell size even more
-        listView.setPrefHeight(660); // Increased preferred height even more
+        listView.setFixedCellSize(220);
+        listView.setPrefHeight(660);
 
         ScrollPane scrollPane = new ScrollPane(listView);
         scrollPane.setFitToWidth(true);
-        scrollPane.setPrefHeight(660); // Sync preferred height with ListView
+        scrollPane.setPrefHeight(660);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;"); // Ensure scroll pane is transparent
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
 
         card.getChildren().add(scrollPane);
         return card;
     }
     
     private VBox createDashboardCard(String title) {
-        VBox card = new VBox(25); // Increased spacing even more
-        card.setPadding(new Insets(35)); // Increased padding even more
+        VBox card = new VBox(25);
+        card.setPadding(new Insets(35));
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 20; " + // Increased radius even more
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 20, 0, 0, 8);"); // Increased shadow even more
+                      "-fx-background-radius: 20; " +
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 20, 0, 0, 8);");
         VBox.setVgrow(card, Priority.ALWAYS);
         
         Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(32, FontWeight.BOLD)); // Increased font size even more
+        titleLabel.setFont(getFont(32, FontWeight.BOLD));
         titleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
         
         card.getChildren().add(titleLabel);
