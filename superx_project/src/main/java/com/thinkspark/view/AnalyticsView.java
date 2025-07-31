@@ -11,10 +11,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
-// NEW IMPORTS FOR CHARTS
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -31,9 +29,9 @@ public class AnalyticsView extends Application {
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String FONT_COLOR_DARK = "#2D3748";
     private static final String FONT_COLOR_MEDIUM = "#4A5568";
-    private static final String SUCCESS_COLOR = "#38A169"; // Green for positive stats
-    private static final String WARNING_COLOR = "#FFC107"; // Orange for caution
-    private static final String DANGER_COLOR = "#DC3545"; // Red for critical
+    private static final String SUCCESS_COLOR = "#38A169"; 
+    private static final String WARNING_COLOR = "#FFC107";
+    private static final String DANGER_COLOR = "#DC3545"; 
 
     private final Scene previousScene;
     private final Stage primaryStage;
@@ -54,11 +52,11 @@ public class AnalyticsView extends Application {
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
-        rootLayout.getChildren().addAll(createHeader(), createAnalyticsContent()); // Changed method call
+        rootLayout.getChildren().addAll(createHeader(), createAnalyticsContent()); 
 
         Scene scene = new Scene(rootLayout,1920,1080);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Safe Serve | Analytics"); // Updated title
+        primaryStage.setTitle("Safe Serve | Analytics"); 
     }
 
     private Node createHeader() {
@@ -68,7 +66,7 @@ public class AnalyticsView extends Application {
 
         Label title = new Label("📊 Analytics & Insights");
         title.setFont(getFont(32, FontWeight.BOLD));
-        title.setTextFill(Color.web(FONT_COLOR_DARK)); // Set font color
+        title.setTextFill(Color.web(FONT_COLOR_DARK)); 
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -87,16 +85,14 @@ public class AnalyticsView extends Application {
         return header;
     }
 
-    // NEW: createAnalyticsContent method
     private Node createAnalyticsContent() {
-        VBox contentLayout = new VBox(40); // Increased spacing
+        VBox contentLayout = new VBox(40);
         contentLayout.setAlignment(Pos.CENTER);
 
-        // Section 1: Overview Statistics
         GridPane overviewStatsGrid = new GridPane();
         overviewStatsGrid.setHgap(50);
         overviewStatsGrid.setVgap(30);
-        overviewStatsGrid.setPadding(new Insets(20, 0, 20, 0)); // Padding around stats grid
+        overviewStatsGrid.setPadding(new Insets(20, 0, 20, 0)); 
 
         overviewStatsGrid.add(createStatCard("Total Incidents", "1,250", PRIMARY_BLUE), 0, 0);
         overviewStatsGrid.add(createStatCard("Resolved Incidents", "980", SUCCESS_COLOR), 1, 0);

@@ -1,7 +1,6 @@
 package com.thinkspark.dao;
 
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.thinkspark.model.FirebaseConfig;
 import com.thinkspark.view.ManageNgosView;
 import javafx.application.Platform;

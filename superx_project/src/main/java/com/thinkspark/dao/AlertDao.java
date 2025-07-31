@@ -5,7 +5,6 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.FieldValue;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.thinkspark.model.Alert;
 import com.thinkspark.model.FirebaseConfig;
 import javafx.application.Platform;

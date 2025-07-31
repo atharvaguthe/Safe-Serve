@@ -1,7 +1,6 @@
 package com.thinkspark.view;
 
 import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.ListenerRegistration;
 import com.thinkspark.Controller.DeleteAccountController;
 import com.thinkspark.Controller.ForgotPasswordController;

@@ -4,11 +4,9 @@ import com.thinkspark.dao.AlertDao;
 import com.thinkspark.dao.TaskDao;
 import com.thinkspark.dao.DisasterDao; // NEW IMPORT
 import com.thinkspark.model.Alert;
-import com.thinkspark.model.DataManager;
 import com.thinkspark.model.Task;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
