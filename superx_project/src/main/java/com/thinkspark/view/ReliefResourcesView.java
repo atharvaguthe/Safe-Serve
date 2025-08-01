@@ -17,28 +17,21 @@ import javafx.stage.Stage;
 
 public class ReliefResourcesView extends Application {
 
-    // --- Style Definitions (consistent with other views) ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String FONT_COLOR_DARK = "#2D3748";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
-    private static final String ACCENT_COLOR_GREEN = "#38A169"; // For availability
-    private static final String ACCENT_COLOR_ORANGE = "#DD6B20"; // For limited stock
+    private static final String ACCENT_COLOR_GREEN = "#38A169"; 
+    private static final String ACCENT_COLOR_ORANGE = "#DD6B20"; 
 
     private final Scene previousScene;
     private final Stage primaryStage;
 
-    // --- Font Helper ---
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
 
-    /**
-     * Constructor to receive the previous scene for back navigation.
-     * @param primaryStage The main application stage.
-     * @param previousScene The scene of the main dashboard.
-     */
     public ReliefResourcesView(Stage primaryStage, Scene previousScene) {
         this.primaryStage = primaryStage;
         this.previousScene = previousScene;
@@ -46,8 +39,8 @@ public class ReliefResourcesView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(40); // Increased spacing
-        rootLayout.setPadding(new Insets(60)); // Increased padding
+        VBox rootLayout = new VBox(40); 
+        rootLayout.setPadding(new Insets(60)); 
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -68,20 +61,20 @@ public class ReliefResourcesView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 30, 0)); // Increased padding
+        header.setPadding(new Insets(0, 0, 30, 0)); 
 
         Label title = new Label("📦 Relief Resources");
-        title.setFont(getFont(40, FontWeight.BOLD)); // Increased font size
+        title.setFont(getFont(40, FontWeight.BOLD)); 
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
+        backButton.setFont(getFont(20, FontWeight.MEDIUM)); 
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
         backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 10;"); // Increased radius
-        backButton.setPadding(new Insets(10, 20, 10, 20)); // Increased padding
+        backButton.setPadding(new Insets(10, 20, 10, 20)); 
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
             primaryStage.setTitle("Safe Serve | Disaster Relief Helper");
@@ -92,17 +85,16 @@ public class ReliefResourcesView extends Application {
     }
 
     private Node createResourcesContent() {
-        VBox card = new VBox(40); // Increased spacing
-        card.setPadding(new Insets(50)); // Increased padding
+        VBox card = new VBox(40); 
+        card.setPadding(new Insets(50)); 
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 15; " + // Increased radius
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 15, 0, 0, 6);"); // Increased shadow
-        card.setMaxWidth(1000); // Increased max width
+                      "-fx-background-radius: 15; " + 
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 15, 0, 0, 6);"); 
+        card.setMaxWidth(1000); 
 
-        // --- Resource Categories ---
         GridPane resourcesGrid = new GridPane();
-        resourcesGrid.setHgap(40); // Increased gap
-        resourcesGrid.setVgap(40); // Increased gap
+        resourcesGrid.setHgap(40); 
+        resourcesGrid.setVgap(40); 
 
         resourcesGrid.add(createResourceCategory(
             "💧 Food & Water",
@@ -157,21 +149,21 @@ public class ReliefResourcesView extends Application {
     }
 
     private Node createResourceCategory(String title, String description, String[] items) {
-        VBox categoryBox = new VBox(20); // Increased spacing
-        categoryBox.setPadding(new Insets(25)); // Increased padding
+        VBox categoryBox = new VBox(20); 
+        categoryBox.setPadding(new Insets(25)); 
         categoryBox.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 12;"); // Increased radius
-        categoryBox.setPrefHeight(350); // Increased height
+        categoryBox.setPrefHeight(350); 
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(24, FontWeight.BOLD)); // Increased font size
+        titleLabel.setFont(getFont(24, FontWeight.BOLD));
         titleLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
         Text descText = new Text(description);
-        descText.setFont(getFont(16, FontWeight.NORMAL)); // Increased font size
+        descText.setFont(getFont(16, FontWeight.NORMAL)); 
         descText.setFill(Color.web(FONT_COLOR_DARK));
-        descText.setWrappingWidth(400); // Adjusted wrapping width
+        descText.setWrappingWidth(400); 
 
-        VBox itemsList = new VBox(10); // Increased spacing
+        VBox itemsList = new VBox(10); 
         for (String item : items) {
             itemsList.getChildren().add(createResourceItem(item));
         }
@@ -181,7 +173,7 @@ public class ReliefResourcesView extends Application {
     }
 
     private Node createResourceItem(String itemText) {
-        HBox itemBox = new HBox(8); // Increased spacing
+        HBox itemBox = new HBox(8); 
         itemBox.setAlignment(Pos.CENTER_LEFT);
         
         String statusText = "";
@@ -207,18 +199,18 @@ public class ReliefResourcesView extends Application {
             color = PRIMARY_BLUE;
         } else if (itemText.contains("(Prescription required)")) {
             statusText = "Restricted";
-            color = ACCENT_COLOR_ORANGE; // Using orange for restricted access
+            color = ACCENT_COLOR_ORANGE; 
         }
 
 
         Label mainLabel = new Label(itemText.split("\\(")[0].trim());
-        mainLabel.setFont(getFont(16, FontWeight.NORMAL)); // Increased font size
+        mainLabel.setFont(getFont(16, FontWeight.NORMAL));
         mainLabel.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Label statusLabel = new Label(statusText);
-        statusLabel.setFont(getFont(14, FontWeight.BOLD)); // Increased font size
+        statusLabel.setFont(getFont(14, FontWeight.BOLD)); 
         statusLabel.setTextFill(Color.web(color));
-        statusLabel.setPadding(new Insets(3, 8, 3, 8)); // Increased padding
+        statusLabel.setPadding(new Insets(3, 8, 3, 8)); 
         statusLabel.setStyle("-fx-background-color: " + Color.web(color).deriveColor(0, 1, 1, 0.1).toString().replace("0x", "#") + "; -fx-background-radius: 6;"); // Increased radius
         
         if (!statusText.isEmpty()) {

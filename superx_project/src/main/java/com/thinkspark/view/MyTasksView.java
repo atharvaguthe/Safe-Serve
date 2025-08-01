@@ -20,28 +20,24 @@ import javafx.stage.Stage;
 
 public class MyTasksView extends Application {
 
-    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String FONT_COLOR_DARK = "#2D3748";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
-    private static final String PRIORITY_HIGH_COLOR = "#DD6B20"; // Orange
-    private static final String PRIORITY_MEDIUM_COLOR = "#3182CE"; // Blue
-    private static final String PRIORITY_LOW_COLOR = "#4A5568"; // Gray
-    private static final String STATUS_COMPLETED_COLOR = "#38A169"; // Green
+    private static final String PRIORITY_HIGH_COLOR = "#DD6B20"; 
+    private static final String PRIORITY_MEDIUM_COLOR = "#3182CE"; 
+    private static final String PRIORITY_LOW_COLOR = "#4A5568";
+    private static final String STATUS_COMPLETED_COLOR = "#38A169"; 
 
     private final Scene previousScene;
     private final Stage primaryStage;
 
-    // --- Font Helper ---
+
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
 
-    /**
-     * Represents a single task item.
-     */
     private static class TaskItem {
         private final String description;
         private final String priority;
@@ -58,9 +54,6 @@ public class MyTasksView extends Application {
         public String getStatus() { return status; }
     }
 
-    /**
-     * Custom ListCell to display TaskItem data.
-     */
     private static class TaskCell extends ListCell<TaskItem> {
         private final HBox content = new HBox();
         private final VBox details = new VBox(5);
@@ -98,7 +91,6 @@ public class MyTasksView extends Application {
                 priorityLabel.setText(item.getPriority());
                 statusButton.setText(item.getStatus());
 
-                // Style priority
                 String priorityColor;
                 switch (item.getPriority().toLowerCase()) {
                     case "high priority":

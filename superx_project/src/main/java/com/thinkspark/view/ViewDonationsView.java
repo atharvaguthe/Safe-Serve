@@ -20,7 +20,6 @@ import javafx.stage.Stage;
 
 public class ViewDonationsView extends Application {
 
-    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String FONT_COLOR_DARK = "#2D3748";
@@ -30,7 +29,6 @@ public class ViewDonationsView extends Application {
     private final Scene previousScene;
     private final Stage primaryStage;
 
-    // --- Font Helper ---
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
@@ -62,7 +60,6 @@ public class ViewDonationsView extends Application {
             amountLabel.setFont(ViewDonationsView.getFont(22, FontWeight.BOLD));
             amountLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
-            // FIX: Added donorLabel and dateLabel to the details VBox
             VBox details = new VBox(10, donorLabel, dateLabel);
             HBox.setHgrow(spacer, Priority.ALWAYS);
             content.setAlignment(Pos.CENTER);
@@ -93,8 +90,8 @@ public class ViewDonationsView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(40); // Increased spacing
-        rootLayout.setPadding(new Insets(60, 80, 80, 80)); // Increased padding
+        VBox rootLayout = new VBox(40); 
+        rootLayout.setPadding(new Insets(60, 80, 80, 80));
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -115,20 +112,20 @@ public class ViewDonationsView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding
+        header.setPadding(new Insets(20, 0, 30, 0)); 
 
         Label title = new Label("Received Donations");
-        title.setFont(getFont(42, FontWeight.BOLD)); // Increased font size
+        title.setFont(getFont(42, FontWeight.BOLD)); 
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
+        backButton.setFont(getFont(20, FontWeight.MEDIUM)); 
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
         backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12;"); // Increased radius
-        backButton.setPadding(new Insets(15, 28, 15, 28)); // Increased padding
+        backButton.setPadding(new Insets(15, 28, 15, 28)); 
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
             primaryStage.setTitle("NGO Dashboard | Disaster Relief Operations");
@@ -139,11 +136,11 @@ public class ViewDonationsView extends Application {
     }
 
     private Node createDonationsList() {
-        VBox card = new VBox(15); // Increased spacing
-        card.setPadding(new Insets(40)); // Increased padding
+        VBox card = new VBox(15); 
+        card.setPadding(new Insets(40)); 
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 20; " + // Increased radius
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); // Increased shadow
+                      "-fx-background-radius: 20; " + 
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); 
 
         ObservableList<DonationItem> donations = FXCollections.observableArrayList(
             new DonationItem("Anonymous", "$100.00", "2024-07-19"),
@@ -152,7 +149,7 @@ public class ViewDonationsView extends Application {
         );
 
         ListView<DonationItem> listView = new ListView<>(donations);
-        listView.setPrefHeight(600); // Increased preferred height
+        listView.setPrefHeight(600); 
         listView.setCellFactory(param -> new DonationCell());
         listView.setStyle("-fx-background-color: transparent;");
 

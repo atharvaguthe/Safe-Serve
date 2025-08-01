@@ -29,42 +29,39 @@ public class MapView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(30); // Increased spacing
-        rootLayout.setPadding(new Insets(30, 50, 50, 50)); // Increased padding
+        VBox rootLayout = new VBox(30); 
+        rootLayout.setPadding(new Insets(30, 50, 50, 50)); 
         rootLayout.setStyle("-fx-background-color: #F4F7FC;");
 
         // Header
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(10, 0, 20, 0)); // Adjusted padding
+        header.setPadding(new Insets(10, 0, 20, 0)); 
 
         Label title = new Label("🗺️ Disaster Map");
-        title.setFont(Font.font("System", FontWeight.BOLD, 38)); // Increased font size
+        title.setFont(Font.font("System", FontWeight.BOLD, 38));
         title.setTextFill(Color.web("#2D3748"));
         
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(Font.font("System", FontWeight.MEDIUM, 18)); // Increased font size
+        backButton.setFont(Font.font("System", FontWeight.MEDIUM, 18));
         backButton.setTextFill(Color.web("#005A9C"));
         backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: #005A9C; -fx-border-radius: 10;"); // Increased radius
-        backButton.setPadding(new Insets(12, 24, 12, 24)); // Increased padding
+        backButton.setPadding(new Insets(12, 24, 12, 24));
         backButton.setOnAction(e -> primaryStage.setScene(previousScene));
         
         header.getChildren().addAll(title, spacer, backButton);
 
-        // WebView for the map
         WebView webView = new WebView();
         VBox.setVgrow(webView, Priority.ALWAYS);
-        webView.setPrefHeight(700); // Explicitly setting a larger preferred height
+        webView.setPrefHeight(700); 
 
-        // Load the local HTML file that contains the map
         try {
             webView.getEngine().load(getClass().getResource("/map.html").toExternalForm());
         } catch (Exception e) {
             e.printStackTrace();
-            // Handle error, maybe show a message to the user
             Label errorLabel = new Label("Error loading map. Make sure 'map.html' is in the resources folder.");
             rootLayout.getChildren().add(errorLabel);
         }

@@ -17,7 +17,6 @@ import javafx.stage.Stage;
 
 public class DisasterInfoTypeView extends Application {
 
-    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String FONT_COLOR_DARK = "#2D3748";

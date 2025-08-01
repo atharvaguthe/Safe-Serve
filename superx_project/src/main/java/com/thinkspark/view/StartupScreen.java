@@ -21,7 +21,6 @@ import javafx.util.Duration;
 
 public class StartupScreen extends Application {
 
-    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String FONT_COLOR_DARK = "#2D3748";
@@ -37,35 +36,29 @@ public class StartupScreen extends Application {
         rootLayout.setPadding(new Insets(40));
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
 
-        // Logo
         ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
         logoView.setFitHeight(350);
         logoView.setPreserveRatio(true);
-        logoView.setOpacity(0); // Start transparent for fade-in
+        logoView.setOpacity(0); 
 
-        // Title
         Label title = new Label("Welcome to Safe Serve");
         title.setFont(getFont(32, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
-        title.setOpacity(0); // Start transparent for fade-in
+        title.setOpacity(0); 
 
-        // Start Button
         Button startButton = new Button("Start");
         startButton.setFont(getFont(18, FontWeight.BOLD));
         startButton.setTextFill(Color.WHITE);
         startButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 8; -fx-cursor: hand;");
         startButton.setPadding(new Insets(15, 40, 15, 40));
-        startButton.setOpacity(0); // Start transparent for fade-in
+        startButton.setOpacity(0); 
 
-        // Button Hover Effect
         DropShadow shadow = new DropShadow();
         startButton.setOnMouseEntered(e -> startButton.setEffect(shadow));
         startButton.setOnMouseExited(e -> startButton.setEffect(null));
 
 
-        // Button Action
         startButton.setOnAction(e -> {
-            // No longer closing the primary stage, just setting a new scene
             new DisasterHelperUI().start(primaryStage);
         });
 
@@ -79,24 +72,19 @@ public class StartupScreen extends Application {
         primaryStage.setMaximized(true);
 
         primaryStage.show();
-        
-        // --- Animations ---
-        // Logo fade-in
-        FadeTransition logoFadeIn = new FadeTransition(Duration.seconds(1), logoView);
+
+        FadeTransition logoFadeIn = new FadeTransition(Duration.seconds(0.2), logoView);
         logoFadeIn.setToValue(1);
 
-        // Title slide-up and fade-in
-        TranslateTransition titleSlideUp = new TranslateTransition(Duration.seconds(0.8), title);
+        TranslateTransition titleSlideUp = new TranslateTransition(Duration.seconds(0.2), title);
         titleSlideUp.setFromY(50);
         titleSlideUp.setToY(0);
-        FadeTransition titleFadeIn = new FadeTransition(Duration.seconds(0.8), title);
+        FadeTransition titleFadeIn = new FadeTransition(Duration.seconds(0.2), title);
         titleFadeIn.setToValue(1);
 
-        // Button fade-in
-        FadeTransition buttonFadeIn = new FadeTransition(Duration.seconds(0.5), startButton);
+        FadeTransition buttonFadeIn = new FadeTransition(Duration.seconds(0.2), startButton);
         buttonFadeIn.setToValue(1);
 
-        // Play animations in sequence
         SequentialTransition sequentialTransition = new SequentialTransition(logoFadeIn, titleSlideUp, titleFadeIn, buttonFadeIn);
         sequentialTransition.play();
     }

@@ -23,7 +23,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.StackPane; // Import StackPane
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -32,7 +32,6 @@ import javafx.stage.Stage;
 
 public class GovDashboard extends Application {
 
-    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String PRIMARY_BLUE = "#005A9C";
@@ -41,7 +40,6 @@ public class GovDashboard extends Application {
     private static final String FONT_COLOR_LIGHT = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
     private static final String ALERT_COLOR = "#E53E3E";
-    // Added from DisasterHelperUI for the floating button
     private static final String SECONDARY_BLUE = "#007BFF";
 
     private Stage primaryStage;
@@ -66,27 +64,24 @@ public class GovDashboard extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
 
-        // --- Initialize DAO and start listening for data ---
         disasterDao = new DisasterDao();
         liveDisasterReportsList = FXCollections.observableArrayList();
         disasterDao.listenForDisasterReports(liveDisasterReportsList);
 
-        VBox rootLayout = new VBox(60); // Increased spacing
-        rootLayout.setPadding(new Insets(40, 80, 80, 80)); // Increased padding
+        VBox rootLayout = new VBox(60);
+        rootLayout.setPadding(new Insets(40, 80, 80, 80)); 
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
-        // Passed primaryStage and dashboardScene to createMainGrid
         rootLayout.getChildren().addAll(createHeader(), createOverviewSection(), createMainGrid());
 
         ScrollPane scrollPane = new ScrollPane(rootLayout);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        // --- Floating Circular Button (Copied from DisasterHelperUI) ---
         Button floatingButton = new Button("🤖"); 
         floatingButton.setStyle(
-            "-fx-background-color: " + SECONDARY_BLUE + "; " + // Using SECONDARY_BLUE defined above
+            "-fx-background-color: " + SECONDARY_BLUE + "; " +
             "-fx-background-radius: 50%; " + 
             "-fx-min-width: 90px; -fx-min-height: 90px; " + 
             "-fx-max-width: 90px; -fx-max-height: 90px; " + 
@@ -98,11 +93,10 @@ public class GovDashboard extends Application {
         StackPane.setAlignment(floatingButton, Pos.BOTTOM_RIGHT);
         StackPane.setMargin(floatingButton, new Insets(0, 60, 180, 0));
 
-        // --- Create a new StackPane as the overall root for the Scene ---
         StackPane overallRoot = new StackPane();
         overallRoot.getChildren().addAll(scrollPane, floatingButton);
 
-        dashboardScene = new Scene(overallRoot,1920,1080); // Set scene to overallRoot
+        dashboardScene = new Scene(overallRoot,1920,1080); 
         primaryStage.setTitle("Safe Serve");
         primaryStage.setScene(dashboardScene);
         primaryStage.setMaximized(true);
@@ -110,8 +104,7 @@ public class GovDashboard extends Application {
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
         primaryStage.show();
 
-        // Set action for the floating button
-        final Scene finalDashboardScene = dashboardScene; // Need a final variable for the lambda
+        final Scene finalDashboardScene = dashboardScene;
         floatingButton.setOnAction(e -> {
             new FloatingButtonPage(primaryStage, finalDashboardScene).start(primaryStage);
         });
@@ -119,40 +112,37 @@ public class GovDashboard extends Application {
 
     private GridPane createMainGrid() {
         GridPane mainGrid = new GridPane();
-        mainGrid.setHgap(50); // Increased gap
-        mainGrid.setVgap(50); // Increased gap
+        mainGrid.setHgap(50); 
+        mainGrid.setVgap(50); 
         mainGrid.setAlignment(Pos.CENTER);
 
         mainGrid.add(createKeyActionsModule(), 0, 0);
         mainGrid.add(createDisasterReportsModule(), 1, 0);
-        mainGrid.add(createStatisticsModule(primaryStage, dashboardScene), 0, 1, 2, 1); // Pass stage and scene here
+        mainGrid.add(createStatisticsModule(primaryStage, dashboardScene), 0, 1, 2, 1); 
         return mainGrid;
     }
 
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding
+        header.setPadding(new Insets(20, 0, 30, 0)); 
 
-        // Create an ImageView for the logo
         ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
-        logoView.setFitHeight(60); // Increased size
+        logoView.setFitHeight(60); 
         logoView.setPreserveRatio(true);
 
-        // Create the text label
         Label logoLabel = new Label("Safe Serve");
-        logoLabel.setFont(getFont(42, FontWeight.BOLD)); // Increased font size
+        logoLabel.setFont(getFont(42, FontWeight.BOLD)); 
         logoLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
-        // Combine image and text into an HBox
-        HBox logoBox = new HBox(20, logoView, logoLabel); // Increased spacing
+        HBox logoBox = new HBox(20, logoView, logoLabel); 
         logoBox.setAlignment(Pos.CENTER_LEFT);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         
         MenuButton profileButton = new MenuButton("Admin");
-        profileButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
+        profileButton.setFont(getFont(20, FontWeight.MEDIUM)); 
         MenuItem profileItem = new MenuItem("Profile");
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(profileItem, logoutItem);
@@ -160,7 +150,6 @@ public class GovDashboard extends Application {
         
         profileItem.setOnAction(e -> new ProfileView(primaryStage, dashboardScene, this.userName).start(primaryStage));
         logoutItem.setOnAction(e -> {
-            // Reuse the existing primary stage to go back to DisasterHelperUI
             new DisasterHelperUI().start(primaryStage);
         });
 
@@ -169,14 +158,14 @@ public class GovDashboard extends Application {
     }
 
     private Node createOverviewSection() {
-        VBox overviewBox = new VBox(25); // Increased spacing
-        overviewBox.setPadding(new Insets(50)); // Increased padding
-        overviewBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 20;"); // Increased radius
+        VBox overviewBox = new VBox(25); 
+        overviewBox.setPadding(new Insets(50)); 
+        overviewBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 20;"); 
         Label title = new Label("Command Center Overview");
-        title.setFont(getFont(48, FontWeight.BOLD)); // Increased font size
+        title.setFont(getFont(48, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
         Label subtitle = new Label("Monitor real-time reports, manage partner NGOs, and broadcast critical alerts.");
-        subtitle.setFont(getFont(22, FontWeight.NORMAL)); // Increased font size
+        subtitle.setFont(getFont(22, FontWeight.NORMAL)); 
         subtitle.setTextFill(Color.web(FONT_COLOR_MEDIUM));
         overviewBox.getChildren().addAll(title, subtitle);
         return overviewBox;
@@ -185,9 +174,9 @@ public class GovDashboard extends Application {
     private Node createKeyActionsModule() {
         VBox card = createDashboardCard("Key Actions");
         GridPane buttonGrid = new GridPane();
-        buttonGrid.setHgap(30); // Increased gap
-        buttonGrid.setVgap(30); // Increased gap
-        buttonGrid.setPadding(new Insets(25, 0, 0, 0)); // Increased padding
+        buttonGrid.setHgap(30);
+        buttonGrid.setVgap(30); 
+        buttonGrid.setPadding(new Insets(25, 0, 0, 0)); 
 
         Button broadcastButton = createQuickAccessButton("Broadcast Alert", true);
         broadcastButton.setOnAction(e -> new BroadcastAlertsView(primaryStage, dashboardScene).start(primaryStage));
@@ -204,8 +193,8 @@ public class GovDashboard extends Application {
 
     private Button createQuickAccessButton(String text, boolean isPrimary) {
         Button button = new Button(text);
-        button.setFont(getFont(20, FontWeight.BOLD)); // Increased font size
-        button.setPrefSize(300, 100); // Increased size
+        button.setFont(getFont(20, FontWeight.BOLD));
+        button.setPrefSize(300, 100);
         GridPane.setHgrow(button, Priority.ALWAYS);
         if (isPrimary) {
             button.setTextFill(Color.web(FONT_COLOR_LIGHT));
@@ -221,7 +210,7 @@ public class GovDashboard extends Application {
         VBox card = createDashboardCard("Incoming Disaster Reports");
         ListView<Disaster> reportsList = new ListView<>(liveDisasterReportsList);
         reportsList.setPlaceholder(new Label("No new disaster reports from citizens."));
-        reportsList.setPrefHeight(600); // Increased preferred height
+        reportsList.setPrefHeight(600); 
         reportsList.setCellFactory(param -> new ListCell<Disaster>() {
             @Override
             protected void updateItem(Disaster item, boolean empty) {
@@ -230,15 +219,15 @@ public class GovDashboard extends Application {
                     setGraphic(null);
                 } else {
                     Text type = new Text(item.getType() + " at " + item.getLocation());
-                    type.setFont(GovDashboard.getFont(18, FontWeight.BOLD)); // Increased font size
+                    type.setFont(GovDashboard.getFont(18, FontWeight.BOLD)); 
                     type.setFill(Color.web(ALERT_COLOR));
                     
                     Text description = new Text(item.getDescription());
-                    description.setWrappingWidth(param.getWidth() - 60); // Adjusted wrapping width
-                    description.setFont(GovDashboard.getFont(16, FontWeight.NORMAL)); // Set font size
+                    description.setWrappingWidth(param.getWidth() - 60); 
+                    description.setFont(GovDashboard.getFont(16, FontWeight.NORMAL));
                     
-                    VBox content = new VBox(10, type, description); // Increased spacing
-                    content.setPadding(new Insets(10)); // Added padding
+                    VBox content = new VBox(10, type, description); 
+                    content.setPadding(new Insets(10)); 
                     setGraphic(content);
                 }
             }
@@ -248,12 +237,12 @@ public class GovDashboard extends Application {
         return card;
     }
 
-    private Node createStatisticsModule(Stage stage, Scene scene) { // Method now accepts stage and scene
+    private Node createStatisticsModule(Stage stage, Scene scene) { 
         VBox card = createDashboardCard("Key Performance Indicators");
         HBox statsBox = new HBox();
         statsBox.setAlignment(Pos.CENTER);
-        statsBox.setSpacing(60); // Increased spacing
-        statsBox.setPadding(new Insets(25, 0, 0, 0)); // Increased padding
+        statsBox.setSpacing(60); 
+        statsBox.setPadding(new Insets(25, 0, 0, 0)); 
         HBox.setHgrow(statsBox, Priority.ALWAYS);
 
         statsBox.getChildren().addAll(
@@ -265,33 +254,31 @@ public class GovDashboard extends Application {
 
         card.getChildren().add(statsBox);
 
-        // New button to open AnalyticsView
         Button viewAnalyticsButton = new Button("View Analytics");
         viewAnalyticsButton.setFont(getFont(20, FontWeight.BOLD));
         viewAnalyticsButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
         viewAnalyticsButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;");
         viewAnalyticsButton.setPrefHeight(60);
         viewAnalyticsButton.setMaxWidth(Double.MAX_VALUE);
-        VBox.setMargin(viewAnalyticsButton, new Insets(30, 0, 0, 0)); // Add top margin
+        VBox.setMargin(viewAnalyticsButton, new Insets(30, 0, 0, 0));
 
-        // Action to open AnalyticsView
         viewAnalyticsButton.setOnAction(e -> new AnalyticsView(stage, scene).start(stage));
 
-        card.getChildren().add(viewAnalyticsButton); // Add the new button to the card
+        card.getChildren().add(viewAnalyticsButton);
 
         return card;
     }
 
     private Node createStatItem(String number, String label) {
-        VBox item = new VBox(-8); // Adjusted spacing
+        VBox item = new VBox(-8); 
         item.setAlignment(Pos.CENTER);
 
         Label numberLabel = new Label(number);
-        numberLabel.setFont(getFont(60, FontWeight.BOLD)); // Increased font size
+        numberLabel.setFont(getFont(60, FontWeight.BOLD));
         numberLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
         Label textLabel = new Label(label);
-        textLabel.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size
+        textLabel.setFont(getFont(20, FontWeight.NORMAL)); 
         textLabel.setTextFill(Color.web(FONT_COLOR_MEDIUM));
 
         item.getChildren().addAll(numberLabel, textLabel);
@@ -299,17 +286,17 @@ public class GovDashboard extends Application {
     }
 
     private VBox createDashboardCard(String title) {
-        VBox card = new VBox(25); // Increased spacing
-        card.setPadding(new Insets(35)); // Increased padding
+        VBox card = new VBox(25); 
+        card.setPadding(new Insets(35));
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 20; " + // Increased radius
+                      "-fx-background-radius: 20; " + 
                       "-fx-border-color: " + BORDER_COLOR + "; " +
                       "-fx-border-width: 1;");
         GridPane.setHgrow(card, Priority.ALWAYS);
         GridPane.setVgrow(card, Priority.ALWAYS);
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(32, FontWeight.BOLD)); // Increased font size
+        titleLabel.setFont(getFont(32, FontWeight.BOLD));
         titleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
 
         card.getChildren().add(titleLabel);

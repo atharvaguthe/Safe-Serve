@@ -17,7 +17,6 @@ import javafx.stage.Stage;
 
 public class ResourcesView extends Application {
 
-    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String FONT_COLOR_DARK = "#2D3748";
@@ -27,7 +26,6 @@ public class ResourcesView extends Application {
     private final Scene previousScene;
     private final Stage primaryStage;
 
-    // --- Font Helper ---
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
@@ -39,8 +37,8 @@ public class ResourcesView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(40); // Increased spacing
-        rootLayout.setPadding(new Insets(60)); // Increased padding
+        VBox rootLayout = new VBox(40);
+        rootLayout.setPadding(new Insets(60)); 
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -61,20 +59,20 @@ public class ResourcesView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 30, 0)); // Increased padding
+        header.setPadding(new Insets(0, 0, 30, 0));
 
         Label title = new Label("📚 Resources & Information");
-        title.setFont(getFont(40, FontWeight.BOLD)); // Increased font size
+        title.setFont(getFont(40, FontWeight.BOLD)); 
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
+        backButton.setFont(getFont(20, FontWeight.MEDIUM)); 
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
         backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 10;"); // Increased radius
-        backButton.setPadding(new Insets(10, 20, 10, 20)); // Increased padding
+        backButton.setPadding(new Insets(10, 20, 10, 20));
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
             primaryStage.setTitle("Citizen Dashboard | Disaster Relief Helper");
@@ -85,14 +83,13 @@ public class ResourcesView extends Application {
     }
 
     private Node createResourcesContent() {
-        VBox card = new VBox(40); // Increased spacing
-        card.setPadding(new Insets(50)); // Increased padding
+        VBox card = new VBox(40);
+        card.setPadding(new Insets(50)); 
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 15; " + // Increased radius
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 15, 0, 0, 6);"); // Increased shadow
-        card.setMaxWidth(1000); // Increased max width
+                      "-fx-background-radius: 15; " +
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 15, 0, 0, 6);"); 
+        card.setMaxWidth(1000);
 
-        // --- Emergency Contacts Section ---
         Node contactsSection = createResourceSection(
             "Emergency Contacts",
             "In any emergency, prompt contact with authorities is crucial. Use these numbers to report incidents or request immediate assistance.\n\n" +
@@ -102,7 +99,6 @@ public class ResourcesView extends Application {
             "Ambulance: 102 - For medical emergencies and patient transport."
         );
 
-        // --- Safety Guides Section ---
         Node guidesSection = createResourceSection(
             "Safety Guides",
             "Understanding basic safety protocols can save lives. Familiarize yourself with these guidelines for common disasters:\n\n" +
@@ -112,8 +108,7 @@ public class ResourcesView extends Application {
             "• Cyclone/Hurricane: Secure loose outdoor items. Stay indoors in the strongest part of your home. Prepare for power outages and have a supply of water and non-perishable food.\n\n" +
             "• Chemical Leak: Stay indoors, close windows and doors, and turn off ventilation systems. If outdoors, move away from the source quickly, preferably upwind. Follow official evacuation orders."
         );
-        
-        // --- Shelter Locations Section ---
+
         Node sheltersSection = createResourceSection(
             "Nearby Shelters (Nashik)",
             "Designated shelters offer a safe haven during and after disasters. Capacity and services may vary, so check local announcements for updates:\n\n" +
@@ -134,8 +129,8 @@ public class ResourcesView extends Application {
     }
 
     private Node createResourceSection(String title, String content) {
-        VBox section = new VBox(15); // Increased spacing
-        section.setPadding(new Insets(25, 0, 25, 0)); // Increased padding
+        VBox section = new VBox(15);
+        section.setPadding(new Insets(25, 0, 25, 0));
         section.setStyle("-fx-border-color: " + BORDER_COLOR + " transparent transparent transparent; -fx-border-width: 1;");
 
         // Remove border from the first item
@@ -148,14 +143,14 @@ public class ResourcesView extends Application {
         });
         
         Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(28, FontWeight.BOLD)); // Increased font size
+        titleLabel.setFont(getFont(28, FontWeight.BOLD));
         titleLabel.setTextFill(Color.web(PRIMARY_BLUE));
         
         Text contentText = new Text(content);
-        contentText.setFont(getFont(18, FontWeight.NORMAL)); // Increased font size
+        contentText.setFont(getFont(18, FontWeight.NORMAL));
         contentText.setFill(Color.web(FONT_COLOR_DARK));
-        contentText.setWrappingWidth(900); // Increased wrapping width
-        contentText.setLineSpacing(7); // Increased line spacing
+        contentText.setWrappingWidth(900); 
+        contentText.setLineSpacing(7); 
         
         section.getChildren().addAll(titleLabel, contentText);
         

@@ -31,7 +31,6 @@ import java.util.Optional;
 
 public class ProfileView extends Application {
 
-    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String SECONDARY_ACCENT_COLOR = "#48BB78";
@@ -42,7 +41,7 @@ public class ProfileView extends Application {
 
     private final Scene previousScene;
     private final Stage primaryStage;
-    private final String userEmail; // To store the current user's email
+    private final String userEmail; 
 
     private final ForgotPasswordController forgotPasswordController = new ForgotPasswordController();
     private final DeleteAccountController deleteAccountController = new DeleteAccountController();
@@ -52,9 +51,8 @@ public class ProfileView extends Application {
     private ImageView profileImageView;
     private Label nameLabel;
     private Label emailLabel;
-    private ListenerRegistration firestoreListener; // To manage Firestore real-time listener
+    private ListenerRegistration firestoreListener; 
 
-    // --- Font Helper ---
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
@@ -67,8 +65,8 @@ public class ProfileView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(40); // Increased spacing
-        rootLayout.setPadding(new Insets(60, 80, 80, 80)); // Increased padding
+        VBox rootLayout = new VBox(40);
+        rootLayout.setPadding(new Insets(60, 80, 80, 80)); 
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -85,13 +83,11 @@ public class ProfileView extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("My Profile | Safe Serve");
 
-        // Start listening for real-time updates to the user's profile
         startProfileListener();
     }
 
     @Override
     public void stop() {
-        // Detach Firestore listener when the view is stopped
         if (firestoreListener != null) {
             firestoreListener.remove();
         }
@@ -131,18 +127,17 @@ public class ProfileView extends Application {
                 });
             } else {
                 System.out.println("Current data: null");
-                Platform.runLater(this::setPlaceholderImage); // Set placeholder if document doesn't exist
+                Platform.runLater(this::setPlaceholderImage);
             }
         });
     }
 
     private void setPlaceholderImage() {
-        InputStream defaultLogoStream = getClass().getResourceAsStream("/logo.png"); // Use a generic logo or user icon
+        InputStream defaultLogoStream = getClass().getResourceAsStream("/logo.png");
         if (defaultLogoStream != null) {
             profileImageView.setImage(new Image(defaultLogoStream));
         } else {
             System.err.println("Default profile placeholder image not found!");
-            // Fallback to a blank image if no placeholder is available
             profileImageView.setImage(null);
         }
     }
@@ -151,23 +146,22 @@ public class ProfileView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding
+        header.setPadding(new Insets(20, 0, 30, 0)); 
 
         Label title = new Label("👤 My Profile");
-        title.setFont(getFont(42, FontWeight.BOLD)); // Increased font size
+        title.setFont(getFont(42, FontWeight.BOLD)); 
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
+        backButton.setFont(getFont(20, FontWeight.MEDIUM));
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
         backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12;"); // Increased radius
-        backButton.setPadding(new Insets(15, 28, 15, 28)); // Increased padding
+        backButton.setPadding(new Insets(15, 28, 15, 28));
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
-            // You might want to restore the previous title here if it's dynamic
         });
 
         header.getChildren().addAll(title, spacer, backButton);
@@ -175,22 +169,20 @@ public class ProfileView extends Application {
     }
 
     private Node createProfileContent() {
-        VBox card = new VBox(35); // Increased spacing
-        card.setPadding(new Insets(50)); // Increased padding
+        VBox card = new VBox(35); 
+        card.setPadding(new Insets(50)); 
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 20; " + // Increased radius
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); // Increased shadow
-        card.setMaxWidth(1000); // Increased max width
-        card.setAlignment(Pos.TOP_CENTER); // Center content within the card
+                      "-fx-background-radius: 20; " + 
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); 
+        card.setMaxWidth(1000); 
+        card.setAlignment(Pos.TOP_CENTER); 
 
-        // Profile Picture Section
         profileImageView = new ImageView();
-        profileImageView.setFitWidth(200); // Increased size
-        profileImageView.setFitHeight(200); // Increased size
+        profileImageView.setFitWidth(200); 
+        profileImageView.setFitHeight(200); 
         profileImageView.setPreserveRatio(true);
-        profileImageView.setClip(new Circle(100, 100, 100)); // Make it circular
+        profileImageView.setClip(new Circle(100, 100, 100)); 
 
-        // Make the image clickable to change photo
         profileImageView.setStyle("-fx-cursor: hand;");
         profileImageView.setOnMouseClicked(e -> handleChangeProfilePhoto());
 
@@ -201,41 +193,39 @@ public class ProfileView extends Application {
 
         VBox photoSection = new VBox(10, profileImageView, changePhotoHint);
         photoSection.setAlignment(Pos.CENTER);
-        VBox.setMargin(photoSection, new Insets(0, 0, 20, 0)); // Margin below photo section
+        VBox.setMargin(photoSection, new Insets(0, 0, 20, 0));
 
-        // User Information Section
         nameLabel = new Label("Name: Loading...");
-        nameLabel.setFont(getFont(24, FontWeight.BOLD)); // Increased font size
+        nameLabel.setFont(getFont(24, FontWeight.BOLD)); 
         nameLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
         emailLabel = new Label("Email: Loading...");
-        emailLabel.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size
+        emailLabel.setFont(getFont(20, FontWeight.NORMAL)); 
         emailLabel.setTextFill(Color.web(FONT_COLOR_DARK));
 
         VBox userInfoSection = new VBox(10, nameLabel, emailLabel);
         userInfoSection.setAlignment(Pos.CENTER_LEFT);
-        VBox.setMargin(userInfoSection, new Insets(0, 0, 30, 0)); // Margin below user info
+        VBox.setMargin(userInfoSection, new Insets(0, 0, 30, 0)); 
 
-        // Account Settings (Existing buttons)
         Label accountLabel = new Label("Account Settings");
-        accountLabel.setFont(getFont(28, FontWeight.BOLD)); // Increased font size
+        accountLabel.setFont(getFont(28, FontWeight.BOLD));
         accountLabel.setTextFill(Color.web(PRIMARY_BLUE));
-        accountLabel.setPadding(new Insets(20, 0, 10, 0)); // Adjusted padding
+        accountLabel.setPadding(new Insets(20, 0, 10, 0));
 
         Button changePasswordButton = new Button("Change Password");
-        changePasswordButton.setFont(getFont(18, FontWeight.MEDIUM)); // Increased font size
-        changePasswordButton.setPadding(new Insets(12, 25, 12, 25)); // Increased padding
+        changePasswordButton.setFont(getFont(18, FontWeight.MEDIUM));
+        changePasswordButton.setPadding(new Insets(12, 25, 12, 25));
         changePasswordButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-text-fill: " + SECONDARY_ACCENT_COLOR + "; -fx-background-radius: 8; -fx-cursor: hand;");
         changePasswordButton.setOnAction(e -> handleChangePassword());
 
         Button deleteAccountButton = new Button("Delete Account");
-        deleteAccountButton.setFont(getFont(18, FontWeight.MEDIUM)); // Increased font size
+        deleteAccountButton.setFont(getFont(18, FontWeight.MEDIUM));
         deleteAccountButton.setTextFill(Color.web(ALERT_COLOR));
-        deleteAccountButton.setPadding(new Insets(12, 25, 12, 25)); // Increased padding
+        deleteAccountButton.setPadding(new Insets(12, 25, 12, 25));
         deleteAccountButton.setStyle("-fx-background-color: transparent; -fx-border-color: " + ALERT_COLOR + "; -fx-border-width: 2; -fx-background-radius: 8; -fx-border-radius: 8; -fx-cursor: hand;");
         deleteAccountButton.setOnAction(e -> handleDeleteAccount());
 
-        HBox accountButtons = new HBox(25, changePasswordButton, deleteAccountButton); // Increased spacing
+        HBox accountButtons = new HBox(25, changePasswordButton, deleteAccountButton);
         accountButtons.setAlignment(Pos.CENTER);
         
         card.getChildren().addAll(photoSection, userInfoSection, accountLabel, accountButtons);
@@ -255,15 +245,10 @@ public class ProfileView extends Application {
         File selectedFile = fileChooser.showOpenDialog(primaryStage);
 
         if (selectedFile != null) {
-            // Show a loading indicator (optional, but good for UX)
-            // For simplicity, we'll just update the image view immediately
-            // and handle the actual upload asynchronously.
             profileImageView.setImage(new Image(selectedFile.toURI().toString()));
 
-            // Upload to Firebase Storage
             String imageUrl = fileStorageDao.uploadFile(selectedFile);
             if (imageUrl != null) {
-                // Save the URL to Firestore
                 boolean success = userService.updateUserProfileImage(userEmail, imageUrl);
                 if (!success) {
                     showAlert("Error", "Failed to save new profile image URL to database.");
