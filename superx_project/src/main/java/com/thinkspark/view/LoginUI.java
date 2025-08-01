@@ -1,3 +1,4 @@
+// File: superx_project/src/main/java/com/thinkspark/view/LoginUI.java
 package com.thinkspark.view;
 
 import com.thinkspark.Controller.LoginController;
@@ -19,7 +20,6 @@ import javafx.stage.Stage;
 
 public class LoginUI extends Application {
 
-    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String PRIMARY_BLUE = "#005A9C";
@@ -40,17 +40,17 @@ public class LoginUI extends Application {
     public void start(Stage stage) {
         HBox mainLayout = new HBox();
         mainLayout.setAlignment(Pos.CENTER);
-        mainLayout.setMaxSize(1200, 800); // Increased max size
+        mainLayout.setMaxSize(1200, 800);
         mainLayout.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                           "-fx-background-radius: 20; " + // Increased radius
-                           "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 30, 0, 0, 10);"); // Increased shadow
+                           "-fx-background-radius: 20; " +
+                           "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 30, 0, 0, 10);");
         mainLayout.getChildren().addAll(createBrandingPane(), createLoginForm(stage));
 
         StackPane root = new StackPane(mainLayout);
         root.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
-        root.setPadding(new Insets(60)); // Increased padding
+        root.setPadding(new Insets(60));
 
-        Scene scene = new Scene(root,1980,1080); 
+        Scene scene = new Scene(root,1980,1080);
         stage.setTitle("Safe Serve");
         stage.setResizable(true);
         stage.setScene(scene);
@@ -59,84 +59,90 @@ public class LoginUI extends Application {
     }
 
     private Node createBrandingPane() {
-    VBox brandingPane = new VBox(30); // Increased spacing
-    brandingPane.setPrefWidth(600); // Increased preferred width
+    VBox brandingPane = new VBox(30);
+    brandingPane.setPrefWidth(600);
     brandingPane.setAlignment(Pos.CENTER_LEFT);
-    brandingPane.setPadding(new Insets(60)); // Increased padding
-    brandingPane.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 20 0 0 20;"); // Increased radius
+    brandingPane.setPadding(new Insets(60));
+    brandingPane.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 20 0 0 20;");
 
-    // Add ImageView for the logo
     ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
-    logoView.setFitHeight(300); // Increased size
+    logoView.setFitHeight(300);
     logoView.setPreserveRatio(true);
 
     Label logo = new Label("Safe Serve");
-    logo.setFont(getFont(50, FontWeight.BOLD)); // Increased font size
+    logo.setFont(getFont(50, FontWeight.BOLD));
     logo.setTextFill(Color.web(FONT_COLOR_LIGHT));
 
     Text welcomeText = new Text("A unified platform for citizens, volunteers, NGOs, and government agencies to collaborate during crises.");
-    welcomeText.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size
+    welcomeText.setFont(getFont(20, FontWeight.NORMAL));
     welcomeText.setFill(Color.web(FONT_COLOR_LIGHT));
     welcomeText.setOpacity(0.9);
-    welcomeText.setWrappingWidth(450); // Increased wrapping width
+    welcomeText.setWrappingWidth(450);
 
-    // Add logoView before the "Safe Serve" label (which is assigned to 'logo')
     brandingPane.getChildren().addAll(logoView, logo, welcomeText);
     return brandingPane;
     }
 
     private Node createLoginForm(Stage stage) {
-        VBox formPane = new VBox(30); // Increased spacing
-        formPane.setPrefWidth(600); // Increased preferred width
+        VBox formPane = new VBox(30);
+        formPane.setPrefWidth(600);
         formPane.setAlignment(Pos.CENTER_LEFT);
-        formPane.setPadding(new Insets(50)); // Increased padding
+        formPane.setPadding(new Insets(50));
 
         Label title = new Label("Log In to Your Account");
-        title.setFont(getFont(34, FontWeight.BOLD)); // Increased font size
+        title.setFont(getFont(34, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
-        VBox.setMargin(title, new Insets(0, 0, 15, 0)); // Increased margin
+        VBox.setMargin(title, new Insets(0, 0, 15, 0));
 
         emailField = createStyledTextField("Enter your email");
         passwordField = createStyledPasswordField("Enter your password");
         roleComboBox = createStyledComboBox();
 
-        Label emailLabel = new Label("Email"); // Added label for email
-        emailLabel.setFont(getFont(18, FontWeight.MEDIUM)); // Set font for label
-        emailLabel.setTextFill(Color.web(FONT_COLOR_DARK)); // Set color for label
+        Label emailLabel = new Label("Email");
+        emailLabel.setFont(getFont(18, FontWeight.MEDIUM));
+        emailLabel.setTextFill(Color.web(FONT_COLOR_DARK));
 
-        Label passwordLabel = new Label("Password"); // Added label for password
-        passwordLabel.setFont(getFont(18, FontWeight.MEDIUM)); // Set font for label
-        passwordLabel.setTextFill(Color.web(FONT_COLOR_DARK)); // Set color for label
+        Label passwordLabel = new Label("Password");
+        passwordLabel.setFont(getFont(18, FontWeight.MEDIUM));
+        passwordLabel.setTextFill(Color.web(FONT_COLOR_DARK));
 
-        Label roleLabel = new Label("Log in as"); // Added label for role
-        roleLabel.setFont(getFont(18, FontWeight.MEDIUM)); // Set font for label
-        roleLabel.setTextFill(Color.web(FONT_COLOR_DARK)); // Set color for label
+        Label roleLabel = new Label("Log in as");
+        roleLabel.setFont(getFont(18, FontWeight.MEDIUM));
+        roleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
 
+        Button backToDashboardButton = new Button("⬅️ Back to Dashboard");
+        backToDashboardButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backToDashboardButton.setTextFill(Color.web(PRIMARY_BLUE));
+        backToDashboardButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12; -fx-border-width: 2; -fx-padding: 10 20;");
+        backToDashboardButton.setOnAction(e -> new DisasterHelperUI().start(stage));
+
+        HBox topLinks = new HBox();
+        topLinks.setAlignment(Pos.TOP_RIGHT);
+        topLinks.getChildren().add(backToDashboardButton);
 
         Button loginBtn = new Button("Log In");
-        loginBtn.setFont(getFont(20, FontWeight.BOLD)); // Increased font size
+        loginBtn.setFont(getFont(20, FontWeight.BOLD));
         loginBtn.setTextFill(Color.web(FONT_COLOR_LIGHT));
-        loginBtn.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;"); // Increased radius
-        loginBtn.setPrefHeight(60); // Increased height
+        loginBtn.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;");
+        loginBtn.setPrefHeight(60);
         loginBtn.setMaxWidth(Double.MAX_VALUE);
 
         Hyperlink forgotPasswordLink = new Hyperlink("Forgot Password?");
-        forgotPasswordLink.setFont(getFont(16, FontWeight.BOLD)); // Increased font size and made bold
-        forgotPasswordLink.setTextFill(Color.web(PRIMARY_BLUE)); // Made text blue
-        forgotPasswordLink.setStyle("-fx-underline: true; -fx-cursor: hand;"); // Ensure underline and hand cursor
+        forgotPasswordLink.setFont(getFont(16, FontWeight.BOLD));
+        forgotPasswordLink.setTextFill(Color.web(PRIMARY_BLUE));
+        forgotPasswordLink.setStyle("-fx-underline: true; -fx-cursor: hand;");
         forgotPasswordLink.setOnAction(e -> handleForgotPassword(stage));
 
         Hyperlink signUpLink = new Hyperlink("Don't have an account? Sign Up");
-        signUpLink.setFont(getFont(16, FontWeight.BOLD)); // Increased font size and made bold
-        signUpLink.setTextFill(Color.web(PRIMARY_BLUE)); // Made text blue
-        signUpLink.setStyle("-fx-underline: true; -fx-cursor: hand;"); // Ensure underline and hand cursor
+        signUpLink.setFont(getFont(16, FontWeight.BOLD));
+        signUpLink.setTextFill(Color.web(PRIMARY_BLUE));
+        signUpLink.setStyle("-fx-underline: true; -fx-cursor: hand;");
 
-        HBox bottomLinks = new HBox(40); // Increased spacing
+        HBox bottomLinks = new HBox(40);
         HBox.setHgrow(forgotPasswordLink, Priority.ALWAYS);
         bottomLinks.setAlignment(Pos.CENTER);
-        bottomLinks.getChildren().addAll(forgotPasswordLink, signUpLink); // Ensure both links are added
+        bottomLinks.getChildren().addAll(forgotPasswordLink, signUpLink);
 
-        // Event handlers for Enter key
         emailField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 passwordField.requestFocus();
@@ -155,15 +161,15 @@ public class LoginUI extends Application {
             }
         });
 
-
         loginBtn.setOnAction(e -> handleLogin(stage, emailField.getText(), passwordField.getText(), roleComboBox.getValue()));
         signUpLink.setOnAction(e -> handleSignUp(stage));
 
         formPane.getChildren().addAll(
+            topLinks,
             title,
-            emailLabel, emailField, // Added labels
-            passwordLabel, passwordField, // Added labels
-            roleLabel, roleComboBox, // Added labels
+            emailLabel, emailField,
+            passwordLabel, passwordField,
+            roleLabel, roleComboBox,
             loginBtn,
             bottomLinks
         );
@@ -174,18 +180,18 @@ public class LoginUI extends Application {
     private TextField createStyledTextField(String prompt) {
         TextField textField = new TextField();
         textField.setPromptText(prompt);
-        textField.setFont(getFont(18, FontWeight.NORMAL)); // Increased font size
-        textField.setPrefHeight(60); // Increased height
-        textField.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 10; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;"); // Increased radius and border width
+        textField.setFont(getFont(18, FontWeight.NORMAL));
+        textField.setPrefHeight(60);
+        textField.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 10; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;");
         return textField;
     }
 
     private PasswordField createStyledPasswordField(String prompt) {
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText(prompt);
-        passwordField.setFont(getFont(18, FontWeight.NORMAL)); // Increased font size
-        passwordField.setPrefHeight(60); // Increased height
-        passwordField.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 10; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;"); // Increased radius and border width
+        passwordField.setFont(getFont(18, FontWeight.NORMAL));
+        passwordField.setPrefHeight(60);
+        passwordField.setStyle("-fx-background-color: " + BACKGROUND_COLOR + "; -fx-background-radius: 10; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;");
         return passwordField;
     }
 
@@ -193,9 +199,9 @@ public class LoginUI extends Application {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.getItems().addAll("Citizen", "Volunteer", "NGO", "Government");
         comboBox.setPromptText("Select your role");
-        comboBox.setPrefHeight(60); // Increased height
+        comboBox.setPrefHeight(60);
         comboBox.setMaxWidth(Double.MAX_VALUE);
-        comboBox.setStyle("-fx-font-size: 18px; -fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;"); // Increased font size, radius and border width
+        comboBox.setStyle("-fx-font-size: 18px; -fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;");
         return comboBox;
     }
 
@@ -212,7 +218,6 @@ public class LoginUI extends Application {
         LoginController.Result result = loginController.login(email, password, selectedRole);
 
         if (result.success) {
-            // No longer closing the current stage, just reusing it
             Application dashboard = null;
 
             switch (selectedRole) {
@@ -232,7 +237,7 @@ public class LoginUI extends Application {
 
             if (dashboard != null) {
                 try {
-                    dashboard.start(currentStage); // Use the existing stage
+                    dashboard.start(currentStage);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     showAlert("Application Error", "Could not open the dashboard.");
@@ -246,13 +251,11 @@ public class LoginUI extends Application {
     }
 
     private void handleSignUp(Stage currentStage) {
-        // No longer closing the current stage, just reusing it
-        new SignUpForm().start(currentStage); // Use the existing stage
+        new SignUpForm().start(currentStage);
     }
     
     private void handleForgotPassword(Stage currentStage) {
-        // No longer closing the current stage, just reusing it
-        new ForgotPasswordUI().start(currentStage); // Use the existing stage
+        new ForgotPasswordUI().start(currentStage);
     }
 
     private void showAlert(String title, String message) {

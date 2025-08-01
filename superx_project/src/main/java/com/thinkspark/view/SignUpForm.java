@@ -1,3 +1,4 @@
+// File: superx_project/src/main/java/com/thinkspark/view/SignUpForm.java
 package com.thinkspark.view;
 
 import com.thinkspark.Controller.SignUpController;
@@ -19,7 +20,6 @@ import javafx.stage.Stage;
 
 public class SignUpForm extends Application {
 
-    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String PRIMARY_BLUE = "#005A9C";
@@ -35,85 +35,93 @@ public class SignUpForm extends Application {
     public void start(Stage primaryStage) {
         HBox mainLayout = new HBox();
         mainLayout.setAlignment(Pos.CENTER);
-        mainLayout.setMaxSize(1200, 800); // Increased max size to match LoginUI
+        mainLayout.setMaxSize(1200, 800);
         mainLayout.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                           "-fx-background-radius: 20; " + // Increased radius to match LoginUI
-                           "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 30, 0, 0, 10);"); // Increased shadow to match LoginUI
+                           "-fx-background-radius: 20; " +
+                           "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 30, 0, 0, 10);");
         mainLayout.getChildren().addAll(createBrandingPane(), createSignUpForm(primaryStage));
 
         StackPane root = new StackPane(mainLayout);
         root.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
-        root.setPadding(new Insets(60)); // Increased padding to match LoginUI
+        root.setPadding(new Insets(60));
 
         Scene scene = new Scene(root,1920,1080);
         primaryStage.setTitle("Safe Serve");
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
         primaryStage.setResizable(true);
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png"))); // Fixed image path to .png
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/logo.png")));
         primaryStage.show();
     }
 
     private Node createBrandingPane() {
-        VBox brandingPane = new VBox(30); // Increased spacing
-        brandingPane.setPrefWidth(600); // Increased preferred width to match LoginUI
+        VBox brandingPane = new VBox(30);
+        brandingPane.setPrefWidth(600);
         brandingPane.setAlignment(Pos.CENTER_LEFT);
-        brandingPane.setPadding(new Insets(60)); // Increased padding to match LoginUI
-        brandingPane.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 20 0 0 20;"); // Increased radius to match LoginUI
+        brandingPane.setPadding(new Insets(60));
+        brandingPane.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 20 0 0 20;");
 
-        // Add ImageView for the logo, similar to LoginUI
         ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/logo.png")));
-        logoView.setFitHeight(300); // Increased size to match LoginUI
+        logoView.setFitHeight(300);
         logoView.setPreserveRatio(true);
 
         Label logo = new Label("🚀 Join Us");
-        logo.setFont(getFont(50, FontWeight.BOLD)); // Increased font size
+        logo.setFont(getFont(50, FontWeight.BOLD));
         logo.setTextFill(Color.web(FONT_COLOR_LIGHT));
 
         Text welcomeText = new Text("Become a part of a community dedicated to providing and receiving help effectively during crises. Your first step to making a difference starts here.");
-        welcomeText.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size
+        welcomeText.setFont(getFont(20, FontWeight.NORMAL));
         welcomeText.setFill(Color.web(FONT_COLOR_LIGHT));
         welcomeText.setOpacity(0.9);
-        welcomeText.setWrappingWidth(450); // Increased wrapping width to match LoginUI
+        welcomeText.setWrappingWidth(450);
 
-        brandingPane.getChildren().addAll(logoView, logo, welcomeText); // Added logoView here
+        brandingPane.getChildren().addAll(logoView, logo, welcomeText);
         return brandingPane;
     }
 
     private Node createSignUpForm(Stage primaryStage) {
-        VBox formPane = new VBox(30); // Increased spacing to match LoginUI
-        formPane.setPrefWidth(600); // Increased preferred width to match LoginUI
+        VBox formPane = new VBox(30);
+        formPane.setPrefWidth(600);
         formPane.setAlignment(Pos.CENTER_LEFT);
-        formPane.setPadding(new Insets(50)); // Increased padding to match LoginUI
+        formPane.setPadding(new Insets(50));
 
         Label title = new Label("Create Your Account");
-        title.setFont(getFont(34, FontWeight.BOLD)); // Increased font size to match LoginUI
+        title.setFont(getFont(34, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
-        VBox.setMargin(title, new Insets(0, 0, 15, 0)); // Increased margin to match LoginUI
+        VBox.setMargin(title, new Insets(0, 0, 15, 0));
 
         TextField nameField = createStyledTextField("Full Name");
         TextField emailField = createStyledTextField("Email Address");
         PasswordField passwordField = createStyledPasswordField("Password");
-        ComboBox<String> userType = createStyledComboBox(); 
+        ComboBox<String> userType = createStyledComboBox();
 
         Button signUpButton = new Button("Sign Up");
-        signUpButton.setFont(getFont(20, FontWeight.BOLD)); // Increased font size
+        signUpButton.setFont(getFont(20, FontWeight.BOLD));
         signUpButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
-        signUpButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;"); // Increased radius
-        signUpButton.setPrefHeight(60); // Increased height to match LoginUI
+        signUpButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;");
+        signUpButton.setPrefHeight(60);
         signUpButton.setMaxWidth(Double.MAX_VALUE);
 
         Hyperlink loginLink = new Hyperlink("Already have an account? Log In");
-        loginLink.setFont(getFont(18, FontWeight.BOLD)); // Increased font size and made bold to match LoginUI
-        loginLink.setTextFill(Color.web(PRIMARY_BLUE)); // Made text blue
-        loginLink.setStyle("-fx-underline: true; -fx-cursor: hand;"); // Ensure underline and hand cursor
+        loginLink.setFont(getFont(18, FontWeight.BOLD));
+        loginLink.setTextFill(Color.web(PRIMARY_BLUE));
+        loginLink.setStyle("-fx-underline: true; -fx-cursor: hand;");
 
-        HBox bottomLinkPane = new HBox(); // Removed spacing as it only contains one element
-        bottomLinkPane.setAlignment(Pos.CENTER); // Center the link
-        bottomLinkPane.getChildren().add(loginLink); // Add the link to the HBox
-        VBox.setMargin(bottomLinkPane, new Insets(20, 0, 0, 0)); // Increased top margin to match LoginUI
+        Button backToDashboardButton = new Button("⬅️ Back to Dashboard");
+        backToDashboardButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backToDashboardButton.setTextFill(Color.web(PRIMARY_BLUE));
+        backToDashboardButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12; -fx-border-width: 2; -fx-padding: 10 20;");
+        backToDashboardButton.setOnAction(e -> new DisasterHelperUI().start(primaryStage));
 
-        // Added labels above input fields for better UI/UX
+        HBox topLinks = new HBox();
+        topLinks.setAlignment(Pos.TOP_RIGHT);
+        topLinks.getChildren().add(backToDashboardButton);
+
+        HBox bottomLinkPane = new HBox(40);
+        bottomLinkPane.setAlignment(Pos.CENTER);
+        bottomLinkPane.getChildren().addAll(loginLink);
+        VBox.setMargin(bottomLinkPane, new Insets(20, 0, 0, 0));
+
         Label nameLabel = createLabel("Full Name");
         Label emailLabel = createLabel("Email Address");
         Label passwordLabel = createLabel("Password");
@@ -159,7 +167,6 @@ public class SignUpForm extends Application {
 
             if (result.success) {
                 showAlert("Success", "User registered successfully! Please log in.");
-                // Reuse the existing primary stage
                  new LoginUI().start(primaryStage);
             } else {
                 showAlert("Error", "Failed to register user. " + result.message);
@@ -167,11 +174,11 @@ public class SignUpForm extends Application {
         });
         
         loginLink.setOnAction(e -> {
-            // Reuse the existing primary stage
             new LoginUI().start(primaryStage);
         });
 
         formPane.getChildren().addAll(
+            topLinks,
             title,
             nameLabel, nameField,
             emailLabel, emailField,
@@ -186,27 +193,27 @@ public class SignUpForm extends Application {
 
     private Label createLabel(String text) {
         Label label = new Label(text);
-        label.setFont(getFont(18, FontWeight.MEDIUM)); // Increased font size
+        label.setFont(getFont(18, FontWeight.MEDIUM));
         label.setTextFill(Color.web(FONT_COLOR_DARK));
-        VBox.setMargin(label, new Insets(10, 0, 0, 0)); // Increased margin
+        VBox.setMargin(label, new Insets(10, 0, 0, 0));
         return label;
     }
 
     private TextField createStyledTextField(String prompt) {
         TextField textField = new TextField();
         textField.setPromptText(prompt);
-        textField.setFont(getFont(18, FontWeight.NORMAL)); // Increased font size
-        textField.setPrefHeight(60); // Set preferred height to match LoginUI text fields
-        textField.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 10; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;"); // Background color set to CARD_BACKGROUND_COLOR to match image
+        textField.setFont(getFont(18, FontWeight.NORMAL));
+        textField.setPrefHeight(60);
+        textField.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 10; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;");
         return textField;
     }
 
     private PasswordField createStyledPasswordField(String prompt) {
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText(prompt);
-        passwordField.setFont(getFont(18, FontWeight.NORMAL)); // Increased font size
-        passwordField.setPrefHeight(60); // Set preferred height to match LoginUI password fields
-        passwordField.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 10; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;"); // Background color set to CARD_BACKGROUND_COLOR to match image
+        passwordField.setFont(getFont(18, FontWeight.NORMAL));
+        passwordField.setPrefHeight(60);
+        passwordField.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 10; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;");
         return passwordField;
     }
     
@@ -214,9 +221,9 @@ public class SignUpForm extends Application {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.getItems().addAll("Citizen", "Volunteer", "NGO", "Government");
         comboBox.setPromptText("Select Role");
-        comboBox.setPrefHeight(60); // Increased height
+        comboBox.setPrefHeight(60);
         comboBox.setMaxWidth(Double.MAX_VALUE);
-        comboBox.setStyle("-fx-font-size: 18px; -fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;"); // Increased font size, radius and border width
+        comboBox.setStyle("-fx-font-size: 18px; -fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-border-width: 2;");
         return comboBox;
     }
 
