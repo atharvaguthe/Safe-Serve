@@ -8,6 +8,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -37,7 +39,7 @@ public class FloatingButtonPage extends Application {
     private Label placeholderLabel;
 
     private static final String GEMINI_API_KEY = "AIzaSyC-WSo0_OCgUTU9zS_AOtJl98CCticuK_U"; 
-    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
+    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=";
 
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
@@ -50,16 +52,18 @@ public class FloatingButtonPage extends Application {
         this.previousScene = previousScene;
     }
 
-    @Override
+   @Override
     public void start(Stage stage) {
         this.primaryStage = stage;
-        VBox rootLayout = new VBox(20);
-        rootLayout.setPadding(new Insets(20));
-        rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
 
+        BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
+
+        // --- Header ---
         HBox header = new HBox();
+        header.setPadding(new Insets(20));
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 10, 0));
+        header.setSpacing(20);
 
         Label title = new Label("🤖 AI Chatbot");
         title.setFont(getFont(32, FontWeight.BOLD));
@@ -69,10 +73,10 @@ public class FloatingButtonPage extends Application {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Home");
-        backButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backButton.setFont(getFont(26, FontWeight.MEDIUM));
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
-        backButton.setPadding(new Insets(8, 16, 8, 16));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 10;");
+        backButton.setPadding(new Insets(6, 12, 6, 12));
         backButton.setOnAction(e -> {
             if (previousScene != null) {
                 primaryStage.setScene(previousScene);
@@ -81,60 +85,62 @@ public class FloatingButtonPage extends Application {
         });
 
         header.getChildren().addAll(title, spacer, backButton);
+        root.setTop(header);
 
-        chatHistoryBox = new VBox(10);
-        chatHistoryBox.setPadding(new Insets(15));
-        chatHistoryBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                "-fx-background-radius: 12; " +
-                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
+        chatHistoryBox = new VBox(20);
+        chatHistoryBox.setPadding(new Insets(30));
+        chatHistoryBox.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 12;");
+        chatHistoryBox.setAlignment(Pos.TOP_CENTER);
 
         placeholderLabel = new Label("Ready when you are!");
-        placeholderLabel.setFont(getFont(24, FontWeight.LIGHT));
+        placeholderLabel.setFont(getFont(32, FontWeight.LIGHT));
         placeholderLabel.setTextFill(Color.web("#6C757D"));
-        HBox placeholderContainer = new HBox(placeholderLabel);
+
+        VBox placeholderContainer = new VBox(placeholderLabel);
         placeholderContainer.setAlignment(Pos.CENTER);
-        VBox.setVgrow(placeholderContainer, Priority.ALWAYS);
+        placeholderContainer.setPrefHeight(800);
         chatHistoryBox.getChildren().add(placeholderContainer);
 
         ScrollPane chatScrollPane = new ScrollPane(chatHistoryBox);
         chatScrollPane.setFitToWidth(true);
-        chatScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         chatScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        chatScrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
-        chatScrollPane.setPadding(new Insets(0));
+        chatScrollPane.setStyle("-fx-background-color: transparent;");
+        root.setCenter(chatScrollPane);
 
         chatHistoryBox.heightProperty().addListener((obs, oldVal, newVal) -> chatScrollPane.setVvalue(1.0));
 
         messageInput = new TextField();
-        messageInput.setPromptText("Type your message here...");
-        messageInput.setFont(getFont(16, FontWeight.NORMAL));
-        messageInput.setPrefHeight(40);
+        messageInput.setPromptText("Type your message...");
+        messageInput.setFont(getFont(22, FontWeight.NORMAL));
+        messageInput.setPrefHeight(60);
         HBox.setHgrow(messageInput, Priority.ALWAYS);
 
-        Button sendButton = new Button("Send");
-        sendButton.setFont(getFont(16, FontWeight.BOLD));
-        sendButton.setTextFill(Color.web(FONT_COLOR_DARK));
-        sendButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 8; -fx-cursor: hand;");
-        sendButton.setPadding(new Insets(8, 15, 8, 15));
-        sendButton.setOnAction(e -> sendMessage());
+        Button sendButton = new Button("➤");
+        sendButton.setFont(getFont(18, FontWeight.BOLD));
+        sendButton.setTextFill(Color.WHITE);
+        sendButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 24; -fx-cursor: hand;");
+        sendButton.setPrefHeight(60);
+        sendButton.setPrefWidth(60);
 
+        sendButton.setOnMouseEntered(e -> sendButton.setStyle("-fx-background-color: #007BFF; -fx-background-radius: 24; -fx-cursor: hand;"));
+        sendButton.setOnMouseExited(e -> sendButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 24; -fx-cursor: hand;"));
+
+        sendButton.setOnAction(e -> sendMessage());
         messageInput.setOnAction(e -> sendMessage());
 
         HBox inputArea = new HBox(10, messageInput, sendButton);
-        inputArea.setAlignment(Pos.CENTER_LEFT);
-        inputArea.setPadding(new Insets(10, 0, 0, 0));
-        inputArea.setMaxWidth(Double.MAX_VALUE);
+        inputArea.setPadding(new Insets(15, 30, 115, 30));
+        inputArea.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: #E0E0E0; -fx-border-width: 1 0 0 0;");
+        inputArea.setAlignment(Pos.CENTER);
+        root.setBottom(inputArea);
 
-        VBox.setMargin(inputArea, new Insets(0, 0, 100, 0));
-
-        rootLayout.getChildren().addAll(header, chatScrollPane, inputArea);
-
-        Scene scene = new Scene(rootLayout, 1920,1080); 
+        Scene scene = new Scene(root, 1920, 1080);
         stage.setScene(scene);
         stage.setTitle("Safe Serve | AI Chatbot");
         stage.setResizable(true);
         stage.show();
     }
+
 
     private void sendMessage() {
         String userMessage = messageInput.getText().trim();
@@ -172,35 +178,50 @@ public class FloatingButtonPage extends Application {
     }
 
     private void displayMessage(String message, boolean isUser) {
+        String timestamp = java.time.LocalTime.now().withNano(0).toString();
+
         Label messageLabel = new Label(message);
-        messageLabel.setFont(getFont(16, FontWeight.NORMAL));
+        messageLabel.setFont(getFont(24, FontWeight.NORMAL));
         messageLabel.setWrapText(true);
-        messageLabel.setPadding(new Insets(8, 12, 8, 12));
+        messageLabel.setTextFill(isUser ? Color.WHITE : Color.web(FONT_COLOR_DARK));
 
-        HBox messageWrapper = new HBox();
-        messageWrapper.setMaxWidth(Region.USE_PREF_SIZE); 
+        Label timeLabel = new Label(timestamp);
+        timeLabel.setFont(Font.font("System", FontWeight.THIN, 10));
+        timeLabel.setTextFill(Color.GRAY);
 
-        HBox messageBubble = new HBox(messageLabel);
-        messageBubble.setMaxWidth(400);
+        VBox bubbleContent = new VBox(messageLabel, timeLabel);
+        bubbleContent.setSpacing(4);
+        bubbleContent.setPadding(new Insets(8, 12, 8, 12));
+        bubbleContent.setMaxWidth(400);
+        bubbleContent.setStyle(isUser
+                ? "-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 12 12 0 12;"
+                : "-fx-background-color: #e9ecef; -fx-background-radius: 12 12 12 0;");
+
+        ImageView avatar = new ImageView(isUser
+                ? new Image("https://img.icons8.com/ios-filled/50/005A9C/user-male-circle.png")
+                : new Image("https://img.icons8.com/ios-filled/50/000000/robot.png"));
+        avatar.setFitWidth(42);
+        avatar.setFitHeight(42);
+
+        HBox messageRow = new HBox(10);
+        messageRow.setAlignment(Pos.TOP_LEFT);
+        messageRow.setMaxWidth(700);
 
         if (isUser) {
-            messageLabel.setTextFill(Color.WHITE);
-            messageBubble.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 15;");
-            messageWrapper.setAlignment(Pos.CENTER);
+            messageRow.setAlignment(Pos.TOP_RIGHT);
+            messageRow.getChildren().addAll(bubbleContent, avatar);
         } else {
-            messageLabel.setTextFill(Color.web(FONT_COLOR_DARK));
-            messageBubble.setStyle("-fx-background-color: #e9ecef; -fx-background-radius: 15;");
-            messageWrapper.setAlignment(Pos.CENTER);
+            messageRow.getChildren().addAll(avatar, bubbleContent);
         }
 
-        messageWrapper.getChildren().add(messageBubble);
+        messageRow.setOpacity(0);
+        chatHistoryBox.getChildren().add(messageRow);
 
-        messageWrapper.setOpacity(0); 
-        chatHistoryBox.getChildren().add(messageWrapper); 
-        FadeTransition ft = new FadeTransition(Duration.millis(500), messageWrapper);
+        FadeTransition ft = new FadeTransition(Duration.millis(400), messageRow);
         ft.setToValue(1.0);
         ft.play();
     }
+
 
     private void showLoading(boolean show) {
         if (show) {
