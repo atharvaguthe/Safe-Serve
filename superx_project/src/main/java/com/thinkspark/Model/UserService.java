@@ -18,33 +18,23 @@ public class UserService {
         }
     }
 
-    /**
-     * Registers user details (name, email, role) in Firestore.
-     * This method no longer handles passwords.
-     * @param user The user object containing name, email, and role.
-     * @return true if the data was successfully written, false otherwise.
-     */
     public boolean registerUser(User user) {
         if (FirebaseConfig.getDb() == null) {
             System.err.println("Firestore database is not initialized.");
             return false;
         }
 
-        // Create a map to store user data, excluding the password.
         Map<String, Object> userData = new HashMap<>();
         userData.put("name", user.getName());
         userData.put("email", user.getEmail());
         userData.put("role", user.getRole());
-        // Add imageUrl if it exists
         if (user.getImageUrl() != null) {
             userData.put("imageUrl", user.getImageUrl());
         }
 
-        // Use the user's email as the document ID for easy lookup.
         ApiFuture<WriteResult> future = FirebaseConfig.getDb().collection("users").document(user.getEmail()).set(userData);
 
         try {
-            // Block and wait for the write to complete to confirm success.
             future.get();
             System.out.println("User data successfully saved to Firestore for: " + user.getEmail());
             return true;
@@ -54,11 +44,6 @@ public class UserService {
         }
     }
 
-    /**
-     * Fetches a user's details from Firestore by their email.
-     * @param email The email of the user to fetch.
-     * @return The User object if found, null otherwise.
-     */
     public User getUserByEmail(String email) {
         if (FirebaseConfig.getDb() == null) {
             System.err.println("Firestore database is not initialized.");
@@ -75,12 +60,6 @@ public class UserService {
         return null;
     }
 
-    /**
-     * Updates a user's profile image URL in Firestore.
-     * @param email The email of the user whose profile image to update.
-     * @param imageUrl The new URL of the profile image.
-     * @return true if the update was successful, false otherwise.
-     */
     public boolean updateUserProfileImage(String email, String imageUrl) {
         if (FirebaseConfig.getDb() == null) {
             System.err.println("Firestore database is not initialized.");

@@ -8,14 +8,13 @@ import com.thinkspark.model.FirebaseConfig;
 import com.thinkspark.model.Task;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-// Import DocumentChange
 import com.google.cloud.firestore.DocumentChange;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors; // NEW IMPORT
+import java.util.concurrent.Executors;
 
 public class TaskDao {
 
@@ -32,7 +31,6 @@ public class TaskDao {
         this.db = initializedDb;
     }
 
-    // NEW METHOD: Save a Task object to Firestore
     public void saveTask(Task task) {
         if (db == null) {
             System.err.println("Firestore is not initialized. Cannot save task.");
@@ -41,15 +39,14 @@ public class TaskDao {
 
         Map<String, Object> taskData = new HashMap<>();
         taskData.put("description", task.getDescription());
-        taskData.put("assignedTo", task.getAssignedTo()); // This field is crucial for filtering!
-        taskData.put("status", task.getStatus()); // Save initial status (Assigned)
-        taskData.put("disasterId", task.getDisasterId()); // Save linked disaster ID
+        taskData.put("assignedTo", task.getAssignedTo()); 
+        taskData.put("status", task.getStatus()); 
+        taskData.put("disasterId", task.getDisasterId()); 
 
-        System.out.println("DEBUG DAO: Saving Task Data: " + taskData); // DEBUG PRINT
+        System.out.println("DEBUG DAO: Saving Task Data: " + taskData); 
 
         ApiFuture<DocumentReference> future = db.collection("tasks").add(taskData);
 
-        // Execute the listener on a separate single-thread executor to prevent blocking the UI.
         future.addListener(() -> {
             try {
                 System.out.println("DAO Success: Task saved to Firebase with new ID: " + future.get().getId());
@@ -57,23 +54,20 @@ public class TaskDao {
                 System.err.println("DAO Error: Failed to save task to Firebase. " + e.getMessage());
                 e.printStackTrace();
             }
-        }, Executors.newSingleThreadExecutor()); // Corrected: Run on a background thread
+        }, Executors.newSingleThreadExecutor()); 
     }
 
-    // NEW METHOD: Update the status of a task
     public void updateTaskStatus(String taskId, String newStatus) {
         if (db == null) {
             System.err.println("Firestore is not initialized. Cannot update task status.");
             return;
         }
-        // Execute the listener on a separate single-thread executor to prevent blocking the UI.
         db.collection("tasks").document(taskId).update("status", newStatus)
             .addListener(() -> {
                 System.out.println("Task " + taskId + " status updated to " + newStatus);
-            }, Executors.newSingleThreadExecutor()); // Corrected: Run on a background thread
+            }, Executors.newSingleThreadExecutor());
     }
 
-    // Modified to filter by assignedTo and include firebaseDocId
     public void listenForTasks(ObservableList<Task> targetList, String assignedToVolunteerName) {
         if (db == null) {
             System.err.println("Firestore is not initialized. Cannot listen for tasks.");
@@ -81,8 +75,8 @@ public class TaskDao {
         }
 
         db.collection("tasks")
-            .whereEqualTo("assignedTo", assignedToVolunteerName) // Filter by volunteer
-            .orderBy("status", Query.Direction.ASCENDING) // Order to show assigned before completed
+            .whereEqualTo("assignedTo", assignedToVolunteerName) 
+            .orderBy("status", Query.Direction.ASCENDING) 
             .addSnapshotListener((snapshots, e) -> {
                 if (e != null) {
                     System.err.println("Listen for tasks failed: " + e);
@@ -90,19 +84,16 @@ public class TaskDao {
                 }
 
                 Platform.runLater(() -> {
-                    // Process only the changes
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Task task = dc.getDocument().toObject(Task.class);
-                        task.setFirebaseDocId(dc.getDocument().getId()); // Set Firebase document ID
+                        task.setFirebaseDocId(dc.getDocument().getId()); 
 
                         switch (dc.getType()) {
                             case ADDED:
-                                // Add at the correct index for ordered lists, or just add if order doesn't strictly matter here
                                 targetList.add(task);
                                 System.out.println("DEBUG DAO: Added task: " + task.getDescription() + " (Status: " + task.getStatus() + ", AssignedTo: " + task.getAssignedTo() + ", ID: " + task.getFirebaseDocId() + ")");
                                 break;
                             case MODIFIED:
-                                // Find and replace the modified item
                                 for (int i = 0; i < targetList.size(); i++) {
                                     if (targetList.get(i).getFirebaseDocId().equals(task.getFirebaseDocId())) {
                                         targetList.set(i, task);
@@ -112,7 +103,6 @@ public class TaskDao {
                                 }
                                 break;
                             case REMOVED:
-                                // Find and remove the deleted item
                                 targetList.removeIf(t -> t.getFirebaseDocId().equals(task.getFirebaseDocId()));
                                 System.out.println("DEBUG DAO: Removed task: " + task.getDescription() + " (Status: " + task.getStatus() + ", AssignedTo: " + task.getAssignedTo() + ", ID: " + task.getFirebaseDocId() + ")");
                                 break;

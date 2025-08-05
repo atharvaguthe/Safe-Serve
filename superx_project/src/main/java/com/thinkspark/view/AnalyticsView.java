@@ -23,7 +23,6 @@ import javafx.collections.ObservableList;
 
 
 public class AnalyticsView extends Application {
-    // Style Definitions
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
@@ -100,22 +99,20 @@ public class AnalyticsView extends Application {
         overviewStatsGrid.add(createStatCard("Volunteers Engaged", "343", FONT_COLOR_MEDIUM), 0, 1);
         overviewStatsGrid.add(createStatCard("Resources Deployed", "8.2K", FONT_COLOR_MEDIUM), 1, 1);
         overviewStatsGrid.add(createStatCard("NGOs Partnered", "12", FONT_COLOR_MEDIUM), 2, 1);
-        
-        // Wrap overviewStatsGrid in a VBox with styling
+
         VBox overviewCard = new VBox(overviewStatsGrid);
         overviewCard.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
                               "-fx-background-radius: 12; " +
                               "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
         overviewCard.setPadding(new Insets(30));
-        overviewCard.setMaxWidth(1200); // Adjust max width
+        overviewCard.setMaxWidth(1200); 
         overviewCard.setAlignment(Pos.CENTER);
 
-        // Section 2: Charts
-        HBox chartsRow1 = new HBox(40); // Spacing between charts
+        HBox chartsRow1 = new HBox(40); 
         chartsRow1.setAlignment(Pos.CENTER);
         chartsRow1.getChildren().addAll(createIncidentTypeBarChart(), createIncidentStatusPieChart());
         
-        HBox chartsRow2 = new HBox(40); // Spacing between charts
+        HBox chartsRow2 = new HBox(40); 
         chartsRow2.setAlignment(Pos.CENTER);
         chartsRow2.getChildren().addAll(createVolunteerActivityLineChart());
 
@@ -123,15 +120,14 @@ public class AnalyticsView extends Application {
         return contentLayout;
     }
 
-    // Helper to create individual statistic cards
     private Node createStatCard(String title, String value, String colorHex) {
         VBox card = new VBox(5);
         card.setPadding(new Insets(20));
         card.setAlignment(Pos.CENTER);
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
                       "-fx-background-radius: 10; " +
-                      "-fx-border-color: " + colorHex + "; -fx-border-width: 2;"); // Border color based on type
-        card.setPrefSize(250, 120); // Fixed size for consistency
+                      "-fx-border-color: " + colorHex + "; -fx-border-width: 2;"); 
+        card.setPrefSize(250, 120); 
 
         Label titleLabel = new Label(title);
         titleLabel.setFont(getFont(16, FontWeight.NORMAL));
@@ -145,7 +141,6 @@ public class AnalyticsView extends Application {
         return card;
     }
 
-    // NEW: Bar Chart for Incident Types
     private Node createIncidentTypeBarChart() {
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
@@ -164,14 +159,13 @@ public class AnalyticsView extends Application {
         series.getData().add(new XYChart.Data<>("Other", 30));
 
         barChart.getData().add(series);
-        barChart.setPrefSize(700, 400); // Adjust size
+        barChart.setPrefSize(700, 400); 
         barChart.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 12;");
         barChart.setPadding(new Insets(20));
 
         return barChart;
     }
 
-    // NEW: Pie Chart for Incident Status
     private Node createIncidentStatusPieChart() {
         ObservableList<PieChart.Data> pieChartData =
                 FXCollections.observableArrayList(
@@ -182,17 +176,13 @@ public class AnalyticsView extends Application {
         final PieChart chart = new PieChart(pieChartData);
         chart.setTitle("Incident Status Distribution");
         chart.setLabelsVisible(true);
-        chart.setPrefSize(500, 400); // Adjust size
+        chart.setPrefSize(500, 400); 
         chart.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 12;");
         chart.setPadding(new Insets(20));
 
-        // Custom colors for pie slices (optional, requires CSS or lookup)
-        // For simplicity, I'll rely on default JavaFX styling or external CSS for this.
-        
         return chart;
     }
 
-    // NEW: Line Chart for Volunteer Activity (example)
     private Node createVolunteerActivityLineChart() {
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
@@ -212,7 +202,7 @@ public class AnalyticsView extends Application {
         series.getData().add(new XYChart.Data<>("Jun", 280));
 
         lineChart.getData().add(series);
-        lineChart.setPrefSize(1200, 400); // Adjust size to span wider
+        lineChart.setPrefSize(1200, 400);
         lineChart.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; -fx-background-radius: 12;");
         lineChart.setPadding(new Insets(20));
 

@@ -143,9 +143,9 @@ public class ViewDonationsView extends Application {
                       "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); 
 
         ObservableList<DonationItem> donations = FXCollections.observableArrayList(
-            new DonationItem("Anonymous", "$100.00", "2024-07-19"),
-            new DonationItem("Atharva Guthe", "$50.00", "2024-07-19"),
-            new DonationItem("Rajesh Malhotra", "$250.00", "2024-07-18")
+            new DonationItem("Anonymous", "Rs100.00", "2024-07-19"),
+            new DonationItem("Atharva Guthe", "Rs5000.00", "2024-07-19"),
+            new DonationItem("Rajesh Malhotra", "Rs250.00", "2024-07-18")
         );
 
         ListView<DonationItem> listView = new ListView<>(donations);

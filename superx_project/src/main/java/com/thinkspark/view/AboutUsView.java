@@ -139,7 +139,6 @@ public class AboutUsView extends Application {
         core2webText.setTextAlignment(TextAlignment.JUSTIFY);
         core2webBox.getChildren().addAll(core2webImage, core2webText);
 
-        // === Safe Serve Project Section (Third) ===
         HBox projectSection = new HBox(45);
         projectSection.setAlignment(Pos.CENTER_LEFT);
         projectSection.setPadding(new Insets(15, 0, 45, 0));
@@ -162,7 +161,6 @@ public class AboutUsView extends Application {
         ImageView logoImage = loadImage("/logo.png", 350, 350);
         projectSection.getChildren().addAll(projectTextBox, logoImage);
 
-        // === Team Section ===
         VBox teamSection = (VBox) createSection(
                 "👥 Our Team : ThinkSpark",
                 "ThinkSpark is a team of passionate developers, designers, and problem-solvers dedicated to using technology for social good. We believe in the power of innovation to create practical solutions for real-world challenges. The Safe Serve project is our commitment to building a more resilient and connected society."
@@ -178,13 +176,11 @@ public class AboutUsView extends Application {
         );
         teamSection.getChildren().add(teamRow);
 
-        // === Goal Section ===
         Node missionSection = createSection(
                 "🎯 Our Goal :",
                 "To empower communities with a reliable and intuitive platform that facilitates rapid response and effective communication during disasters, ensuring that help reaches those who need it most, as quickly as possible."
         );
 
-        // Final Card Additions
         card.getChildren().addAll(
                 teacherTitleBox, shashiBox,
                 coreTitleBox, core2webBox,

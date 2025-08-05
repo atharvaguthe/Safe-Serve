@@ -32,11 +32,7 @@ public class CitizenDashboard extends Application {
     private static final String FONT_COLOR_LIGHT = "#FFFFFF";
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
-    private static final String SECONDARY_BLUE = "#007BFF"; // For floating button
-    // Reverted color definitions as they are no longer directly used in basic stats
-    // private static final String WARNING_COLOR = "#FFC107"; // Orange for caution
-    // private static final String DANGER_COLOR = "#DC3545"; // Red for critical
-
+    private static final String SECONDARY_BLUE = "#007BFF"; 
 
     private Stage primaryStage;
     private Scene dashboardScene;
@@ -76,7 +72,6 @@ public class CitizenDashboard extends Application {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        // --- Floating Circular Button ---
         Button floatingButton = new Button("🤖"); 
         floatingButton.setStyle(
             "-fx-background-color: " + SECONDARY_BLUE + "; " + 
@@ -307,46 +302,42 @@ public class CitizenDashboard extends Application {
         return card;
     }
 
-    // UPDATED: createStatisticsModule to use basic stats and a "View Analytics" button
     private Node createStatisticsModule() {
-        VBox card = createDashboardCard("Key Statistics"); // Reverted title
+        VBox card = createDashboardCard("Key Statistics");
         GridPane grid = new GridPane();
-        grid.setHgap(35); // Reverted gap
-        grid.setVgap(35); // Reverted gap
-        grid.setPadding(new Insets(30, 0, 0, 0)); // Reverted padding
+        grid.setHgap(35); 
+        grid.setVgap(35); 
+        grid.setPadding(new Insets(30, 0, 0, 0)); 
         
-        grid.add(createStatItem("12K", "People Rescued", PRIMARY_BLUE), 0, 0); // Re-added color parameter
-        grid.add(createStatItem("56K", "Requests Handled", PRIMARY_BLUE), 1, 0); // Re-added color parameter
-        grid.add(createStatItem("343", "Active Volunteers", SECONDARY_ACCENT_COLOR), 0, 1); // Re-added color parameter
-        grid.add(createStatItem("39K", "Resources Delivered", SECONDARY_ACCENT_COLOR), 1, 1); // Re-added color parameter
+        grid.add(createStatItem("12K", "People Rescued", PRIMARY_BLUE), 0, 0); 
+        grid.add(createStatItem("56K", "Requests Handled", PRIMARY_BLUE), 1, 0); 
+        grid.add(createStatItem("343", "Active Volunteers", SECONDARY_ACCENT_COLOR), 0, 1); 
+        grid.add(createStatItem("39K", "Resources Delivered", SECONDARY_ACCENT_COLOR), 1, 1); 
 
         card.getChildren().add(grid);
 
-        // New button to open AnalyticsView
         Button viewAnalyticsButton = new Button("View Analytics");
         viewAnalyticsButton.setFont(getFont(20, FontWeight.BOLD));
         viewAnalyticsButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
         viewAnalyticsButton.setStyle("-fx-background-color: " + PRIMARY_BLUE + "; -fx-background-radius: 10; -fx-cursor: hand;");
         viewAnalyticsButton.setPrefHeight(60);
         viewAnalyticsButton.setMaxWidth(Double.MAX_VALUE);
-        VBox.setMargin(viewAnalyticsButton, new Insets(30, 0, 0, 0)); // Add top margin
+        VBox.setMargin(viewAnalyticsButton, new Insets(30, 0, 0, 0)); 
 
-        // Action to open AnalyticsView
         viewAnalyticsButton.setOnAction(e -> new AnalyticsView(primaryStage, dashboardScene).start(primaryStage));
 
-        card.getChildren().add(viewAnalyticsButton); // Add the new button to the card
+        card.getChildren().add(viewAnalyticsButton); 
 
         return card;
     }
 
-    // UPDATED: createStatItem to include color parameter
     private Node createStatItem(String number, String label, String color) {
         VBox item = new VBox(-7);
         item.setAlignment(Pos.CENTER_LEFT);
         
         Label numberLabel = new Label(number);
         numberLabel.setFont(getFont(48, FontWeight.BOLD));
-        numberLabel.setTextFill(Color.web(color)); // Use passed color
+        numberLabel.setTextFill(Color.web(color)); 
         
         Label textLabel = new Label(label);
         textLabel.setFont(getFont(20, FontWeight.NORMAL));

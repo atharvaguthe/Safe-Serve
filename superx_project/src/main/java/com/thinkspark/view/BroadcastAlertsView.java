@@ -2,7 +2,7 @@ package com.thinkspark.view;
 
 import com.thinkspark.dao.AlertDao;
 import com.thinkspark.model.DataManager;
-// We use the fully qualified name for com.thinkspark.model.Alert to avoid name conflicts
+
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -19,7 +19,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class BroadcastAlertsView extends Application {
-    // --- Style Definitions ---
     private static final String BACKGROUND_COLOR = "#F4F7FC";
     private static final String PRIMARY_BLUE = "#005A9C";
     private static final String FONT_COLOR_DARK = "#2D3748";
@@ -42,8 +41,8 @@ public class BroadcastAlertsView extends Application {
 
     @Override
     public void start(Stage stage) {
-        VBox rootLayout = new VBox(50); // Increased spacing
-        rootLayout.setPadding(new Insets(60, 80, 80, 80)); // Increased padding
+        VBox rootLayout = new VBox(50);
+        rootLayout.setPadding(new Insets(60, 80, 80, 80));
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -61,20 +60,20 @@ public class BroadcastAlertsView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(20, 0, 30, 0)); // Increased padding
+        header.setPadding(new Insets(20, 0, 30, 0));
 
         Label title = new Label("📢 Broadcast New Alert");
-        title.setFont(getFont(42, FontWeight.BOLD)); // Increased font size
+        title.setFont(getFont(42, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(20, FontWeight.MEDIUM)); // Increased font size
+        backButton.setFont(getFont(20, FontWeight.MEDIUM));
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
         backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12;"); // Increased radius
-        backButton.setPadding(new Insets(15, 28, 15, 28)); // Increased padding
+        backButton.setPadding(new Insets(15, 28, 15, 28));
         backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
@@ -82,34 +81,34 @@ public class BroadcastAlertsView extends Application {
     }
 
     private Node createBroadcastForm() {
-        VBox card = new VBox(35); // Increased spacing
-        card.setPadding(new Insets(50)); // Increased padding
+        VBox card = new VBox(35); 
+        card.setPadding(new Insets(50)); 
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 20; " + // Increased radius
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); // Increased shadow
-        card.setMaxWidth(1000); // Increased max width
+                      "-fx-background-radius: 20; " + 
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); 
+        card.setMaxWidth(1000);
 
         GridPane formGrid = new GridPane();
-        formGrid.setHgap(30); // Increased gap
-        formGrid.setVgap(25); // Increased gap
+        formGrid.setHgap(30);
+        formGrid.setVgap(25);
 
         TextField titleField = new TextField();
         titleField.setPromptText("e.g., Evacuation Notice for Sector 5");
         styleFormControl(titleField);
-        titleField.setPrefHeight(60); // Set preferred height
+        titleField.setPrefHeight(60);
 
         TextArea messageArea = new TextArea();
         messageArea.setPromptText("Enter the full alert details here...");
         messageArea.setWrapText(true);
-        messageArea.setPrefRowCount(5); // Increased row count
+        messageArea.setPrefRowCount(5);
         styleFormControl(messageArea);
-        messageArea.setPrefHeight(150); // Set preferred height
+        messageArea.setPrefHeight(150);
 
         ComboBox<String> priorityBox = new ComboBox<>();
         priorityBox.getItems().addAll("High", "Medium", "Low");
         priorityBox.setPromptText("Select Priority");
         styleFormControl(priorityBox);
-        priorityBox.setPrefHeight(60); // Set preferred height
+        priorityBox.setPrefHeight(60); 
 
         formGrid.add(createLabel("Alert Title"), 0, 0);
         formGrid.add(titleField, 1, 0);
@@ -119,10 +118,10 @@ public class BroadcastAlertsView extends Application {
         formGrid.add(priorityBox, 1, 2);
 
         Button submitButton = new Button("Broadcast Alert");
-        submitButton.setFont(getFont(22, FontWeight.BOLD)); // Increased font size
+        submitButton.setFont(getFont(22, FontWeight.BOLD)); 
         submitButton.setTextFill(Color.web(FONT_COLOR_LIGHT));
         submitButton.setStyle("-fx-background-color: " + SUCCESS_COLOR + "; -fx-background-radius: 12; -fx-cursor: hand;"); // Increased radius
-        submitButton.setPadding(new Insets(18, 35, 18, 35)); // Increased padding
+        submitButton.setPadding(new Insets(18, 35, 18, 35)); 
         HBox actionBox = new HBox(submitButton);
         actionBox.setAlignment(Pos.CENTER_RIGHT);
 
@@ -139,26 +138,22 @@ public class BroadcastAlertsView extends Application {
                 return;
             }
 
-            // 1. Create the Alert object using its fully qualified name
             com.thinkspark.model.Alert newAlert = new com.thinkspark.model.Alert(title, message, priority);
 
-            // 2. Use the AlertDao to save the alert to the database
             AlertDao alertDao = new AlertDao();
             alertDao.saveAlert(newAlert);
-            
-            // 3. (Optional) Also add to the local DataManager for immediate UI updates.
+
             DataManager.getBroadcastAlerts().add(newAlert);
 
-            // --- Confirmation UI ---
-            VBox confirmationVBox = new VBox(30); // Increased spacing
+            VBox confirmationVBox = new VBox(30);
             confirmationVBox.setAlignment(Pos.CENTER);
-            confirmationVBox.setPadding(new Insets(60)); // Increased padding
+            confirmationVBox.setPadding(new Insets(60)); 
             
             Label confirmationTitle = new Label("✅ Alert Sent Successfully!");
-            confirmationTitle.setFont(getFont(32, FontWeight.BOLD)); // Increased font size
+            confirmationTitle.setFont(getFont(32, FontWeight.BOLD)); 
             
             Label confirmationText = new Label("The alert has been broadcast and saved to the database.");
-            confirmationText.setFont(getFont(20, FontWeight.NORMAL)); // Increased font size
+            confirmationText.setFont(getFont(20, FontWeight.NORMAL)); 
             confirmationText.setTextAlignment(TextAlignment.CENTER);
             
             confirmationVBox.getChildren().addAll(confirmationTitle, confirmationText);
@@ -176,13 +171,13 @@ public class BroadcastAlertsView extends Application {
 
     private Label createLabel(String text) {
         Label label = new Label(text);
-        label.setFont(getFont(18, FontWeight.MEDIUM)); // Increased font size
+        label.setFont(getFont(18, FontWeight.MEDIUM)); 
         label.setTextFill(Color.web(FONT_COLOR_DARK));
         return label;
     }
 
     private void styleFormControl(Control control) {
         control.setStyle("-fx-font-size: 16px; -fx-background-color: #FFFFFF; -fx-border-color: " + BORDER_COLOR + "; -fx-border-radius: 10; -fx-padding: 10;"); // Increased font size, padding, radius
-        GridPane.setHgrow(control, Priority.ALWAYS); // Ensure it grows within the grid
+        GridPane.setHgrow(control, Priority.ALWAYS); 
     }
 }

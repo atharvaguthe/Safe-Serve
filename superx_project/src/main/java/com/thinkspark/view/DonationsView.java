@@ -103,7 +103,7 @@ public class DonationsView extends Application {
         formGrid.setVgap(25);
 
 
-        formGrid.add(createLabel("Select Amount ($)"), 0, 0);
+        formGrid.add(createLabel("Select Amount (Rs)"), 0, 0);
         HBox amountBox = new HBox(15);
         amountBox.getChildren().addAll(
             createAmountButton("25"),

@@ -8,10 +8,8 @@ import java.net.URL;
 import java.util.Base64;
 import org.json.JSONObject;
 
-// Handles user authentication.
 public class LoginController {
 
-    // Authenticates a user with their email, password, and role.
     public Result login(String email, String password, String selectedRole) {
         try {
             String apiKey = "AIzaSyAZ0tYGpqtLb3OvVNj0RROf4eDMx5Uk330"; // Your Web API Key
@@ -60,7 +58,6 @@ public class LoginController {
             return new Result(false, "Login Unsuccessful: " + e.getMessage());
         }
     }
-    // Represents the result of a login attempt.
     public static class Result {
         public final boolean success;
         public final String message;

@@ -10,8 +10,8 @@ public class Disaster {
     private String description;
     private String citizenName;
     private String imageUrl;
-    private String status; // NEW FIELD: To track the status of the disaster report
-    private String firebaseDocId; // NEW FIELD: To store Firestore document ID
+    private String status;
+    private String firebaseDocId; 
 
     @ServerTimestamp
     private Date timestamp;
@@ -23,10 +23,9 @@ public class Disaster {
         this.location = location;
         this.description = description;
         this.citizenName = citizenName;
-        this.status = "Pending"; // Default status when a disaster is reported
+        this.status = "Pending"; 
     }
 
-    // Getters and Setters for existing fields...
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
 
@@ -45,7 +44,6 @@ public class Disaster {
     public Date getTimestamp() { return timestamp; }
     public void setTimestamp(Date timestamp) { this.timestamp = timestamp; }
 
-    // NEW Getters and Setters for status and firebaseDocId
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 

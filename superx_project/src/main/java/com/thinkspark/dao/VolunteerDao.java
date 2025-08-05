@@ -6,7 +6,6 @@ import com.thinkspark.model.FirebaseConfig;
 import com.thinkspark.model.Volunteer;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-// Import DocumentChange
 import com.google.cloud.firestore.DocumentChange;
 
 import java.io.IOException;
@@ -40,18 +39,14 @@ public class VolunteerDao {
                 }
 
                 Platform.runLater(() -> {
-                    // Process only the changes
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Volunteer volunteer = dc.getDocument().toObject(Volunteer.class);
-                        // Assuming Volunteer objects are unique by email, or some other ID
-                        // For simplicity, we'll rely on object equality or add an ID field if necessary.
 
                         switch (dc.getType()) {
                             case ADDED:
                                 targetList.add(volunteer);
                                 break;
                             case MODIFIED:
-                                // Find and replace the modified item. You might need a unique ID here if object equality doesn't work.
                                 for (int i = 0; i < targetList.size(); i++) {
                                     if (targetList.get(i).getEmail().equals(volunteer.getEmail())) { // Assuming email is unique identifier
                                         targetList.set(i, volunteer);

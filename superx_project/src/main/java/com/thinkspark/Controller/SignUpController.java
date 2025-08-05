@@ -13,10 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.json.JSONObject;
 
-// Handles user registration.
 public class SignUpController {
 
-    // Registers a new user with their name, email, password, and role.
     public Result signUp(String name, String email, String password, String role) {
         if (email == null || email.isEmpty() || password == null || password.isEmpty() || name == null || name.isEmpty() || role == null || role.isEmpty()) {
             return new Result(false, "All fields are required and cannot be empty");
@@ -73,7 +71,6 @@ public class SignUpController {
         }
     }
 
-    // Represents the result of a sign-up attempt.
     public static class Result {
         public Boolean success;
         public String message;

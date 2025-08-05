@@ -23,7 +23,6 @@ public class FileStorageDao {
     public FileStorageDao() {
         try {
             FirebaseConfig.initialize();
-            // Authenticate with Google Cloud Storage
             FileInputStream serviceAccount = new FileInputStream("superx_project/src/main/resources/safe-serve-private.json");
             storage = StorageOptions.newBuilder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -46,10 +45,8 @@ public class FileStorageDao {
             BlobId blobId = BlobId.of(BUCKET_NAME, blobName);
             BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
-            // Upload the file
             storage.create(blobInfo, Files.readAllBytes(file.toPath()));
 
-            // Get the public URL
             return storage.get(blobId).signUrl(365, TimeUnit.DAYS).toString();
         } catch (IOException e) {
             System.err.println("Error uploading file to Firebase Storage: " + e.getMessage());

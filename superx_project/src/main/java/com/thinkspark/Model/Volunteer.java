@@ -12,16 +12,11 @@ public class Volunteer {
 
     public Volunteer() {}
 
-    /**
-     * Constructs a new Volunteer object.
-     *
-     * @param name The full name of the volunteer.
-     */
+   
     public Volunteer(String name) {
         this.name = name;
     }
 
-    // Firestore uses these to automatically map data.
 
     public String getName() {
         return name;

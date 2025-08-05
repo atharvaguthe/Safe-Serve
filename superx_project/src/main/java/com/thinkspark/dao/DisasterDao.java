@@ -6,14 +6,13 @@ import com.thinkspark.model.Disaster;
 import com.thinkspark.model.FirebaseConfig;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-// Import DocumentChange
 import com.google.cloud.firestore.DocumentChange;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors; // NEW IMPORT
+import java.util.concurrent.Executors; 
 
 public class DisasterDao {
 
@@ -42,12 +41,11 @@ public class DisasterDao {
         disasterData.put("description", disaster.getDescription());
         disasterData.put("citizenName", disaster.getCitizenName());
         disasterData.put("imageUrl", disaster.getImageUrl());
-        disasterData.put("status", disaster.getStatus()); // NEW: Save initial status
+        disasterData.put("status", disaster.getStatus());
         disasterData.put("timestamp", FieldValue.serverTimestamp());
 
         ApiFuture<DocumentReference> future = db.collection("disasters").add(disasterData);
 
-        // Execute the listener on a separate single-thread executor to prevent blocking the UI.
         future.addListener(() -> {
             try {
                 System.out.println("DAO Success: Disaster report saved to Firebase with new ID: " + future.get().getId());
@@ -58,17 +56,15 @@ public class DisasterDao {
         }, Executors.newSingleThreadExecutor());
     }
 
-    // NEW METHOD: Update the status of a disaster report
     public void updateDisasterStatus(String disasterId, String newStatus) {
         if (db == null) {
             System.err.println("Firestore is not initialized. Cannot update disaster status.");
             return;
         }
-        // Execute the listener on a separate single-thread executor to prevent blocking the UI.
         db.collection("disasters").document(disasterId).update("status", newStatus)
             .addListener(() -> {
                 System.out.println("Disaster report " + disasterId + " status updated to " + newStatus);
-            }, Executors.newSingleThreadExecutor()); // Corrected: Run on a background thread
+            }, Executors.newSingleThreadExecutor()); 
     }
 
     public void listenForDisasterReports(ObservableList<Disaster> targetList) {
@@ -85,10 +81,9 @@ public class DisasterDao {
                 }
 
                 Platform.runLater(() -> {
-                    // Process only the changes
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Disaster disaster = dc.getDocument().toObject(Disaster.class);
-                        disaster.setFirebaseDocId(dc.getDocument().getId()); // Set the Firebase document ID
+                        disaster.setFirebaseDocId(dc.getDocument().getId()); 
                         disaster.setStatus(dc.getDocument().getString("status"));
 
                         switch (dc.getType()) {
@@ -131,8 +126,8 @@ public class DisasterDao {
                     // Process only the changes
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         Disaster disaster = dc.getDocument().toObject(Disaster.class);
-                        disaster.setFirebaseDocId(dc.getDocument().getId()); // NEW: Set the Firebase document ID
-                        disaster.setStatus(dc.getDocument().getString("status")); // NEW: Set the status from Firestore
+                        disaster.setFirebaseDocId(dc.getDocument().getId());
+                        disaster.setStatus(dc.getDocument().getString("status")); 
 
                         switch (dc.getType()) {
                             case ADDED:

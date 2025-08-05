@@ -5,7 +5,6 @@ import com.thinkspark.model.FirebaseConfig;
 import com.thinkspark.view.ManageNgosView;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-// Import DocumentChange
 import com.google.cloud.firestore.DocumentChange;
 
 
@@ -40,12 +39,10 @@ public class NgoDao {
                 }
 
                 Platform.runLater(() -> {
-                    // Process only the changes
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                        // Assuming NgoItem can be uniquely identified by name or email (contact)
                         ManageNgosView.NgoItem ngoItem = new ManageNgosView.NgoItem(
                             dc.getDocument().getString("name"),
-                            dc.getDocument().getString("status"), // Assuming 'status' field exists and is updated
+                            dc.getDocument().getString("status"), 
                             dc.getDocument().getString("email")
                         );
 
@@ -55,14 +52,14 @@ public class NgoDao {
                                 break;
                             case MODIFIED:
                                 for (int i = 0; i < targetList.size(); i++) {
-                                    if (targetList.get(i).getContact().equals(ngoItem.getContact())) { // Assuming contact is unique
+                                    if (targetList.get(i).getContact().equals(ngoItem.getContact())) { 
                                         targetList.set(i, ngoItem);
                                         break;
                                     }
                                 }
                                 break;
                             case REMOVED:
-                                targetList.removeIf(n -> n.getContact().equals(ngoItem.getContact())); // Assuming contact is unique
+                                targetList.removeIf(n -> n.getContact().equals(ngoItem.getContact())); 
                                 break;
                         }
                     }
