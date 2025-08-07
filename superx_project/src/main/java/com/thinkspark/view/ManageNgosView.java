@@ -25,7 +25,7 @@ public class ManageNgosView extends Application {
     private static final String CARD_BACKGROUND_COLOR = "#FFFFFF";
     private static final String BORDER_COLOR = "#E2E8F0";
     private static final String STATUS_VERIFIED_COLOR = "#38A169";
-    private static final String STATUS_PENDING_COLOR = "#DD6B20";
+    private static final String STATUS_PENDING_COLOR = "#00a6ffff";
     private static final String ACTION_BUTTON_COLOR = "#3182CE";
 
     private final Scene previousScene;
@@ -67,29 +67,30 @@ public class ManageNgosView extends Application {
                 content.setStyle("-fx-border-color: transparent transparent " + BORDER_COLOR + " transparent; -fx-border-width: 1;");
 
                 Label nameLabel = new Label(item.getName());
-                nameLabel.setFont(ManageNgosView.getFont(20, FontWeight.BOLD)); 
+                nameLabel.setFont(ManageNgosView.getFont(20, FontWeight.BOLD));
                 Label contactLabel = new Label("Contact: " + item.getContact());
-                contactLabel.setFont(ManageNgosView.getFont(18, FontWeight.NORMAL)); 
+                contactLabel.setFont(ManageNgosView.getFont(18, FontWeight.NORMAL));
                 contactLabel.setOpacity(0.8);
-                VBox details = new VBox(10, nameLabel, contactLabel); 
+                VBox details = new VBox(10, nameLabel, contactLabel);
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                Label statusLabel = new Label(item.getStatus().toUpperCase());
-                statusLabel.setFont(ManageNgosView.getFont(16, FontWeight.BOLD)); 
+                String status = item.getStatus() != null ? item.getStatus().toUpperCase() : "VERIFIED";
+                Label statusLabel = new Label(status);
+                statusLabel.setFont(ManageNgosView.getFont(16, FontWeight.BOLD));
                 statusLabel.setTextFill(Color.WHITE);
-                statusLabel.setPadding(new Insets(8, 12, 8, 12)); 
-                String statusColor = "Verified".equalsIgnoreCase(item.getStatus()) ? STATUS_VERIFIED_COLOR : STATUS_PENDING_COLOR;
-                statusLabel.setStyle("-fx-background-color: " + statusColor + "; -fx-background-radius: 10;"); 
+                statusLabel.setPadding(new Insets(8, 12, 8, 12));
+                String statusColor = "Verified".equalsIgnoreCase(item.getStatus()) ? STATUS_VERIFIED_COLOR : STATUS_VERIFIED_COLOR;
+                statusLabel.setStyle("-fx-background-color: " + statusColor + "; -fx-background-radius: 10;");
 
                 content.getChildren().addAll(details, spacer, statusLabel);
 
                 if ("Pending Verification".equalsIgnoreCase(item.getStatus())) {
                     Button verifyButton = new Button("Verify NGO");
-                    verifyButton.setFont(ManageNgosView.getFont(16, FontWeight.BOLD)); 
+                    verifyButton.setFont(ManageNgosView.getFont(16, FontWeight.BOLD));
                     verifyButton.setTextFill(Color.WHITE);
-                    verifyButton.setStyle("-fx-background-color: " + ACTION_BUTTON_COLOR + "; -fx-background-radius: 10; -fx-cursor: hand;"); 
-                    verifyButton.setPadding(new Insets(10, 20, 10, 20)); 
+                    verifyButton.setStyle("-fx-background-color: " + ACTION_BUTTON_COLOR + "; -fx-background-radius: 10; -fx-cursor: hand;");
+                    verifyButton.setPadding(new Insets(10, 20, 10, 20));
                     verifyButton.setOnAction(e -> {
                         item.setStatus("Verified");
                         getListView().refresh();
@@ -110,7 +111,7 @@ public class ManageNgosView extends Application {
     @Override
     public void start(Stage stage) {
         VBox rootLayout = new VBox(40);
-        rootLayout.setPadding(new Insets(60, 80, 80, 80)); 
+        rootLayout.setPadding(new Insets(60, 80, 80, 80));
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -128,19 +129,19 @@ public class ManageNgosView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(20, 0, 30, 0)); 
+        header.setPadding(new Insets(20, 0, 30, 0));
 
         Label title = new Label("Manage Partner NGOs");
-        title.setFont(getFont(42, FontWeight.BOLD)); 
+        title.setFont(getFont(42, FontWeight.BOLD));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(20, FontWeight.MEDIUM)); 
+        backButton.setFont(getFont(20, FontWeight.MEDIUM));
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
         backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12;"); // Increased radius
-        backButton.setPadding(new Insets(15, 28, 15, 28)); 
+        backButton.setPadding(new Insets(15, 28, 15, 28));
         backButton.setOnAction(e -> primaryStage.setScene(previousScene));
 
         header.getChildren().addAll(title, spacer, backButton);
@@ -148,11 +149,11 @@ public class ManageNgosView extends Application {
     }
 
     private Node createNgosList() {
-        VBox card = new VBox(15); 
-        card.setPadding(new Insets(40)); 
+        VBox card = new VBox(15);
+        card.setPadding(new Insets(40));
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
                       "-fx-background-radius: 20; " +
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);"); 
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 20, 0, 0, 8);");
 
         ngosList = FXCollections.observableArrayList();
 
@@ -160,7 +161,7 @@ public class ManageNgosView extends Application {
         listView.setCellFactory(param -> new NgoCell());
         listView.setStyle("-fx-background-color: transparent;");
         listView.setPlaceholder(new Label("No NGOs to display."));
-        listView.setPrefHeight(600); 
+        listView.setPrefHeight(600);
 
         card.getChildren().add(listView);
         

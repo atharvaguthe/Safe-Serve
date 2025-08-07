@@ -62,17 +62,17 @@ public class ResourcesView extends Application {
         header.setPadding(new Insets(0, 0, 30, 0));
 
         Label title = new Label("📚 Resources & Information");
-        title.setFont(getFont(40, FontWeight.BOLD)); 
+        title.setFont(getFont(48, FontWeight.BOLD)); 
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(20, FontWeight.MEDIUM)); 
+        backButton.setFont(getFont(24, FontWeight.MEDIUM)); 
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 10;"); // Increased radius
-        backButton.setPadding(new Insets(10, 20, 10, 20));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 10;");
+        backButton.setPadding(new Insets(12, 24, 12, 24));
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
             primaryStage.setTitle("Citizen Dashboard | Disaster Relief Helper");
@@ -84,11 +84,11 @@ public class ResourcesView extends Application {
 
     private Node createResourcesContent() {
         VBox card = new VBox(40);
-        card.setPadding(new Insets(50)); 
+        card.setPadding(new Insets(60)); 
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
                       "-fx-background-radius: 15; " +
                       "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 15, 0, 0, 6);"); 
-        card.setMaxWidth(1000);
+        card.setMaxWidth(1400);
 
         Node contactsSection = createResourceSection(
             "Emergency Contacts",
@@ -129,8 +129,8 @@ public class ResourcesView extends Application {
     }
 
     private Node createResourceSection(String title, String content) {
-        VBox section = new VBox(15);
-        section.setPadding(new Insets(25, 0, 25, 0));
+        VBox section = new VBox(20);
+        section.setPadding(new Insets(35, 0, 35, 0));
         section.setStyle("-fx-border-color: " + BORDER_COLOR + " transparent transparent transparent; -fx-border-width: 1;");
 
         // Remove border from the first item
@@ -143,14 +143,14 @@ public class ResourcesView extends Application {
         });
         
         Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(28, FontWeight.BOLD));
+        titleLabel.setFont(getFont(32, FontWeight.BOLD));
         titleLabel.setTextFill(Color.web(PRIMARY_BLUE));
         
         Text contentText = new Text(content);
-        contentText.setFont(getFont(18, FontWeight.NORMAL));
+        contentText.setFont(getFont(22, FontWeight.NORMAL));
         contentText.setFill(Color.web(FONT_COLOR_DARK));
-        contentText.setWrappingWidth(900); 
-        contentText.setLineSpacing(7); 
+        contentText.setWrappingWidth(1200); 
+        contentText.setLineSpacing(10); 
         
         section.getChildren().addAll(titleLabel, contentText);
         

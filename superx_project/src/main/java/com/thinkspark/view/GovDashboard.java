@@ -16,6 +16,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -172,24 +173,48 @@ public class GovDashboard extends Application {
     }
 
     private Node createKeyActionsModule() {
-        VBox card = createDashboardCard("Key Actions");
-        GridPane buttonGrid = new GridPane();
-        buttonGrid.setHgap(30);
-        buttonGrid.setVgap(30); 
-        buttonGrid.setPadding(new Insets(25, 0, 0, 0)); 
+    VBox card = createDashboardCard("Key Actions");
 
-        Button broadcastButton = createQuickAccessButton("Broadcast Alert", true);
-        broadcastButton.setOnAction(e -> new BroadcastAlertsView(primaryStage, dashboardScene).start(primaryStage));
+    GridPane buttonGrid = new GridPane();
+    buttonGrid.setHgap(30);
+    buttonGrid.setVgap(30); 
+    buttonGrid.setPadding(new Insets(25, 0, 0, 0)); 
 
-        Button manageNgosButton = createQuickAccessButton("Manage NGOs", false);
-        manageNgosButton.setOnAction(e -> new ManageNgosView(primaryStage, dashboardScene).start(primaryStage));
+    Button broadcastButton = createQuickAccessButton("Broadcast Alert", true);
+    broadcastButton.setOnAction(e -> new BroadcastAlertsView(primaryStage, dashboardScene).start(primaryStage));
 
-        buttonGrid.add(broadcastButton, 0, 0);
-        buttonGrid.add(manageNgosButton, 1, 0);
+    Button manageNgosButton = createQuickAccessButton("Manage NGOs", false);
+    manageNgosButton.setOnAction(e -> new ManageNgosView(primaryStage, dashboardScene).start(primaryStage));
 
-        card.getChildren().add(buttonGrid);
-        return card;
-    }
+    buttonGrid.add(broadcastButton, 0, 0);
+    buttonGrid.add(manageNgosButton, 1, 0);
+
+    // Motivational Quote
+    Label quote = new Label("“Preparedness is the calm before the storm.”");
+    quote.setFont(getFont(18, FontWeight.NORMAL));
+    quote.setTextFill(Color.web("#A0AEC0"));
+    quote.setWrapText(true);
+    quote.setAlignment(Pos.CENTER);
+    quote.setMaxWidth(Double.MAX_VALUE);
+
+    // Notes Section
+    Label notesTitle = new Label("Admin Notes");
+    notesTitle.setFont(getFont(20, FontWeight.BOLD));
+    notesTitle.setTextFill(Color.web(FONT_COLOR_MEDIUM));
+    TextArea notesArea = new TextArea();
+    notesArea.setPromptText("Write reminders or notes here...");
+    notesArea.setPrefRowCount(4);
+    notesArea.setWrapText(true);
+    notesArea.setStyle("-fx-background-radius: 10; -fx-border-color: #CBD5E0; -fx-border-radius: 10;");
+
+    VBox.setMargin(quote, new Insets(40, 0, 10, 0));
+    VBox.setMargin(notesTitle, new Insets(30, 0, 5, 0));
+    VBox.setMargin(notesArea, new Insets(0, 0, 0, 0));
+
+    card.getChildren().addAll(buttonGrid, quote, notesTitle, notesArea);
+    return card;
+}
+
 
     private Button createQuickAccessButton(String text, boolean isPrimary) {
         Button button = new Button(text);

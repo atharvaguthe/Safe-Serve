@@ -144,7 +144,6 @@ public class VolunteerDashboard extends Application {
         logoView.setFitHeight(60);
         logoView.setPreserveRatio(true);
 
-        // Create the text label
         Label logoLabel = new Label("Safe Serve");
         logoLabel.setFont(getFont(42, FontWeight.BOLD)); 
         logoLabel.setTextFill(Color.web(PRIMARY_BLUE));
@@ -166,7 +165,7 @@ public class VolunteerDashboard extends Application {
 
         MenuButton profileButton = new MenuButton("Profile");
         profileButton.setFont(getFont(20, FontWeight.MEDIUM));
-        MenuItem profileItem = new MenuItem("Settings");
+        MenuItem profileItem = new MenuItem("Profile");
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(profileItem, logoutItem);
 
@@ -244,7 +243,7 @@ public class VolunteerDashboard extends Application {
             style = "-fx-background-color: " + BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR + ";";
         }
 
-        button.setStyle(style + " -fx-background-radius: 15; -fx-border-radius: 15; -fx-cursor: hand;"); // Increased radius further
+        button.setStyle(style + " -fx-background-radius: 15; -fx-border-radius: 15; -fx-cursor: hand;"); 
         return button;
     }
 

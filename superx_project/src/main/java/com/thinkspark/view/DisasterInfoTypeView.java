@@ -39,7 +39,7 @@ public class DisasterInfoTypeView extends Application {
     @Override
     public void start(Stage stage) {
         VBox rootLayout = new VBox(30);
-        rootLayout.setPadding(new Insets(40));
+        rootLayout.setPadding(new Insets(60));
         rootLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
         rootLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -60,20 +60,20 @@ public class DisasterInfoTypeView extends Application {
     private Node createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 0, 20, 0));
+        header.setPadding(new Insets(0, 0, 30, 0));
 
         Label title = new Label("Disaster Information");
-        title.setFont(getFont(32, FontWeight.BOLD));
+        title.setFont(getFont(42, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button backButton = new Button("⬅️ Back to Dashboard");
-        backButton.setFont(getFont(16, FontWeight.MEDIUM));
+        backButton.setFont(getFont(20, FontWeight.MEDIUM));
         backButton.setTextFill(Color.web(PRIMARY_BLUE));
-        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 8;");
-        backButton.setPadding(new Insets(8, 16, 8, 16));
+        backButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-border-color: " + PRIMARY_BLUE + "; -fx-border-radius: 12; -fx-border-width: 2;");
+        backButton.setPadding(new Insets(15, 28, 15, 28));
         backButton.setOnAction(e -> {
             primaryStage.setScene(previousScene);
             primaryStage.setTitle("Safe Serve | Disaster Relief Helper");
@@ -84,12 +84,12 @@ public class DisasterInfoTypeView extends Application {
     }
 
     private Node createDisasterInfoContent() {
-        VBox card = new VBox(30);
-        card.setPadding(new Insets(40));
+        VBox card = new VBox(40);
+        card.setPadding(new Insets(50));
         card.setStyle("-fx-background-color: " + CARD_BACKGROUND_COLOR + "; " +
-                      "-fx-background-radius: 12; " +
-                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);");
-        card.setMaxWidth(900);
+                      "-fx-background-radius: 18; " +
+                      "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 15, 0, 0, 6);");
+        card.setMaxWidth(1200);
 
         // --- Disaster Type Sections ---
         Node floodSection = createDisasterSection(
@@ -122,8 +122,8 @@ public class DisasterInfoTypeView extends Application {
     }
 
     private Node createDisasterSection(String title, String status, String protocols, String affectedAreas) {
-        VBox section = new VBox(15);
-        section.setPadding(new Insets(20, 0, 20, 0));
+        VBox section = new VBox(20);
+        section.setPadding(new Insets(30, 0, 30, 0));
         section.setStyle("-fx-border-color: " + BORDER_COLOR + " transparent transparent transparent; -fx-border-width: 1;");
 
         // Remove border from the first item
@@ -134,11 +134,11 @@ public class DisasterInfoTypeView extends Application {
         });
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(24, FontWeight.BOLD));
+        titleLabel.setFont(getFont(28, FontWeight.BOLD));
         titleLabel.setTextFill(Color.web(PRIMARY_BLUE));
 
         Label statusLabel = new Label(status);
-        statusLabel.setFont(getFont(16, FontWeight.BOLD));
+        statusLabel.setFont(getFont(18, FontWeight.BOLD));
         statusLabel.setWrapText(true);
         if (status.startsWith("ACTIVE ALERT")) {
             statusLabel.setTextFill(Color.web(ALERT_COLOR_RED));
@@ -154,16 +154,16 @@ public class DisasterInfoTypeView extends Application {
     }
 
     private VBox createInfoSubSection(String title, String content) {
-        VBox subSection = new VBox(5);
+        VBox subSection = new VBox(8);
         Label titleLabel = new Label(title);
-        titleLabel.setFont(getFont(18, FontWeight.BOLD));
+        titleLabel.setFont(getFont(20, FontWeight.BOLD));
         titleLabel.setTextFill(Color.web(FONT_COLOR_DARK));
 
         Text contentText = new Text(content);
-        contentText.setFont(getFont(15, FontWeight.NORMAL));
+        contentText.setFont(getFont(18, FontWeight.NORMAL));
         contentText.setFill(Color.web(FONT_COLOR_DARK));
-        contentText.setWrappingWidth(820);
-        contentText.setLineSpacing(4);
+        contentText.setWrappingWidth(1100);
+        contentText.setLineSpacing(6);
 
         subSection.getChildren().addAll(titleLabel, contentText);
         return subSection;

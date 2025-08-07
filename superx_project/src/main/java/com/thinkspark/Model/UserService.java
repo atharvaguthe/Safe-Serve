@@ -32,6 +32,11 @@ public class UserService {
             userData.put("imageUrl", user.getImageUrl());
         }
 
+        // *** FIX: Add default status for new NGOs ***
+        if ("NGO".equals(user.getRole())) {
+            userData.put("status", "Pending Verification");
+        }
+
         ApiFuture<WriteResult> future = FirebaseConfig.getDb().collection("users").document(user.getEmail()).set(userData);
 
         try {

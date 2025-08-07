@@ -23,7 +23,7 @@ public class FileStorageDao {
     public FileStorageDao() {
         try {
             FirebaseConfig.initialize();
-            FileInputStream serviceAccount = new FileInputStream("superx_project/src/main/resources/safe-serve-private.json");
+            FileInputStream serviceAccount = new FileInputStream("src\\main\\resources\\safe-serve-private.json");
             storage = StorageOptions.newBuilder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build()

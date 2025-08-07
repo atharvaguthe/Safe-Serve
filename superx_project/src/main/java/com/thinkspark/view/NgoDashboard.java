@@ -205,32 +205,43 @@ public class NgoDashboard extends Application {
     }
 
     private Node createQuickAccessModule() {
-        VBox card = createDashboardCard("Quick Actions");
-        GridPane buttonGrid = new GridPane();
-        buttonGrid.setHgap(30); 
-        buttonGrid.setVgap(30); 
-        buttonGrid.setPadding(new Insets(25, 0, 0, 0));
+    VBox card = createDashboardCard("Quick Actions");
+    GridPane buttonGrid = new GridPane();
+    buttonGrid.setHgap(30); 
+    buttonGrid.setVgap(30); 
+    buttonGrid.setPadding(new Insets(25, 0, 0, 0));
 
-        Button allRequestsButton = createQuickAccessButton("View & Assign Tasks", true);
-        allRequestsButton.setOnAction(e -> new AllRequestsView(primaryStage, dashboardScene).start(primaryStage));
+    Button allRequestsButton = createQuickAccessButton("View & Assign Tasks", true);
+    allRequestsButton.setOnAction(e -> new AllRequestsView(primaryStage, dashboardScene).start(primaryStage));
 
-        Button manageVolunteersButton = createQuickAccessButton("Manage Volunteers", false);
-        manageVolunteersButton.setOnAction(e -> new ManageVolunteersView(primaryStage, dashboardScene).start(primaryStage));
+    Button manageVolunteersButton = createQuickAccessButton("Manage Volunteers", false);
+    manageVolunteersButton.setOnAction(e -> new ManageVolunteersView(primaryStage, dashboardScene).start(primaryStage));
 
-        Button viewMapButton = createQuickAccessButton("View Map", false);
-        viewMapButton.setOnAction(e -> new MapView(primaryStage, dashboardScene).start(primaryStage));
+    Button viewMapButton = createQuickAccessButton("View Map", false);
+    viewMapButton.setOnAction(e -> new MapView(primaryStage, dashboardScene).start(primaryStage));
 
-        Button viewDonationsButton = createQuickAccessButton("View Donations", false);
-        viewDonationsButton.setOnAction(e -> new ViewDonationsView(primaryStage, dashboardScene).start(primaryStage));
+    Button viewDonationsButton = createQuickAccessButton("View Donations", false);
+    viewDonationsButton.setOnAction(e -> new ViewDonationsView(primaryStage, dashboardScene).start(primaryStage));
 
-        buttonGrid.add(allRequestsButton, 0, 0);
-        buttonGrid.add(manageVolunteersButton, 1, 0);
-        buttonGrid.add(viewMapButton, 0, 1);
-        buttonGrid.add(viewDonationsButton, 1, 1);
+    buttonGrid.add(allRequestsButton, 0, 0);
+    buttonGrid.add(manageVolunteersButton, 1, 0);
+    buttonGrid.add(viewMapButton, 0, 1);
+    buttonGrid.add(viewDonationsButton, 1, 1);
 
-        card.getChildren().add(buttonGrid);
-        return card;
-    }
+    card.getChildren().add(buttonGrid);
+
+    // --- Add an image below the buttons to fill the space ---
+    ImageView quickAccessImage = new ImageView(new Image(getClass().getResourceAsStream("/Assets/Images/ngoMap.jpg")));
+    quickAccessImage.setPreserveRatio(true);
+    quickAccessImage.setFitWidth(600); // Adjust as per design
+    quickAccessImage.setSmooth(true);
+    quickAccessImage.setCache(true);
+    VBox.setMargin(quickAccessImage, new Insets(30, 0, 0, 0));
+
+    card.getChildren().add(quickAccessImage); // Add image to the card
+    return card;
+}
+
 
     private Button createQuickAccessButton(String text, boolean isPrimary) {
         Button button = new Button(text);
