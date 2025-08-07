@@ -27,7 +27,6 @@ public class DisasterInfoTypeView extends Application {
     private final Scene previousScene;
     private final Stage primaryStage;
 
-    // --- Font Helper ---
     private static Font getFont(double size, FontWeight weight) {
         return Font.font("System", weight, size);
     }
@@ -63,7 +62,7 @@ public class DisasterInfoTypeView extends Application {
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(0, 0, 20, 0));
 
-        Label title = new Label("ℹ️ Disaster Information");
+        Label title = new Label("Disaster Information");
         title.setFont(getFont(32, FontWeight.BOLD));
         title.setTextFill(Color.web(FONT_COLOR_DARK));
 
