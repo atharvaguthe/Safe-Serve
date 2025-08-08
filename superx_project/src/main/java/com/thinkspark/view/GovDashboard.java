@@ -142,8 +142,7 @@ public class GovDashboard extends Application {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         
-        MenuButton profileButton = new MenuButton("Admin");
-        profileButton.setFont(getFont(20, FontWeight.MEDIUM)); 
+        MenuButton profileButton = new MenuButton(this.userName.substring(0, 1).toUpperCase());
         MenuItem profileItem = new MenuItem("Profile");
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(profileItem, logoutItem);
@@ -153,6 +152,16 @@ public class GovDashboard extends Application {
         logoutItem.setOnAction(e -> {
             new DisasterHelperUI().start(primaryStage);
         });
+
+        profileButton.setFont(getFont(22, FontWeight.BOLD));
+        profileButton.setStyle(
+            "-fx-background-color: " + PRIMARY_BLUE + "; " +
+            "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " +
+            "-fx-background-radius: 50em; -fx-padding: 0;"
+        );
+        profileButton.setMinSize(60, 60);
+        profileButton.setMaxSize(60, 60);
+        profileButton.setAlignment(Pos.CENTER);
 
         header.getChildren().addAll(logoBox, spacer, profileButton);
         return header;
@@ -189,7 +198,6 @@ public class GovDashboard extends Application {
     buttonGrid.add(broadcastButton, 0, 0);
     buttonGrid.add(manageNgosButton, 1, 0);
 
-    // Motivational Quote
     Label quote = new Label("“Preparedness is the calm before the storm.”");
     quote.setFont(getFont(18, FontWeight.NORMAL));
     quote.setTextFill(Color.web("#A0AEC0"));
@@ -197,7 +205,6 @@ public class GovDashboard extends Application {
     quote.setAlignment(Pos.CENTER);
     quote.setMaxWidth(Double.MAX_VALUE);
 
-    // Notes Section
     Label notesTitle = new Label("Admin Notes");
     notesTitle.setFont(getFont(20, FontWeight.BOLD));
     notesTitle.setTextFill(Color.web(FONT_COLOR_MEDIUM));

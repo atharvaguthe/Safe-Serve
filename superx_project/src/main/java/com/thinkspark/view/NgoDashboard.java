@@ -167,8 +167,7 @@ public class NgoDashboard extends Application {
             navLinks.getChildren().add(link);
         }
 
-        MenuButton profileButton = new MenuButton("Profile");
-        profileButton.setFont(getFont(20, FontWeight.MEDIUM));
+        MenuButton profileButton = new MenuButton(this.userName.substring(0, 1).toUpperCase());
         MenuItem profileItem = new MenuItem("Profile");
         MenuItem logoutItem = new MenuItem("Log Out");
         profileButton.getItems().addAll(profileItem, logoutItem);
@@ -178,6 +177,16 @@ public class NgoDashboard extends Application {
         logoutItem.setOnAction(e -> {
             new DisasterHelperUI().start(primaryStage);
         });
+
+        profileButton.setFont(getFont(22, FontWeight.BOLD));
+        profileButton.setStyle(
+            "-fx-background-color: " + PRIMARY_BLUE + "; " +
+            "-fx-text-fill: " + FONT_COLOR_LIGHT + "; " +
+            "-fx-background-radius: 50em; -fx-padding: 0;"
+        );
+        profileButton.setMinSize(60, 60);
+        profileButton.setMaxSize(60, 60);
+        profileButton.setAlignment(Pos.CENTER);
 
         navLinks.getChildren().add(profileButton);
 
