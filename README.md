@@ -1,266 +1,263 @@
 # Safe Serve
 
-```{=html}
-<p align="center">
-```
-`<strong>`{=html}A JavaFX-based disaster management and relief
-coordination application`</strong>`{=html} `<br />`{=html} Bringing
-citizens, volunteers, NGOs, and administrators together to coordinate
-disaster response.
-```{=html}
-</p>
-```
-```{=html}
-<p align="center">
-```
-`<img src="superx_project/src/main/resources/logo.png" alt="Safe Serve logo" width="150" />`{=html}
-```{=html}
-</p>
-```
-```{=html}
-<p align="center">
-```
-`<img src="https://img.shields.io/badge/Java-17-orange?logo=openjdk" alt="Java 17" />`{=html}
-`<img src="https://img.shields.io/badge/JavaFX-Desktop%20UI-2f6f9f" alt="JavaFX" />`{=html}
-`<img src="https://img.shields.io/badge/Backend-Firebase-ffca28?logo=firebase" alt="Firebase" />`{=html}
-`<img src="https://img.shields.io/badge/Build-Maven-C71A36?logo=apachemaven" alt="Maven" />`{=html}
-```{=html}
-</p>
-```
+**A JavaFX-based Disaster Management and Relief Coordination System**
+
+Safe Serve is a desktop application designed to support disaster
+response and relief coordination. It brings citizens, volunteers, NGOs,
+and administrators together through role-based workflows for reporting
+incidents, requesting assistance, and coordinating relief activities.
+
+![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)
+![JavaFX](https://img.shields.io/badge/UI-JavaFX-blue)
+![Firebase](https://img.shields.io/badge/Backend-Firebase-ffca28?logo=firebase)
+![Maven](https://img.shields.io/badge/Build-Maven-C71A36?logo=apachemaven)
+
+------------------------------------------------------------------------
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Firebase Configuration](#firebase-configuration)
+- [Security Notes](#security-notes)
+- [Project Scope](#project-scope)
+- [Author](#author)
+
 ## Overview
 
-**Safe Serve** is a desktop application designed to support disaster
-response and relief operations. It provides a shared platform where
-people can report incidents, request assistance, coordinate volunteers,
-and communicate important updates.
+Disasters require timely communication and coordination between affected
+people and relief providers. Safe Serve aims to provide a common desktop
+platform for these activities.
 
-The application has separate workflows for different user roles,
-including **Citizens, Volunteers, NGOs, and Government Administrators**.
-Its JavaFX interface connects to Firebase services for authentication
-and data management.
+The application contains separate interfaces for four user roles:
 
-> Safe Serve is an academic project/prototype. It is not an emergency
-> dispatch service. In a real emergency, contact the relevant local
-> emergency services rather than relying on this application.
+- **Citizens** – report disasters and request help.
+- **Volunteers** – participate in relief tasks and track their
+  contributions.
+- **NGOs** – access information relevant to relief coordination.
+- **Government / Administrators** – review reports, manage resources and
+  users, and publish alerts.
+
+The application uses JavaFX for its desktop interface and Firebase
+services for authentication and cloud data operations.
+
+> **Disclaimer:** Safe Serve is an academic project/prototype, not a
+> live emergency-response service. It must not be relied upon for
+> emergency dispatch or life-critical decisions.
 
 ## Features
 
-### Citizen
+### Citizen Portal
 
--   Create disaster reports with incident type, location, description,
-    and an optional image.
--   Submit requests for assistance, including medical help, food and
-    water, shelter, and rescue.
--   View submitted requests.
--   Browse emergency information, safety resources, and relief-resource
-    information.
--   View safe-zone information and a disaster map.
--   Access the donation interface.
+- Submit disaster reports with incident details, location, description,
+  and an optional image.
+- Request assistance such as medical help, food and water, shelter, or
+  rescue.
+- View submitted requests.
+- Access emergency information and safety resources.
+- View safe-zone information and the disaster map interface.
+- Access the donation interface.
 
-### Volunteer
+### Volunteer Portal
 
--   Access a dedicated volunteer dashboard.
--   View assigned relief tasks and update task status.
--   Log hours contributed to relief activities.
--   View volunteer profile information.
+- Access a dedicated volunteer dashboard.
+- View assigned relief tasks and update task status.
+- Record hours contributed to relief activities.
+- View volunteer profile information.
 
-### NGO
+### NGO Portal
 
--   Access an NGO dashboard.
--   View relevant reports and volunteer information.
--   Participate in the relief coordination workflow.
+- Access an NGO dashboard.
+- View information relevant to reports and volunteers.
+- Participate in the relief coordination workflow.
 
-### Government / Administrator
+### Government / Administrator Portal
 
--   Access an administrative dashboard.
--   Review disaster reports and requests.
--   Manage volunteers and partner NGOs.
--   Verify NGO entries.
--   Create and broadcast priority-based alerts.
--   View the analytics interface.
+- Access an administrative dashboard.
+- Review disaster reports and assistance requests.
+- Manage volunteer and NGO information.
+- Verify NGO entries.
+- Create and publish priority-based alerts.
+- Access the analytics interface.
 
-### Shared application capabilities
+### Shared Capabilities
 
--   Firebase Authentication for account registration and sign-in.
--   Cloud Firestore integration for application records.
--   Firebase Cloud Storage integration for uploaded files.
--   News feed retrieval through NewsAPI.
--   JavaFX desktop screens for dashboards, forms, maps, and resource
-    information.
+- User authentication through Firebase Authentication.
+- Cloud data operations using Cloud Firestore.
+- File and image storage integration.
+- News feed integration through NewsAPI.
+- JavaFX screens for dashboards, forms, maps, and resource information.
 
-*Some screens currently contain sample or locally defined information.
-Features such as payments, live operational data, and real-world
-emergency dispatch should not be assumed to be fully integrated.*
+*Feature availability depends on the current implementation and
+configuration. Some screens may use sample or locally defined
+information.*
 
 ## Technology Stack
 
-  Area                  Technology
-  --------------------- -----------------------------------------------------
-  Language              Java
-  Desktop UI            JavaFX
-  Build configuration   Maven
-  Authentication        Firebase Authentication (Identity Toolkit REST API)
-  Database              Cloud Firestore
-  File storage          Google Cloud Storage / Firebase Storage
-  JSON handling         `org.json`
-  HTTP client           OkHttp and Java networking APIs
-  News                  NewsAPI
+| Component              | Technology                              |
+|------------------------|-----------------------------------------|
+| Programming language   | Java                                    |
+| Desktop application UI | JavaFX                                  |
+| Build tool             | Maven                                   |
+| Authentication         | Firebase Authentication                 |
+| Database               | Cloud Firestore                         |
+| File storage           | Firebase Storage / Google Cloud Storage |
+| JSON handling          | `org.json`                              |
+| HTTP communication     | OkHttp and Java networking APIs         |
+| News integration       | NewsAPI                                 |
 
 ## Project Structure
 
 ``` text
 Safe-Serve/
-├── README.md
 └── superx_project/
     ├── pom.xml
     └── src/
         └── main/
             ├── java/
             │   └── com/thinkspark/
-            │       ├── Controller/    # Login, registration and account controllers
-            │       ├── Model/         # Domain models and Firebase configuration
-            │       ├── configuration/ # Application configuration
-            │       ├── dao/           # Firestore and storage data-access classes
-            │       └── view/          # JavaFX screens and dashboards
+            │       ├── Controller/
+            │       ├── Model/
+            │       ├── configuration/
+            │       ├── dao/
+            │       └── view/
             └── resources/
                 ├── Assets/
                 ├── logo.png
                 └── map.html
 ```
 
-### Architectural notes
+### Code Organization
 
-The code is organized around three main responsibilities:
-
--   **Views (`view/`)** -- JavaFX screens and user interactions.
--   **Controllers (`Controller/`)** -- authentication and
-    account-related workflows.
--   **Models and data access (`Model/`, `dao/`)** -- application data
-    structures and communication with Firebase services.
-
-The DAO layer includes classes for disaster reports, alerts, tasks,
-volunteers, NGOs, news, and file storage.
+| Directory        | Responsibility                                           |
+|------------------|----------------------------------------------------------|
+| `Controller/`    | Login, registration, and account-related controllers     |
+| `Model/`         | Application models and Firebase-related configuration    |
+| `configuration/` | Application configuration                                |
+| `dao/`           | Data-access classes for Firebase and application records |
+| `view/`          | JavaFX screens and dashboards                            |
+| `resources/`     | Images, assets, and other application resources          |
 
 ## Getting Started
 
 ### Prerequisites
 
--   JDK 17 or a compatible JDK.
--   Maven.
--   JavaFX SDK compatible with your JDK and operating system.
--   A Firebase project with the required services configured.
--   A NewsAPI key if you want the news feed to work.
+Before running the project, make sure you have:
 
-### 1. Clone the repository
+- JDK 17 or a compatible JDK.
+- Maven installed.
+- JavaFX SDK compatible with your JDK and operating system.
+- A Firebase project configured for the services used by the
+  application.
+- A NewsAPI key if you want to use the news feed.
+
+### 1. Clone the Repository
 
 ``` bash
 git clone https://github.com/atharvaguthe/Safe-Serve.git
 cd Safe-Serve
 ```
 
-### 2. Configure Firebase
+### 2. Open the Maven Project
 
-1.  Create or select a Firebase project.
-2.  Enable the Firebase Authentication providers used by the
-    application.
-3.  Create a Cloud Firestore database.
-4.  Configure Firebase Storage if you intend to use file uploads.
-5.  Create a service-account key with only the permissions the
-    application needs.
-6.  Configure the application to locate the service-account credentials.
+Open the `superx_project` directory in your Java IDE, or navigate into
+it:
 
-The current Firebase configuration code expects a service-account JSON
-file at:
-
-``` text
-superx_project/src/main/resources/safe-serve-private.json
+``` bash
+cd superx_project
 ```
 
-**Do not commit this file.** It contains private credentials. Keep it
-outside version control, add it to `.gitignore`, and preferably update
-the application to load credentials from a protected external path or
-environment-based configuration. Never distribute a service-account key
-inside a desktop application or a public repository.
+Make sure Maven has downloaded the required dependencies.
 
-The Firebase Authentication API key and NewsAPI key are also currently
-present in source code. Move configurable keys out of source control and
-apply the appropriate restrictions/quotas before sharing or deploying
-the application.
+### 3. Configure Firebase
 
-### 3. Configure JavaFX and Maven
+Create a Firebase project and configure the services used by the
+application:
 
-The project uses JavaFX classes, but the current `pom.xml` does not
-declare the JavaFX dependencies or a JavaFX Maven run configuration.
-Configure the JavaFX SDK and update the Maven build for your platform
-before building.
+1.  Enable the required Firebase Authentication provider(s).
+2.  Create a Cloud Firestore database.
+3.  Configure Firebase Storage if you need file uploads.
+4.  Configure the credentials and permissions required by the
+    application.
 
-For a local JavaFX SDK installation, the application is launched
-through:
+The current configuration expects a service-account JSON file at:
+
+``` text
+src/main/resources/safe-serve-private.json
+```
+
+Do not commit this file or distribute it publicly. See [Security
+Notes](#security-notes).
+
+### 4. Run the Application
+
+The application entry point is:
 
 ``` java
 com.thinkspark.Main
 ```
 
-The entry point calls `Application.launch(StartupScreen.class, args)`.
+Configure JavaFX in your IDE or Maven launch setup, then run the main
+class after completing the Firebase configuration.
 
-### 4. Run the application
+**Build note:** Verify the JavaFX dependencies and launch configuration
+in `pom.xml` for your environment. A compatible JavaFX SDK may need to
+be configured separately.
 
-Once JavaFX, Maven dependencies, and Firebase credentials are
-configured, run the `com.thinkspark.Main` class from your IDE or your
-configured Java launch command.
+## Firebase Configuration
 
-## Configuration and Security Notes
+Safe Serve uses Firebase services for application authentication and
+data operations.
 
-Before using this project beyond a local demonstration:
+Depending on the feature being used, the Firebase project needs:
 
--   Keep Firebase service-account JSON files, private keys, passwords,
-    and tokens out of Git.
--   Rotate any credential that has ever been committed or shared
-    publicly.
--   Move API keys from source code into external configuration.
--   Apply least-privilege IAM permissions and secure Firestore and
-    Storage rules.
--   Do not treat a client-side role selector as authorization; enforce
-    permissions in Firebase security rules and trusted backend code.
--   Review file-upload validation, access controls, and signed-URL
-    expiration.
--   Replace sample dashboard values and static safe-zone/resource
-    information with verified, maintained data.
--   Add error handling and user-facing feedback for network and Firebase
-    failures.
+- Firebase Authentication
+- Cloud Firestore
+- Firebase Storage
 
-## Current Scope
+Make sure the Firebase project configuration, database rules, and
+storage permissions are set up before testing the application.
+
+## Security Notes
+
+Before sharing or deploying the project:
+
+- Never commit service-account JSON files, private keys, passwords, or
+  tokens.
+- Rotate credentials if they have ever been committed to a public
+  repository.
+- Move API keys from source code into external configuration.
+- Apply least-privilege permissions to Firebase and Google Cloud
+  resources.
+- Enforce authorization through Firestore and Storage security rules,
+  not only through the desktop UI.
+- Validate uploaded files and restrict access to private user data.
+- Do not use sample dashboard values or static safe-zone information as
+  verified live emergency data.
+
+## Project Scope
 
 Safe Serve demonstrates a role-based desktop workflow for disaster
-reporting and relief coordination. The repository includes JavaFX
-interfaces and Firebase data-access code. However, not every screen
-represents a production-ready or live service: some content is sample
-data, and the repository does not establish a verified
-emergency-response deployment.
+reporting and relief coordination. It brings together JavaFX user
+interfaces and Firebase-backed data-access functionality.
 
-## Contributing
-
-Contributions and suggestions are welcome.
-
-1.  Fork the repository.
-2.  Create a feature branch.
-3.  Make your changes and test them locally.
-4.  Open a pull request with a clear description of the change.
+It is an academic prototype. A production emergency-management platform
+would additionally require verified real-time data, robust
+authorization, operational monitoring, reliable deployment
+infrastructure, and integration with responsible emergency-response
+organizations.
 
 ## Author
 
 **Atharva Guthe**
 
--   GitHub: [@atharvaguthe](https://github.com/atharvaguthe)
--   Project: [Safe-Serve](https://github.com/atharvaguthe/Safe-Serve)
+- GitHub: [@atharvaguthe](https://github.com/atharvaguthe)
+- Repository: [Safe-Serve](https://github.com/atharvaguthe/Safe-Serve)
 
 ------------------------------------------------------------------------
 
-```{=html}
-<p align="center">
-```
-Built to explore how software can support disaster response and
-community relief coordination.
-```{=html}
-</p>
-```
+*Built as an academic project exploring how software can support
+disaster response and community relief coordination.*
